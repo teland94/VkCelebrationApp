@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# wwwRoot
+*/wwwroot/dist
+
+# Others
+*.db
+*/Properties/PublishProfiles
+*/logs

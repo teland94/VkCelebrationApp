@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using VkCelebrationApp.DAL.Interfaces;
 
-namespace SimpleTelegramBotApp.DAL.EF
+namespace VkCelebrationApp.DAL.EF
 {
     public class EFGenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {

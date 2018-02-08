@@ -6,9 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="Microsoft.ProjectOxford.Face.DotNetStandard" Version="1.0.0" />
     <PackageReference Include="Telegram.Bot" Version="14.0.0-rc-367" />
     <PackageReference Include="VkNet" Version="1.31.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VkCelebrationApp.DAL\VkCelebrationApp.DAL.csproj" />
   </ItemGroup>
 
 </Project>

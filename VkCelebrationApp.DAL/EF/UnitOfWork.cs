@@ -1,13 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using VkCelebrationApp.DAL.Configuration;
+using VkCelebrationApp.DAL.Entities;
+using VkCelebrationApp.DAL.Interfaces;
 
 namespace VkCelebrationApp.DAL.EF
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private ApplicationContext _db;
-        //private IGenericRepository<Translation> _translationsRepository;
+        private readonly ApplicationContext _db;
+
+        private IGenericRepository<User> _usersRepository;
+        private IGenericRepository<UserCongratulation> _userCongratulationsRepository;
+        private IGenericRepository<CongratulationTemplate> _congratulationTemplatesRepository;
 
         public UnitOfWork(IConnectionStringsConfiguration connectionStringsConfiguration)
         {
@@ -15,27 +19,28 @@ namespace VkCelebrationApp.DAL.EF
             _db.Database.EnsureCreated();
         }
 
-        //public IGenericRepository<Translation> TranslationsRepository
-        //{
-        //    get
-        //    {
-        //        if (_translationsRepository == null)
-        //            _translationsRepository = new EFGenericRepository<Translation>(_db);
-        //        return _translationsRepository;
-        //    }
-        //}
+        public IGenericRepository<User> UsersRepository => 
+            _usersRepository ?? (_usersRepository = new EFGenericRepository<User>(_db));
 
-        private bool disposed = false;
+
+        public IGenericRepository<UserCongratulation> UserCongratulationsRepository => 
+            _userCongratulationsRepository ?? (_userCongratulationsRepository = new EFGenericRepository<UserCongratulation>(_db));
+
+        public IGenericRepository<CongratulationTemplate> CongratulationTemplatesRepository => 
+            _congratulationTemplatesRepository ?? (_congratulationTemplatesRepository = new EFGenericRepository<CongratulationTemplate>(_db));
+
+
+        private bool _disposed;
 
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     _db.Dispose();
                 }
-                this.disposed = true;
+                this._disposed = true;
             }
         }
 

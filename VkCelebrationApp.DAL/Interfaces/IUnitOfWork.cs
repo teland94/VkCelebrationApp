@@ -1,7 +1,13 @@
-﻿namespace VkCelebrationApp.DAL.EF
+﻿using VkCelebrationApp.DAL.Entities;
+
+namespace VkCelebrationApp.DAL.Interfaces
 {
     public interface IUnitOfWork
     {
-        //IGenericRepository<Translation> TranslationsRepository { get; }
+        IGenericRepository<User> UsersRepository { get;  }
+
+        IGenericRepository<UserCongratulation> UserCongratulationsRepository { get; }
+
+        IGenericRepository<CongratulationTemplate> CongratulationTemplatesRepository { get; }
     }
 }

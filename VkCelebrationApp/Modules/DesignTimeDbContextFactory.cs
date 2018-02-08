@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using VkCelebrationApp.DAL.EF;
 
-namespace SimpleTelegramBotApp.Modules
+namespace VkCelebrationApp.Modules
 {
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationContext>
     {

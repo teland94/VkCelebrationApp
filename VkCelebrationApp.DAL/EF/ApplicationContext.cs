@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VkCelebrationApp.DAL.Configuration;
+using VkCelebrationApp.DAL.Entities;
 
 namespace VkCelebrationApp.DAL.EF
 {
     public class ApplicationContext : DbContext
     {
-        private IConnectionStringsConfiguration _connectionConfiguration;
+        private readonly IConnectionStringsConfiguration _connectionConfiguration;
 
-        //public DbSet<Translation> Translations { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserCongratulation> UserCongratulations { get; set; }
+        public DbSet<CongratulationTemplate> CongratulationTemplates { get; set; }
 
-        public ApplicationContext(DbContextOptions<ApplicationContext> options)
+        public ApplicationContext(DbContextOptions options)
             : base(options)
         {
         }

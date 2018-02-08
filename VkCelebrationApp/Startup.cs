@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 using VkCelebrationApp.Autofac;
+using VkCelebrationApp.BLL.Interfaces;
 
 namespace VkCelebrationApp
 {
@@ -25,6 +27,11 @@ namespace VkCelebrationApp
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Vk Celebration API", Version = "v1" });
+            });
 
             ApplicationContainer = services.AddAutofac(Configuration);
 
@@ -49,6 +56,12 @@ namespace VkCelebrationApp
 
             app.UseStaticFiles();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vk Celebration API V1");
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -60,13 +73,15 @@ namespace VkCelebrationApp
                     defaults: new { controller = "Home", action = "Index" });
             });
 
-            StartBot();
+            AuthVk();
         }
 
-        private void StartBot()
+        private void AuthVk()
         {
             using (var scope = ApplicationContainer.BeginLifetimeScope())
             {
+                var vkApi = scope.Resolve<IVkCelebrationService>();
+                vkApi.Auth();
             }
         }
     }

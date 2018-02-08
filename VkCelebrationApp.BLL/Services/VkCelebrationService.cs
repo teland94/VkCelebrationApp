@@ -7,45 +7,78 @@ using VkNet.Model.RequestParams;
 using System.Linq;
 using VkNet.Model;
 using System.Threading.Tasks;
+using AutoMapper;
+using VkCelebrationApp.BLL.Configuration;
+using VkCelebrationApp.BLL.Dtos;
+using VkCelebrationApp.DAL.Interfaces;
+using VkNet.Enums;
+using VkNet.Utils;
 
 namespace VkCelebrationApp.BLL.Services
 {
     public class VkCelebrationService : IVkCelebrationService
     {
-        public async Task<IEnumerable<User>> SearchAsync(int ageFrom, int ageTo)
+        private readonly IVkApiConfiguration _vkApiConfiguration;
+
+        private VkApi VkApi { get; }
+
+        private IUnitOfWork UnitOfWork { get; }
+
+        public VkCelebrationService(IVkApiConfiguration vkApiConfiguration, 
+            VkApi vkApi,
+            IUnitOfWork unitOfWork)
+        {
+            _vkApiConfiguration = vkApiConfiguration;
+            VkApi = vkApi;
+            UnitOfWork = unitOfWork;
+        }
+
+        public void Auth()
+        {
+            //TODO: Change Auth
+            var user = UnitOfWork.UsersRepository.FindById(1);
+
+            VkApi.Authorize(new ApiAuthParams
+            {
+                ApplicationId = _vkApiConfiguration.AppId,
+                Login = user.Login,
+                Password = user.Password,
+                Settings = Settings.Friends
+            });
+        }
+
+        public async Task<IEnumerable<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo)
         {
             var date = DateTime.Now;
 
-            var vk = new VkApi();
-            vk.Authorize(new ApiAuthParams { Login = "111", Password = "111" });
-
-            var users = await vk.Users.SearchAsync(new UserSearchParams
+            var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
-                Fields = ProfileFields.All,
-                Sort = VkNet.Enums.UserSort.ByRegDate,
-                AgeFrom = (ushort)ageFrom,
-                AgeTo = (ushort)ageTo,
+                Sort = UserSort.ByRegDate,
+                AgeFrom = ageFrom,
+                AgeTo = ageTo,
                 BirthMonth = (ushort)date.Month,
                 BirthDay = (ushort)date.Day,
                 City = 280,
                 Country = 2,
-                Sex = VkNet.Enums.Sex.Female,
+                Sex = Sex.Female,
                 Online = true,
-                HasPhoto = true
+                HasPhoto = true,
+                Fields = ProfileFields.Photo100 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate
             });
+            
             var totalCount = users.TotalCount;
-            var usersList = users.ToList();
 
-            return users;
+            var userDtos = Mapper.Map<VkCollection<User>, IEnumerable<UserDto>>(users);
+            return userDtos;
         }
 
-        public async Task<int> DetectAgeAsync(long id, string firstName, string lastName, int ageFrom, int ageTo)
+        public async Task<int> DetectAgeAsync(long userId, string firstName, string lastName, ushort ageFrom, ushort ageTo)
         {
             var query = firstName + ' ' + lastName;
-            int counter = 0;
+            ushort counter;
             for (counter = ageFrom; counter < ageTo; counter++)
             {
-                if (await UserExistsAsync(id, query, counter))
+                if (await UserExistsAsync(userId, query, counter))
                 {
                     return counter;
                 }
@@ -54,15 +87,12 @@ namespace VkCelebrationApp.BLL.Services
             return counter;
         }
 
-        private async Task<bool> UserExistsAsync(long id, string query, int ageTo)
+        private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)
         {
-            var vk = new VkApi();
-            vk.Authorize(new ApiAuthParams { Login = "111", Password = "111" });
-
-            var users = await vk.Users.SearchAsync(new UserSearchParams
+            var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
                 Query = query,
-                AgeTo = (ushort)ageTo,
+                AgeTo = ageTo,
                 City = 280,
                 Country = 2
             });

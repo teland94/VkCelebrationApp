@@ -43,7 +43,10 @@ namespace VkCelebrationApp.BLL.Services
                 ApplicationId = _vkApiConfiguration.AppId,
                 Login = user.Login,
                 Password = user.Password,
-                Settings = Settings.Friends
+                Settings = Settings.Friends,
+
+                Host = _vkApiConfiguration.Host,
+                Port = _vkApiConfiguration.Port
             });
         }
 

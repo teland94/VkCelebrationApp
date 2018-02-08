@@ -61,6 +61,8 @@ namespace VkCelebrationApp.Modules
         public class VkApiConfiguration : IVkApiConfiguration
         {
             public ulong AppId { get; set; }
+            public string Host { get; set; }
+            public int? Port { get; set; }
         }
 
         public class BotConfiguration : IBotConfiguration

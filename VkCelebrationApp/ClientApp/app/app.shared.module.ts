@@ -1,13 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
+
+import { DataService } from './services/data.service';
+import { VkCelebrationService } from './services/vk-celebration.service';
 
 @NgModule({
     declarations: [
@@ -17,7 +20,7 @@ import { HomeComponent } from './components/home/home.component';
     ],
     imports: [
         CommonModule,
-        HttpModule,
+        HttpClientModule,
         FormsModule,
         ToastrModule.forRoot(),
         RouterModule.forRoot([
@@ -25,6 +28,10 @@ import { HomeComponent } from './components/home/home.component';
             { path: 'home', component: HomeComponent },
             { path: '**', redirectTo: 'home' }
         ])
+    ],
+    providers: [
+        DataService,
+        VkCelebrationService
     ]
 })
 export class AppModuleShared {

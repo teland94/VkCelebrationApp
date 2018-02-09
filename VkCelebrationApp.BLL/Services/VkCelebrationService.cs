@@ -69,9 +69,8 @@ namespace VkCelebrationApp.BLL.Services
                 Fields = ProfileFields.Photo100 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate
             });
             
-            var totalCount = users.TotalCount;
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
 
-            var userDtos = Mapper.Map<VkCollection<User>, IEnumerable<UserDto>>(users);
             return userDtos;
         }
 

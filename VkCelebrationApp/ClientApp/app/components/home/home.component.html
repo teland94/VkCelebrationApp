@@ -1,16 +1,25 @@
-<h1>Hello, world!</h1>
-<p>Welcome to your new single-page application, built with:</p>
-<ul>
-    <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-    <li><a href='https://angular.io/'>Angular</a> and <a href='http://www.typescriptlang.org/'>TypeScript</a> for client-side code</li>
-    <li><a href='https://webpack.github.io/'>Webpack</a> for building and bundling client-side resources</li>
-    <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-</ul>
-<p>To help you get started, we've also set up:</p>
-<ul>
-    <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-    <li><strong>Server-side prerendering</strong>. For faster initial loading and improved SEO, your Angular app is prerendered on the server. The resulting HTML is then transferred to the browser where a client-side copy of the app takes over.</li>
-    <li><strong>Webpack dev middleware</strong>. In development mode, there's no need to run the <code>webpack</code> build tool. Your client-side resources are dynamically built on demand. Updates are available as soon as you modify any file.</li>
-    <li><strong>Hot module replacement</strong>. In development mode, you don't even need to reload the page after making most changes. Within seconds of saving changes to files, your Angular app will be rebuilt and a new instance injected into the page.</li>
-    <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and the <code>webpack</code> build tool produces minified static CSS and JavaScript files.</li>
-</ul>
+﻿<div>
+    <div *ngIf="usersList">
+        <h3>Количество: {{usersCount}}</h3>
+        <div style="margin: 20px;">
+            <ul class="media-list">
+                <li *ngFor="let user of usersList" class="media">
+                    <a class="pull-left" [href]="baseUrl + user.id" target="_blank">
+                        <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading media-bottom">{{user.firstName}} {{user.lastName}}</h4>
+                        <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
+                        <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
+                            <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">Определить возраст</button>
+                            <span *ngIf="user.age" class="text-info">Возраст: {{user.age}}</span>
+                        </div>
+                        <button class="btn btn-primary" (click)="sendMessageOpen(user)">Написать сообщение</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <button class="btn btn-primary" (click)="seachUsers()">Обновить</button>
+        <button class="btn btn-default" (click)="navigate()">Перейти</button>
+    </div>
+</div>

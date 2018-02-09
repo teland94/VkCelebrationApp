@@ -51,7 +51,7 @@ namespace VkCelebrationApp.Modules
             return result;
         }
 
-        #region Nested Class
+        #region Nested Classes
 
         public class ConnectionStringsConfiguration : IConnectionStringsConfiguration
         {

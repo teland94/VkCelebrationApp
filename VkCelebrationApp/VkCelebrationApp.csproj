@@ -25,8 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\models\user.model.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\VkCelebrationApp.BLL\VkCelebrationApp.BLL.csproj" />
     <ProjectReference Include="..\VkCelebrationApp.DAL\VkCelebrationApp.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\models\user.model.ts" />
   </ItemGroup>
 
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">

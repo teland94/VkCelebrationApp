@@ -51,7 +51,7 @@ namespace VkCelebrationApp.Controllers
 
             var messageId = await VkCelebrationService.SendCongratulationAsync(userCongratulation);
 
-            return CreatedAtAction("SendMessage", new { id = messageId });
+            return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
     }
 }

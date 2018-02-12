@@ -60,7 +60,7 @@ namespace VkCelebrationApp.Controllers
 
             CongratulationTemplatesCrudService.Create(template);
 
-            return CreatedAtAction("GetTranslation", new { id = template.Id }, template);
+            return CreatedAtAction("PostCongratulationTemplate", new { id = template.Id }, template);
         }
 
         [HttpDelete("{id}")]

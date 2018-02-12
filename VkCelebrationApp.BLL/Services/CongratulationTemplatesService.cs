@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.DAL.Entities;
 using VkCelebrationApp.DAL.Interfaces;
+using VkCelebrationApp.BLL.Extensions;
 
 namespace VkCelebrationApp.BLL.Services
 {
@@ -58,12 +59,12 @@ namespace VkCelebrationApp.BLL.Services
                 if (maxItems != null)
                 {
                     congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository
-                        .Get(1, maxItems.Value, t => t.Text.Contains(text));
+                        .Get(1, maxItems.Value, t => t.Text.Contains(text, StringComparison.OrdinalIgnoreCase));
                 }
                 else
                 {
                     congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository
-                        .Get(t => t.Text.Contains(text));
+                        .Get(t => t.Text.Contains(text, StringComparison.OrdinalIgnoreCase));
                 }
             }
             else

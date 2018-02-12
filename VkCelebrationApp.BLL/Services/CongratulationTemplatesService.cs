@@ -58,7 +58,7 @@ namespace VkCelebrationApp.BLL.Services
                 if (maxItems != null)
                 {
                     congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository
-                        .Get(t => t.Text.Contains(text), 1, maxItems.Value);
+                        .Get(1, maxItems.Value, t => t.Text.Contains(text));
                 }
                 else
                 {

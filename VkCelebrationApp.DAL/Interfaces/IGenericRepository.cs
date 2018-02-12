@@ -13,7 +13,7 @@ namespace VkCelebrationApp.DAL.Interfaces
 
         IEnumerable<TEntity> Get(Func<TEntity, bool> predicate);
 
-        IEnumerable<TEntity> Get(Func<TEntity, bool> predicate, int page, int pageSize);
+        IEnumerable<TEntity> Get(int page, int pageSize, Func<TEntity, bool> predicate = null);
 
         IEnumerable<TEntity> Get<TKey>(Func<TEntity, TKey> orderBy, bool isAsc = true, Func<TEntity, bool> predicate = null);
 

@@ -7,7 +7,7 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         void Auth();
 
-        Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo);
+        Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo, uint? count = 1000, uint? offset = 0);
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
 

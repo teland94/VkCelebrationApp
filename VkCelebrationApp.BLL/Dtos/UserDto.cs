@@ -10,5 +10,6 @@ namespace VkCelebrationApp.BLL.Dtos
         public string BirthDate { get; set; }
         public ushort Age { get; set; }
         public Uri Photo100 { get; set; }
+        public Uri PhotoMax { get; set; }
     }
 }

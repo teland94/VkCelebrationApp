@@ -68,6 +68,7 @@ namespace VkCelebrationApp.Modules
         public class BotConfiguration : IBotConfiguration
         {
             public string Url { get; set; }
+            public string UpdateBaseApiPath { get; set; }
             public string Name { get; set; }
             public string Key { get; set; }
         }

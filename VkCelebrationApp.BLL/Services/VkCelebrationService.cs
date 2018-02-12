@@ -50,7 +50,7 @@ namespace VkCelebrationApp.BLL.Services
             });
         }
 
-        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo)
+        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo, uint? count = 1000, uint? offset = 0)
         {
             var date = DateTime.Now;
 
@@ -66,7 +66,9 @@ namespace VkCelebrationApp.BLL.Services
                 Sex = Sex.Female,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate,
+                Count = count,
+                Offset = offset
             });
             
             var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);

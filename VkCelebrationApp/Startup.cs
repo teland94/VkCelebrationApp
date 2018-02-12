@@ -63,6 +63,7 @@ namespace VkCelebrationApp
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vk Celebration API V1");
             });
 
+            loggerFactory.AddFile("logs/logger-info.txt");
             loggerFactory.AddFile("logs/logger.txt", LogLevel.Error);
 
             app.UseMvc(routes =>
@@ -77,6 +78,7 @@ namespace VkCelebrationApp
             });
 
             AuthVk();
+            StartBot();
         }
 
         private void AuthVk()
@@ -85,6 +87,15 @@ namespace VkCelebrationApp
             {
                 var vkApi = scope.Resolve<IVkCelebrationService>();
                 vkApi.Auth();
+            }
+        }
+
+        private void StartBot()
+        {
+            using (var scope = ApplicationContainer.BeginLifetimeScope())
+            {
+                var telegramBotService = scope.Resolve<IVkCelebrationTelegramBotService>();
+                telegramBotService.InitClient();
             }
         }
     }

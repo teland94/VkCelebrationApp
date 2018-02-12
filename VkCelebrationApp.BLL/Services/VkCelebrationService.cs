@@ -43,14 +43,14 @@ namespace VkCelebrationApp.BLL.Services
                 ApplicationId = _vkApiConfiguration.AppId,
                 Login = user.Login,
                 Password = user.Password,
-                Settings = Settings.Friends,
+                Settings = Settings.Friends | Settings.Messages,
 
                 Host = _vkApiConfiguration.Host,
                 Port = _vkApiConfiguration.Port
             });
         }
 
-        public async Task<IEnumerable<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo)
+        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo)
         {
             var date = DateTime.Now;
 
@@ -78,7 +78,7 @@ namespace VkCelebrationApp.BLL.Services
         {
             var query = firstName + ' ' + lastName;
             ushort counter;
-            for (counter = ageFrom; counter < ageTo; counter++)
+            for (counter = ageFrom; counter <= ageTo; counter++)
             {
                 if (await UserExistsAsync(userId, query, counter))
                 {
@@ -86,7 +86,16 @@ namespace VkCelebrationApp.BLL.Services
                 }
                 await Task.Delay(200);
             }
-            return counter;
+            return 0;
+        }
+
+        public async Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto)
+        {
+            return await VkApi.Messages.SendAsync(new MessagesSendParams
+            {
+                UserId = userCongratulationDto.VkUserId,
+                Message = userCongratulationDto.Text
+            });
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)

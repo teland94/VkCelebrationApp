@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
@@ -8,7 +7,9 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         void Auth();
 
-        Task<IEnumerable<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo);
+        Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo);
+
+        Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
 
         Task<int> DetectAgeAsync(long userId, string firstName, string lastName, ushort ageFrom, ushort ageTo);
     }

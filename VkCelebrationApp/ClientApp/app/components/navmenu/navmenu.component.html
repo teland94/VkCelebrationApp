@@ -1,23 +1,34 @@
-<div class='main-nav'>
-    <div class='navbar navbar-inverse'>
-        <div class='navbar-header'>
-            <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse'>
-                <span class='sr-only'>Toggle navigation</span>
-                <span class='icon-bar'></span>
-                <span class='icon-bar'></span>
-                <span class='icon-bar'></span>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
-            <a class='navbar-brand' [routerLink]="['/home']">VkCelebrationApp</a>
+            <a class="navbar-brand" routerLink="">Поздравлятор</a>
         </div>
-        <div class='clearfix'></div>
-        <div class='navbar-collapse collapse'>
-            <ul class='nav navbar-nav'>
-                <li [routerLinkActive]="['link-active']">
-                    <a [routerLink]="['/home']">
-                        <span class='glyphicon glyphicon-home'></span> Home
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li routerLinkActive='active'><a routerLink="/home">Главная</a></li>
+                <li routerLinkActive='active'><a routerLink="/congratulation-templates">Заготовки поздравлений</a></li>
+                <li routerLinkActive='active'><a routerLink="/about">Информация</a></li>
+            </ul>
+            <!--<ul *ngIf="currentUser" class="nav navbar-nav navbar-right">
+                <li style="padding: 0; margin: 0">
+                    <a style="padding: 10px;" [href]="baseUrl + currentUser.uid" target="_blank">
+                        <div class="media">
+                            <div class="media-left">
+                                <img [src]="currentUser.photo_50" [alt]="currentUser.uid" class="media-object img-circle" style="width:30px">
+                            </div>
+                            <div class="media-body" style="width:auto; vertical-align: middle">
+                                <span style="font-weight: 700">{{currentUser.first_name}} {{currentUser.last_name}}</span>
+                            </div>
+                        </div>
                     </a>
                 </li>
-            </ul>
+            </ul>-->
         </div>
     </div>
 </div>

@@ -17,14 +17,22 @@ export class DataService {
     }
 
     post(url: string, data?: any) {
-        return this.httpClient.post(url, data);
+        return this.httpClient.post(this.baseUrl + '/' + url, data);
+    }
+
+    put(url: string, data?: any) {
+        return this.httpClient.put(this.baseUrl + '/' + url, data);
+    }
+
+    delete(url: string) {
+        return this.httpClient.delete(this.baseUrl + '/' + url);
     }
 
     private buildHttpParams(params?: any): HttpParams {
-        const httpParams = new HttpParams();
+        let httpParams = new HttpParams();
         for (const key in params) {
             if (params.hasOwnProperty(key)) {
-                httpParams.set(key, params[key]);
+                httpParams = httpParams.append(key, params[key]);
             }
         }
         return httpParams;

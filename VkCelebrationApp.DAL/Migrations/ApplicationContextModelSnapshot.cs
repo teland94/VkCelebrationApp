@@ -23,9 +23,13 @@ namespace VkCelebrationApp.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("CreatedById");
+
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("CongratulationTemplates");
                 });
@@ -51,7 +55,9 @@ namespace VkCelebrationApp.DAL.Migrations
 
                     b.Property<string>("Text");
 
-                    b.Property<int>("UserId");
+                    b.Property<int?>("UserId");
+
+                    b.Property<long>("VkUserId");
 
                     b.HasKey("Id");
 
@@ -60,12 +66,18 @@ namespace VkCelebrationApp.DAL.Migrations
                     b.ToTable("UserCongratulations");
                 });
 
+            modelBuilder.Entity("VkCelebrationApp.DAL.Entities.CongratulationTemplate", b =>
+                {
+                    b.HasOne("VkCelebrationApp.DAL.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+                });
+
             modelBuilder.Entity("VkCelebrationApp.DAL.Entities.UserCongratulation", b =>
                 {
                     b.HasOne("VkCelebrationApp.DAL.Entities.User", "User")
                         .WithMany("UserCongratulations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

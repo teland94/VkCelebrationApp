@@ -5,8 +5,8 @@ using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.BLL.Services;
+using VkCelebrationApp.DAL.Entities;
 using VkNet;
-using VkNet.Model;
 using VkNet.Utils;
 
 namespace VkCelebrationApp.BLL.Modules
@@ -17,6 +17,8 @@ namespace VkCelebrationApp.BLL.Modules
         {
             builder.RegisterType<VkApi>().SingleInstance();
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>();
+            builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>();
+            builder.RegisterType<CongratulationTemplatesService>().As<ICongratulationTemplatesService>();
 
             ConfigureMapper();
         }
@@ -25,13 +27,19 @@ namespace VkCelebrationApp.BLL.Modules
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<User, UserDto>()
+                cfg.CreateMap<VkNet.Model.User, UserDto>()
                     .ForMember(
                         d => d.Age,
                         opt => opt.MapFrom(m => ConvertBirthDateToAge(m.BirthDate)));
 
                 cfg.CreateMap(typeof(VkCollection<>), typeof(VkCollectionDto<>))
                     .ConvertUsing(typeof(VkCollectionToVkCollectionDtoConverter<,>));
+
+                cfg.CreateMap<CongratulationTemplate, CongratulationTemplateDto>();
+                cfg.CreateMap<CongratulationTemplateDto, CongratulationTemplate>();
+
+                cfg.CreateMap<UserCongratulation, UserCongratulationDto>();
+                cfg.CreateMap<UserCongratulationDto, UserCongratulation>();
             });
         }
 

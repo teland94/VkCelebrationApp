@@ -27,6 +27,15 @@ namespace VkCelebrationApp.DAL.EF
             return _dbSet.AsNoTracking().Where(predicate).ToList();
         }
 
+        public IEnumerable<TEntity> Get(int page, int pageSize, Func<TEntity, bool> predicate = null)
+        {
+            return _dbSet.AsNoTracking()
+                .Where(predicate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
         public IEnumerable<TEntity> Get<TKey>(Func<TEntity, TKey> orderBy, bool isAsc = true, Func<TEntity, bool> predicate = null)
         {
             IQueryable<TEntity> query = _dbSet;

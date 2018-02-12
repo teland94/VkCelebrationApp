@@ -1,25 +1,70 @@
-﻿<div>
-    <div *ngIf="usersList">
-        <h3>Количество: {{usersCount}}</h3>
-        <div style="margin: 20px;">
-            <ul class="media-list">
-                <li *ngFor="let user of usersList" class="media">
-                    <a class="pull-left" [href]="baseUrl + user.id" target="_blank">
-                        <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading media-bottom">{{user.firstName}} {{user.lastName}}</h4>
-                        <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
-                        <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
-                            <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">Определить возраст</button>
-                            <span *ngIf="user.age" class="text-info">Возраст: {{user.age}}</span>
-                        </div>
-                        <button class="btn btn-primary" (click)="sendMessageOpen(user)">Написать сообщение</button>
-                    </div>
-                </li>
-            </ul>
+﻿<div bsModal #congratulationModal="bs-modal" class="modal fade"tabindex="-1" role="dialog"
+     *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Написать поздравление</h4>
+                <button type="button" class="close pull-right" (click)="congratulationModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="well">
+                    {{selectedUser?.firstName + " " + selectedUser?.lastName}}
+                    <span *ngIf="selectedUser?.age">(Возраст: {{selectedUser?.age}})</span>
+                </div>
+                <div class="form-group">
+                    <label for="templates">Заготовки</label>
+                    <ng-select id="templates"
+                               [items]="congratulationTemplates"
+                               placeholder="Найти шаблон поздравления"
+                               typeToSearchText="Введите текст для поиска"
+                               notFoundText="Поздравлений не найдено"
+                               bindLabel="text"
+                               bindValue="text"
+                               [typeahead]="typeahead"
+                               [(ngModel)]="template">
+                        <ng-template ng-option-tmp let-item="item">
+                            {{item.text}}
+                        </ng-template>
+                    </ng-select>
+                </div>
+                <div class="form-group">
+                    <label for="messageText">Сообщение</label>
+                    <textarea id="messageText" name="messageText"
+                              #messageTextRef="ngModel" [(ngModel)]="messageText"
+                              class="form-control" rows="5" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="sendCongratulation()" 
+                        [disabled]="!messageTextRef.valid">Отправить</button>
+                <button type="button" class="btn btn-default" (click)="congratulationModal.hide()">Отмена</button>
+            </div>
         </div>
-        <button class="btn btn-primary" (click)="seachUsers()">Обновить</button>
-        <button class="btn btn-default" (click)="navigate()">Перейти</button>
     </div>
+</div>
+
+<div *ngIf="usersCollection">
+    <h3>Количество: {{usersCollection.totalCount}}</h3>
+    <div style="margin: 20px;">
+        <ul class="media-list">
+            <li *ngFor="let user of usersCollection.items" class="media">
+                <a class="pull-left" [href]="baseUrl + user.id" target="_blank">
+                    <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
+                </a>
+                <div class="media-body">
+                    <h4 class="media-heading media-bottom">{{user.firstName}} {{user.lastName}}</h4>
+                    <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
+                    <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
+                        <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">Определить возраст</button>
+                        <span *ngIf="user.age" class="text-info">Возраст: {{user.age}}</span>
+                    </div>
+                    <button class="btn btn-primary" (click)="sendMessageOpen(user)">Написать поздравление</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <button class="btn btn-primary" (click)="seachUsers()">Обновить</button>
+    <button class="btn btn-default" (click)="navigate()">Перейти</button>
 </div>

@@ -1,0 +1,11 @@
+﻿button, input[type=button] {
+    min-width: 80px;
+}
+
+.close {
+    min-width: inherit;
+}
+
+textarea {
+    resize: none;
+}

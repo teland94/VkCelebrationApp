@@ -1,0 +1,58 @@
+﻿<h1>Congratulation Templates</h1>
+<h4 *ngIf="congratulationTemplates && tableMode">Count: {{congratulationTemplates.length}}</h4>
+<div *ngIf="tableMode">
+    <input type="button" value="Add" class="btn btn-default" (click)="add()" />
+</div>
+<ng-container *ngIf="tableMode; else create">
+    <table *ngIf="congratulationTemplates && congratulationTemplates.length > 0" class="table table-striped">
+        <thead>
+            <tr>
+                <th class="fit">№</th>
+                <th>Text</th>
+                <th class="fit"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let t of congratulationTemplates">
+                <ng-template [ngIf]="congratulationTemplate?.id != t.id" [ngIfElse]="edit">
+                    <td class="fit">{{t?.id}}</td>
+                    <td>{{t?.text}}</td>
+                    <td class="fit">
+                        <button class="btn btn-sm btn-primary" (click)="editCongratulationTemplate(t)">Edit</button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(t)">Delete</button>
+                    </td>
+                </ng-template>
+            </tr>
+        </tbody>
+    </table>
+</ng-container>
+
+<ng-template #edit>
+    <td class="fit">
+        {{congratulationTemplate?.id}}
+    </td>
+    <td>
+        <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus class="form-control"></textarea>
+    </td>
+    <td class="fit">
+        <input type="button" value="Save" (click)="save()" class="btn btn-sm btn-success" [disabled]="!text.valid" />
+        <input type="button" value="Cancel" (click)="cancel()" class="btn btn-sm btn-warning" />
+    </td>
+</ng-template>
+
+<ng-template #create>
+    <form #f="ngForm" novalidate>
+        <div class="form-group">
+            <label>Text</label>
+            <textarea name="Text" #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus class="form-control"></textarea>
+
+            <small [hidden]="text.valid || (text.pristine && !submitted)" class="text-danger">
+                Please enter a valid text
+            </small>
+        </div>
+        <div>
+            <input type="button" value="Save" (click)="save()" class="btn btn-success" [disabled]="f.invalid" />
+            <input type="button" value="Cancel" (click)="cancel()" class="btn btn-warning" />
+        </div>
+    </form>
+</ng-template>

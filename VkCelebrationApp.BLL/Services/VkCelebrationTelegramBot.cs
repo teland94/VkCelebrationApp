@@ -48,32 +48,46 @@ namespace VkCelebrationApp.BLL.Services
         {
             await InitClient();
 
-            const int count = 1;
-            var users = await _vkCelebrationService.SearchAsync(15, 25, count, _offset);
-            _currentUser = users.FirstOrDefault();
-
-            await _client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-
             if (message.Text.Contains("искать", StringComparison.OrdinalIgnoreCase))
             {
+                await _client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+
+                const int count = 1;
+                var users = await _vkCelebrationService.SearchAsync(15, 25, count, _offset);
+                _currentUser = users.FirstOrDefault();
+
                 await _client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(_currentUser.PhotoMax.AbsoluteUri));
                 await _client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(_currentUser));
 
                 _offset++;
                 if (_offset >= users.TotalCount)
+                {
                     _offset = 0;
-                _currentUser = null;
+                    _currentUser = null;
+                }
             }
 
             if (message.Text.Contains("поздравить", StringComparison.OrdinalIgnoreCase))
             {
+                await _client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+
                 if (_currentUser != null)
                 {
-                    var templates = _congratulationTemplatesService.Find("", 1).ToList();
+                    var templates = _congratulationTemplatesService.Find(null, 1).ToList();
 
                     if (templates.Any())
                     {
-                        await _client.SendTextMessageAsync(message.Chat.Id, templates.FirstOrDefault()?.Text);
+                        var t = templates.FirstOrDefault();
+                        if (t != null)
+                        {
+                            await _vkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
+                            {
+                                VkUserId = _currentUser.Id,
+                                Text = t.Text
+                            });
+
+                            await _client.SendTextMessageAsync(message.Chat.Id, t.Text);
+                        }
                     }
                 }
                 else

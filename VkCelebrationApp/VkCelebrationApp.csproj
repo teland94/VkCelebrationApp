@@ -49,6 +49,12 @@
     <TypeScriptCompile Include="ClientApp\app\models\vk-collection.model.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="vkcelebrations.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

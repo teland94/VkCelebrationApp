@@ -54,7 +54,7 @@ namespace VkCelebrationApp.BLL.Services
         public IEnumerable<CongratulationTemplateDto> Find(string text, int? maxItems = 5)
         {
             IEnumerable<CongratulationTemplate> congratulationTemplates;
-            if (string.IsNullOrWhiteSpace(text))
+            if (!string.IsNullOrWhiteSpace(text))
             {
                 if (maxItems != null)
                 {

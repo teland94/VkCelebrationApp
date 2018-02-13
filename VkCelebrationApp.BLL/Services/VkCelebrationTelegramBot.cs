@@ -100,8 +100,8 @@ namespace VkCelebrationApp.BLL.Services
         private string GetStrUserInfo(UserDto user)
         {
             var sb = new StringBuilder();
-
-            sb.AppendLine("Номер: " + user.Id);
+            
+            sb.AppendLine("http://vk.com/id" + user.Id);
             sb.AppendLine(user.FirstName + " " + user.LastName);
             if (user.Age > 0)
             {

@@ -5,14 +5,16 @@ using VkNet;
 using VkNet.Enums.Filters;
 using VkNet.Model.RequestParams;
 using System.Linq;
-using VkNet.Model;
 using System.Threading.Tasks;
 using AutoMapper;
 using VkCelebrationApp.BLL.Configuration;
 using VkCelebrationApp.BLL.Dtos;
+using VkCelebrationApp.BLL.Extensions;
+using VkCelebrationApp.DAL.Entities;
 using VkCelebrationApp.DAL.Interfaces;
 using VkNet.Enums;
 using VkNet.Utils;
+using User = VkNet.Model.User;
 
 namespace VkCelebrationApp.BLL.Services
 {
@@ -70,6 +72,8 @@ namespace VkCelebrationApp.BLL.Services
                 Count = count,
                 Offset = offset
             });
+
+            users = GetCustomFilteredUsers(users);
             
             var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
 
@@ -93,11 +97,34 @@ namespace VkCelebrationApp.BLL.Services
 
         public async Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto)
         {
-            return await VkApi.Messages.SendAsync(new MessagesSendParams
+            var messageId = await VkApi.Messages.SendAsync(new MessagesSendParams
             {
                 UserId = userCongratulationDto.VkUserId,
                 Message = userCongratulationDto.Text
             });
+
+            UnitOfWork.UserCongratulationsRepository.Create(new UserCongratulation
+            {
+                Text = userCongratulationDto.Text,
+                CongratulationDate = DateTime.UtcNow,
+                VkUserId = userCongratulationDto.VkUserId
+            });
+
+            await VkApi.Messages.DeleteDialogAsync(userCongratulationDto.VkUserId);
+
+            return messageId;
+        }
+
+        public IEnumerable<UserCongratulationDto> GetUserCongratulations()
+        {
+            var userCongratulations = UnitOfWork.UserCongratulationsRepository.Get();
+
+            return Mapper.Map<IEnumerable<UserCongratulation>, IEnumerable<UserCongratulationDto>>(userCongratulations);
+        }
+
+        private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
+        {
+            return users.Where(u => u.CanWritePrivateMessage).ToVkCollection(users.TotalCount);
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)

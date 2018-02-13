@@ -53,5 +53,18 @@ namespace VkCelebrationApp.Controllers
 
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
+
+        [HttpGet("GetUserCongratulations")]
+        public IActionResult GetUserCongratulations()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var congratulations = VkCelebrationService.GetUserCongratulations();
+
+            return Ok(congratulations);
+        }
     }
 }

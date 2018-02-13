@@ -1,6 +1,7 @@
 ﻿export class UserCongratulation {
     id: number;
     text: string;
+    congratulationDate: Date;
     vkUserId: number;
     userId: number;
 

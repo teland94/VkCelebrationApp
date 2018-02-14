@@ -17,6 +17,7 @@ namespace VkCelebrationApp.BLL.Modules
         {
             builder.RegisterType<VkApi>().SingleInstance();
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>();
+            builder.RegisterType<VkCelebrationService>().As<IVkCelebrationStateService>();
             builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>();
             builder.RegisterType<CongratulationTemplatesService>().As<ICongratulationTemplatesService>();
 

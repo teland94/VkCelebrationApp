@@ -18,13 +18,16 @@ using User = VkNet.Model.User;
 
 namespace VkCelebrationApp.BLL.Services
 {
-    public class VkCelebrationService : IVkCelebrationService
+    public class VkCelebrationService : IVkCelebrationService, IVkCelebrationStateService
     {
         private readonly IVkApiConfiguration _vkApiConfiguration;
 
         private VkApi VkApi { get; }
 
         private IUnitOfWork UnitOfWork { get; }
+
+        private static VkCollectionDto<UserDto> _currentUsers;
+        private static uint _offset;
 
         public VkCelebrationService(IVkApiConfiguration vkApiConfiguration, 
             VkApi vkApi,
@@ -50,6 +53,33 @@ namespace VkCelebrationApp.BLL.Services
                 Host = _vkApiConfiguration.Host,
                 Port = _vkApiConfiguration.Port
             });
+        }
+
+        public async Task<VkCollectionDto<UserDto>> FindAsync(ushort ageFrom, ushort ageTo)
+        {
+            var users = await SearchAsync(ageFrom, ageTo, 1, _offset);
+            _currentUsers = users;
+
+            return users;
+        }
+
+        public void Next()
+        {
+            _offset++;
+            if (_offset >= _currentUsers.TotalCount)
+            {
+                _offset = 0;
+                _currentUsers = null;
+            }
+        }
+
+        public VkCelebrationServiceState GetState()
+        {
+            return new VkCelebrationServiceState
+            {
+                CurrentUsers = _currentUsers,
+                Offset = _offset
+            };
         }
 
         public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo, uint? count = 1000, uint? offset = 0)

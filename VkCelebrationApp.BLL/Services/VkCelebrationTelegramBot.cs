@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
+using VkCelebrationApp.BLL.Commands;
 using VkCelebrationApp.BLL.Configuration;
-using VkCelebrationApp.BLL.Dtos;
-using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.BLL.Interfaces;
 
 namespace VkCelebrationApp.BLL.Services
@@ -18,17 +14,17 @@ namespace VkCelebrationApp.BLL.Services
         private ITelegramBotClient _client;
         private readonly IBotConfiguration _botConfiguration;
         private readonly IVkCelebrationService _vkCelebrationService;
+        private readonly IVkCelebrationStateService _vkCelebrationStateService;
         private readonly ICongratulationTemplatesService _congratulationTemplatesService;
-
-        private uint _offset;
-        private UserDto _currentUser;
 
         public VkCelebrationTelegramBotService(IBotConfiguration botConfiguration,
             IVkCelebrationService vkCelebrationService,
+            IVkCelebrationStateService vkCelebrationStateService,
             ICongratulationTemplatesService congratulationTemplatesService)
         {
             _botConfiguration = botConfiguration;
             _vkCelebrationService = vkCelebrationService;
+            _vkCelebrationStateService = vkCelebrationStateService;
             _congratulationTemplatesService = congratulationTemplatesService;
         }
 
@@ -48,67 +44,20 @@ namespace VkCelebrationApp.BLL.Services
         {
             await InitClient();
 
-            if (message.Text.Contains("искать", StringComparison.OrdinalIgnoreCase))
+            var commands = new List<Command>
             {
-                await _client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+                new FindCommand("", _vkCelebrationService, _vkCelebrationStateService),
+                new СongratulateCommand("", _vkCelebrationService, _vkCelebrationStateService, _congratulationTemplatesService)
+            };
 
-                const int count = 1;
-                var users = await _vkCelebrationService.SearchAsync(15, 25, count, _offset);
-                _currentUser = users.FirstOrDefault();
-
-                await _client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(_currentUser.PhotoMax.AbsoluteUri));
-                await _client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(_currentUser));
-
-                _offset++;
-                if (_offset >= users.TotalCount)
+            foreach (var command in commands)
+            {
+                if (command.Contains(message.Text))
                 {
-                    _offset = 0;
-                    _currentUser = null;
+                    await command.Execute(message, _client);
+                    break;
                 }
             }
-
-            if (message.Text.Contains("поздравить", StringComparison.OrdinalIgnoreCase))
-            {
-                await _client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-
-                if (_currentUser != null)
-                {
-                    var templates = _congratulationTemplatesService.Find(null, 1).ToList();
-
-                    if (templates.Any())
-                    {
-                        var t = templates.FirstOrDefault();
-                        if (t != null)
-                        {
-                            await _vkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
-                            {
-                                VkUserId = _currentUser.Id,
-                                Text = t.Text
-                            });
-
-                            await _client.SendTextMessageAsync(message.Chat.Id, t.Text);
-                        }
-                    }
-                }
-                else
-                {
-                    await _client.SendTextMessageAsync(message.Chat.Id, "Не выбрано именинника");
-                }
-            }
-        }
-
-        private string GetStrUserInfo(UserDto user)
-        {
-            var sb = new StringBuilder();
-            
-            sb.AppendLine("http://vk.com/id" + user.Id);
-            sb.AppendLine(user.FirstName + " " + user.LastName);
-            if (user.Age > 0)
-            {
-                sb.AppendLine("Возраст не определен");
-            }
-
-            return sb.ToString();
         }
     }
 }

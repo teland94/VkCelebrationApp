@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using VkCelebrationApp.BLL.Commands;
@@ -12,7 +13,9 @@ namespace VkCelebrationApp.BLL.Services
     public class VkCelebrationTelegramBotService : IVkCelebrationTelegramBotService
     {
         private ITelegramBotClient _client;
+
         private readonly IBotConfiguration _botConfiguration;
+
         private readonly IVkCelebrationService _vkCelebrationService;
         private readonly IVkCelebrationStateService _vkCelebrationStateService;
         private readonly ICongratulationTemplatesService _congratulationTemplatesService;

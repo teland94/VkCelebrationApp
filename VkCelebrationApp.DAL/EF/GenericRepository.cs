@@ -6,30 +6,30 @@ using VkCelebrationApp.DAL.Interfaces;
 
 namespace VkCelebrationApp.DAL.EF
 {
-    public class EFGenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public class EfGenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private DbContext _context;
-        private DbSet<TEntity> _dbSet;
+        protected DbContext Context;
+        protected DbSet<TEntity> DbSet;
 
-        public EFGenericRepository(DbContext context)
+        public EfGenericRepository(DbContext context)
         {
-            _context = context;
-            _dbSet = context.Set<TEntity>();
+            Context = context;
+            DbSet = context.Set<TEntity>();
         }
 
         public IEnumerable<TEntity> Get()
         {
-            return _dbSet.AsNoTracking().ToList();
+            return DbSet.AsNoTracking().ToList();
         }
 
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
-            return _dbSet.AsNoTracking().Where(predicate).ToList();
+            return DbSet.AsNoTracking().Where(predicate).ToList();
         }
 
         public IEnumerable<TEntity> Get(int page, int pageSize, Func<TEntity, bool> predicate = null)
         {
-            IQueryable<TEntity> query = _dbSet.AsNoTracking()
+            IQueryable<TEntity> query = DbSet.AsNoTracking()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
 
@@ -43,7 +43,7 @@ namespace VkCelebrationApp.DAL.EF
 
         public IEnumerable<TEntity> Get<TKey>(Func<TEntity, TKey> orderBy, bool isAsc = true, Func<TEntity, bool> predicate = null)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             if (predicate != null)
             {
@@ -56,36 +56,36 @@ namespace VkCelebrationApp.DAL.EF
 
         public TEntity FindById(int id)
         {
-            return _dbSet.Find(id);
+            return DbSet.Find(id);
         }
 
         public void Create(TEntity item)
         {
-            _dbSet.Add(item);
-            _context.SaveChanges();
+            DbSet.Add(item);
+            Context.SaveChanges();
         }
 
         public void Update(TEntity item)
         {
-            _context.Entry(item).State = EntityState.Modified;
-            _context.SaveChanges();
+            Context.Entry(item).State = EntityState.Modified;
+            Context.SaveChanges();
         }
 
         public void Remove(int id)
         {
-            var item = _dbSet.Find(id);
+            var item = DbSet.Find(id);
             if (item == null)
             {
                 throw new InvalidOperationException("Item not found");
             }
-            _dbSet.Remove(item);
-            _context.SaveChanges();
+            DbSet.Remove(item);
+            Context.SaveChanges();
         }
 
         public void Remove(TEntity item)
         {
-            _dbSet.Remove(item);
-            _context.SaveChanges();
+            DbSet.Remove(item);
+            Context.SaveChanges();
         }
 
         private bool disposed = false;
@@ -96,7 +96,7 @@ namespace VkCelebrationApp.DAL.EF
             {
                 if (disposing)
                 {
-                    _context.Dispose();
+                    Context.Dispose();
                 }
                 this.disposed = true;
             }

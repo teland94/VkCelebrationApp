@@ -21,24 +21,29 @@ namespace VkCelebrationApp.BLL.Services
     public class VkCelebrationService : IVkCelebrationService, IVkCelebrationStateService
     {
         private readonly IVkApiConfiguration _vkApiConfiguration;
+        private readonly IVkSearchConfiguration _vkSearchConfiguration;
 
         private VkApi VkApi { get; }
 
         private IUnitOfWork UnitOfWork { get; }
 
+        private static User _currentUser;
+
         private static VkCollectionDto<UserDto> _currentUsers;
         private static uint _offset;
 
-        public VkCelebrationService(IVkApiConfiguration vkApiConfiguration, 
+        public VkCelebrationService(IVkApiConfiguration vkApiConfiguration,
+            IVkSearchConfiguration vkSearchConfiguration,
             VkApi vkApi,
             IUnitOfWork unitOfWork)
         {
             _vkApiConfiguration = vkApiConfiguration;
+            _vkSearchConfiguration = vkSearchConfiguration;
             VkApi = vkApi;
             UnitOfWork = unitOfWork;
         }
 
-        public void Auth()
+        public async Task Auth()
         {
             //TODO: Change Auth
             var user = UnitOfWork.UsersRepository.FindById(1);
@@ -53,14 +58,34 @@ namespace VkCelebrationApp.BLL.Services
                 Host = _vkApiConfiguration.Host,
                 Port = _vkApiConfiguration.Port
             });
+
+            if (VkApi.UserId != null)
+            {
+                var usersGet = await VkApi.Users.GetAsync(new List<long> { VkApi.UserId.Value }, ProfileFields.Country | ProfileFields.City);
+                _currentUser = usersGet.FirstOrDefault();
+            }
+
+            throw new InvalidOperationException("Invalid Vk Authorization");
         }
 
-        public async Task<VkCollectionDto<UserDto>> FindAsync(ushort ageFrom, ushort ageTo)
+        public async Task<VkCollectionDto<UserDto>> FindAsync()
         {
-            var users = await SearchAsync(ageFrom, ageTo, 1, _offset);
-            _currentUsers = users;
+            var users = await SearchAsync(_vkSearchConfiguration.AgeFrom, _vkSearchConfiguration.AgeTo, 1, _offset);
 
-            return users;
+            if (!users.Any()) 
+            {
+                if (_offset < users.TotalCount)
+                {
+                    _offset++;
+                    await FindAsync();
+                }
+            }
+            else
+            {
+                _currentUsers = users;
+            }
+
+            return _currentUsers;
         }
 
         public void Next()
@@ -82,20 +107,21 @@ namespace VkCelebrationApp.BLL.Services
             };
         }
 
-        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort ageFrom, ushort ageTo, uint? count = 1000, uint? offset = 0)
+        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort? ageFrom, ushort? ageTo, uint? count = 1000, uint? offset = 0)
         {
             var date = DateTime.Now;
 
             var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
-                AgeFrom = ageFrom,
-                AgeTo = ageTo,
+                AgeFrom = _vkSearchConfiguration.AgeFrom,
+                AgeTo = _vkSearchConfiguration.AgeTo,
                 BirthMonth = (ushort)date.Month,
                 BirthDay = (ushort)date.Day,
-                City = 280,
-                Country = 2,
-                Sex = Sex.Female,
+                City = (int?)_currentUser.City?.Id,
+                Country = (int?)_currentUser.Country?.Id,
+                Sex = _vkSearchConfiguration.Sex != null && _vkSearchConfiguration.Sex >= 0 && _vkSearchConfiguration.Sex <= 2
+                    ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
                 Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate,
@@ -104,9 +130,8 @@ namespace VkCelebrationApp.BLL.Services
             });
 
             users = GetCustomFilteredUsers(users);
-            
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
 
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
             return userDtos;
         }
 
@@ -163,8 +188,8 @@ namespace VkCelebrationApp.BLL.Services
             {
                 Query = query,
                 AgeTo = ageTo,
-                City = 280,
-                Country = 2
+                City = (int?)_currentUser.City?.Id,
+                Country = (int?)_currentUser.Country?.Id
             });
 
             return users.TotalCount > 0 && users.Any(u => u.Id == id);

@@ -25,7 +25,9 @@ namespace VkCelebrationApp.BLL.Commands
             _vkCelebrationStateService = vkCelebrationStateService;
         }
 
-        public override string Name => "поздравить";
+        public override string Name => "congratulate";
+
+        public override string LocalizedName => "поздравить";
 
         public override async Task Execute(Message message, ITelegramBotClient client)
         {
@@ -35,21 +37,17 @@ namespace VkCelebrationApp.BLL.Commands
             var currentUser = currentState.CurrentUsers.FirstOrDefault();
             if (currentUser != null)
             {
-                var templates = _congratulationTemplatesService.Find(null, 1).ToList();
+                var template = await _congratulationTemplatesService.GetRandomCongratulationTemplateAsync();
 
-                if (templates.Any())
+                if (template != null)
                 {
-                    var t = templates.FirstOrDefault();
-                    if (t != null)
+                    await _vkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
                     {
-                        await _vkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
-                        {
-                            VkUserId = currentUser.Id,
-                            Text = t.Text
-                        });
+                        VkUserId = currentUser.Id,
+                        Text = template.Text
+                    });
 
-                        await client.SendTextMessageAsync(message.Chat.Id, t.Text);
-                    }
+                    await client.SendTextMessageAsync(message.Chat.Id, template.Text);
                 }
             }
             else

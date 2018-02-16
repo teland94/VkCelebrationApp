@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,18 +18,25 @@ namespace VkCelebrationApp.BLL.Commands
 
         public FindCommand(string botName,
             IVkCelebrationService vkCelebrationService,
-            IVkCelebrationStateService vkCelebrationStateService) : base(botName, vkCelebrationService)
+            IVkCelebrationStateService vkCelebrationStateService) 
+            : base(botName, vkCelebrationService)
         {
             VkCelebrationStateService = vkCelebrationStateService;
         }
 
-        public override string Name => "искать";
+        public override string Name => "find";
+
+        public override string LocalizedName => "искать";
 
         public override async Task Execute(Message message, ITelegramBotClient client)
         {
             await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
-            var users = await VkCelebrationStateService.FindAsync(15, 25);
+            var users = await VkCelebrationStateService.FindAsync();
+            
+            if (users == null) 
+                return;
+
             if (users.Any())
             {
                 var user = users.FirstOrDefault();

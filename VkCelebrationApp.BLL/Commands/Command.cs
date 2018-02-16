@@ -21,12 +21,15 @@ namespace VkCelebrationApp.BLL.Commands
 
         public abstract string Name { get; }
 
+        public abstract string LocalizedName { get; }
+
         public abstract Task Execute(Message message, ITelegramBotClient client);
 
         public bool Contains(string command)
         {
             //return command.Contains(this.Name) && command.Contains(_botName);
-            return command.Contains(this.Name, StringComparison.OrdinalIgnoreCase);
+            return command.Contains(this.Name, StringComparison.OrdinalIgnoreCase)
+                || command.Contains(this.LocalizedName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

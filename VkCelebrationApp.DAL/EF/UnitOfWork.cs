@@ -2,6 +2,7 @@
 using VkCelebrationApp.DAL.Configuration;
 using VkCelebrationApp.DAL.Entities;
 using VkCelebrationApp.DAL.Interfaces;
+using VkCelebrationApp.DAL.Repositories;
 
 namespace VkCelebrationApp.DAL.EF
 {
@@ -11,7 +12,7 @@ namespace VkCelebrationApp.DAL.EF
 
         private IGenericRepository<User> _usersRepository;
         private IGenericRepository<UserCongratulation> _userCongratulationsRepository;
-        private IGenericRepository<CongratulationTemplate> _congratulationTemplatesRepository;
+        private ICongratulationTemplateRepository _congratulationTemplatesRepository;
 
         public UnitOfWork(IConnectionStringsConfiguration connectionStringsConfiguration)
         {
@@ -20,14 +21,14 @@ namespace VkCelebrationApp.DAL.EF
         }
 
         public IGenericRepository<User> UsersRepository => 
-            _usersRepository ?? (_usersRepository = new EFGenericRepository<User>(_db));
+            _usersRepository ?? (_usersRepository = new EfGenericRepository<User>(_db));
 
 
         public IGenericRepository<UserCongratulation> UserCongratulationsRepository => 
-            _userCongratulationsRepository ?? (_userCongratulationsRepository = new EFGenericRepository<UserCongratulation>(_db));
+            _userCongratulationsRepository ?? (_userCongratulationsRepository = new EfGenericRepository<UserCongratulation>(_db));
 
-        public IGenericRepository<CongratulationTemplate> CongratulationTemplatesRepository => 
-            _congratulationTemplatesRepository ?? (_congratulationTemplatesRepository = new EFGenericRepository<CongratulationTemplate>(_db));
+        public ICongratulationTemplateRepository CongratulationTemplatesRepository => 
+            _congratulationTemplatesRepository ?? (_congratulationTemplatesRepository = new CongratulationTemplateRepository(_db));
 
 
         private bool _disposed;

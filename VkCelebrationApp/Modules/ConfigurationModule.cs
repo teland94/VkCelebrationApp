@@ -12,6 +12,7 @@ namespace VkCelebrationApp.Modules
         {
             builder.Register(CreateConnectionStringsConfiguration).SingleInstance();
             builder.Register(CreateVkApiConfiguration).SingleInstance();
+            builder.Register(CreateVkSearchConfiguration).SingleInstance();
             builder.Register(CreateBotConfiguration).SingleInstance();
         }
 
@@ -34,6 +35,18 @@ namespace VkCelebrationApp.Modules
             var result = new VkApiConfiguration();
 
             new ConfigureFromConfigurationOptions<VkApiConfiguration>(configuration.GetSection("VkApi"))
+                .Configure(result);
+
+            return result;
+        }
+
+        private static IVkSearchConfiguration CreateVkSearchConfiguration(IComponentContext context)
+        {
+            var configuration = context.Resolve<IConfiguration>();
+
+            var result = new VkSearchConfiguration();
+
+            new ConfigureFromConfigurationOptions<VkSearchConfiguration>(configuration.GetSection("VkSearch"))
                 .Configure(result);
 
             return result;
@@ -63,6 +76,13 @@ namespace VkCelebrationApp.Modules
             public ulong AppId { get; set; }
             public string Host { get; set; }
             public int? Port { get; set; }
+        }
+
+        public class VkSearchConfiguration : IVkSearchConfiguration
+        {
+            public ushort AgeFrom { get; set; }
+            public ushort? AgeTo { get; set; }
+            public ushort? Sex { get; set; }
         }
 
         public class BotConfiguration : IBotConfiguration

@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.DAL.Entities;
@@ -79,6 +80,13 @@ namespace VkCelebrationApp.BLL.Services
                 }
             }
             return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(congratulationTemplates);
+        }
+
+        public async Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync()
+        {
+            var template = await UnitOfWork.CongratulationTemplatesRepository.GetRandomCongratulationTemplateAsync();
+
+            return Mapper.Map<CongratulationTemplate, CongratulationTemplateDto>(template);
         }
     }
 }

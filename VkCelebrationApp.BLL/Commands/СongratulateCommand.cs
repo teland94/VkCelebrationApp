@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -11,7 +13,6 @@ namespace VkCelebrationApp.BLL.Commands
     public class СongratulateCommand : Command
     {
         private readonly ICongratulationTemplatesService _congratulationTemplatesService;
-        private readonly IVkCelebrationService _vkCelebrationService;
         private readonly IVkCelebrationStateService _vkCelebrationStateService;
 
         public СongratulateCommand(string botName,
@@ -21,7 +22,6 @@ namespace VkCelebrationApp.BLL.Commands
             : base(botName, vkCelebrationService)
         {
             _congratulationTemplatesService = congratulationTemplatesService;
-            _vkCelebrationService = vkCelebrationService;
             _vkCelebrationStateService = vkCelebrationStateService;
         }
 
@@ -32,28 +32,60 @@ namespace VkCelebrationApp.BLL.Commands
         public override async Task Execute(Message message, ITelegramBotClient client)
         {
             await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-
-            var currentState = _vkCelebrationStateService.GetState();
-            var currentUser = currentState.CurrentUsers.FirstOrDefault();
-            if (currentUser != null)
+            
+            try
             {
-                var template = await _congratulationTemplatesService.GetRandomCongratulationTemplateAsync();
-
-                if (template != null)
+                var currentState = _vkCelebrationStateService.GetState();
+                if (currentState.CurrentUsers != null)
                 {
-                    await _vkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
-                    {
-                        VkUserId = currentUser.Id,
-                        Text = template.Text
-                    });
+                    var currentUser = currentState.CurrentUsers.FirstOrDefault();
 
-                    await client.SendTextMessageAsync(message.Chat.Id, template.Text);
+                    var text = GetGongratulationText(message.Text);
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        var template = await _congratulationTemplatesService.GetRandomCongratulationTemplateAsync();
+
+                        if (template != null)
+                        {
+                            await VkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
+                            {
+                                VkUserId = currentUser.Id,
+                                Text = template.Text
+                            });
+                            await client.SendTextMessageAsync(message.Chat.Id, template.Text);
+                        }
+                    }
+                    else
+                    {
+                        await VkCelebrationService.SendCongratulationAsync(new UserCongratulationDto
+                        {
+                            VkUserId = currentUser.Id,
+                            Text = text
+                        });
+                        await client.SendTextMessageAsync(message.Chat.Id, "Поздравление успешно отправлено");
+                        await client.SendTextMessageAsync(message.Chat.Id, text); //Debug!
+                    }
+                }
+                else
+                {
+                    await client.SendTextMessageAsync(message.Chat.Id, "Не выбрано именинника");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                await client.SendTextMessageAsync(message.Chat.Id, "Не выбрано именинника");
+                await client.SendTextMessageAsync(message.Chat.Id, "Ошибка при отправке поздравления");
+                await client.SendTextMessageAsync(message.Chat.Id, ex.Message); // Debug!
             }
+        }
+
+        private string GetGongratulationText(string message)
+        {
+            var pattern = $@"^(/?{Name}|{LocalizedName})\s+";
+            var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            if (!regex.IsMatch(message))
+                return null;
+            var result = regex.Replace(message, "", 1);
+            return result;
         }
     }
 }

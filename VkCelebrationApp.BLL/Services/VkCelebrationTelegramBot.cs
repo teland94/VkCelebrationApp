@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using VkCelebrationApp.BLL.Commands;
@@ -50,7 +48,8 @@ namespace VkCelebrationApp.BLL.Services
             var commands = new List<Command>
             {
                 new FindCommand("", _vkCelebrationService, _vkCelebrationStateService),
-                new СongratulateCommand("", _vkCelebrationService, _vkCelebrationStateService, _congratulationTemplatesService)
+                new СongratulateCommand("", _vkCelebrationService, _vkCelebrationStateService, _congratulationTemplatesService),
+                new DetectAgeCommand("", _vkCelebrationService, _vkCelebrationStateService)
             };
 
             foreach (var command in commands)

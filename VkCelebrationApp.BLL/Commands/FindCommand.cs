@@ -32,26 +32,34 @@ namespace VkCelebrationApp.BLL.Commands
         {
             await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
-            var users = await VkCelebrationStateService.FindAsync();
+            try
+            {
+                var users = await VkCelebrationStateService.FindAsync();
             
-            if (users == null) 
-                return;
+                if (users == null) 
+                    return;
 
-            if (users.Any())
-            {
-                var user = users.FirstOrDefault();
+                if (users.Any())
+                {
+                    var user = users.FirstOrDefault();
 
-                await client.SendChatActionAsync(message.Chat.Id, ChatAction.UploadPhoto);
-                await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMax.AbsoluteUri));
+                    await client.SendChatActionAsync(message.Chat.Id, ChatAction.UploadPhoto);
+                    await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMax.AbsoluteUri));
 
-                await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-                await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user));
+                    await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+                    await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user));
 
-                VkCelebrationStateService.Next();
+                    VkCelebrationStateService.Next();
+                }
+                else
+                {
+                    await client.SendTextMessageAsync(message.Chat.Id, "Именинников не найдено");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await client.SendTextMessageAsync(message.Chat.Id, "Именинников не найдено");
+                await client.SendTextMessageAsync(message.Chat.Id, "Ошибка поиска именинника");
+                await client.SendTextMessageAsync(message.Chat.Id, ex.Message);
             }
         }
 

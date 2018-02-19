@@ -80,8 +80,21 @@ namespace VkCelebrationApp.Modules
 
         public class VkSearchConfiguration : IVkSearchConfiguration
         {
-            public ushort AgeFrom { get; set; }
-            public ushort? AgeTo { get; set; }
+            private ushort? _ageFrom;
+            private ushort? _ageTo;
+
+            public ushort? AgeFrom
+            {
+                get => _ageFrom ?? 15;
+                set => _ageFrom = value;
+            }
+
+            public ushort? AgeTo
+            {
+                get => _ageTo ?? 25;
+                set => _ageTo = value;
+            }
+
             public ushort? Sex { get; set; }
         }
 

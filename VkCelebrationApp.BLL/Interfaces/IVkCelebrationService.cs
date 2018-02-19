@@ -8,11 +8,11 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         Task Auth();
 
-        Task<VkCollectionDto<UserDto>> SearchAsync(ushort? ageFrom, ushort? ageTo, uint? count = 1000, uint? offset = 0);
+        Task<VkCollectionDto<UserDto>> SearchAsync(uint? count = 1000, uint? offset = 0);
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
 
-        Task<int> DetectAgeAsync(long userId, string firstName, string lastName, ushort ageFrom, ushort ageTo);
+        Task<int> DetectAgeAsync(long userId, string firstName, string lastName);
 
         IEnumerable<UserCongratulationDto> GetUserCongratulations();
     }

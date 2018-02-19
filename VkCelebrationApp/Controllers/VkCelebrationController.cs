@@ -36,7 +36,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var age = await VkCelebrationService.DetectAgeAsync(userId, firstName, lastName, ageFrom, ageTo);
+            var age = await VkCelebrationService.DetectAgeAsync(userId, firstName, lastName);
 
             return Ok(age);
         }

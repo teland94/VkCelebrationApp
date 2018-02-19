@@ -2,7 +2,7 @@
 {
     public interface IVkSearchConfiguration
     {
-        ushort AgeFrom { get; set; }
+        ushort? AgeFrom { get; set; }
 
         ushort? AgeTo { get; set; }
 

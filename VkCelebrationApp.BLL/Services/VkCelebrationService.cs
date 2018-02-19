@@ -63,6 +63,8 @@ namespace VkCelebrationApp.BLL.Services
             {
                 var usersGet = await VkApi.Users.GetAsync(new List<long> { VkApi.UserId.Value }, ProfileFields.Country | ProfileFields.City);
                 _currentUser = usersGet.FirstOrDefault();
+
+                return;
             }
 
             throw new InvalidOperationException("Invalid Vk Authorization");
@@ -70,7 +72,7 @@ namespace VkCelebrationApp.BLL.Services
 
         public async Task<VkCollectionDto<UserDto>> FindAsync()
         {
-            var users = await SearchAsync(_vkSearchConfiguration.AgeFrom, _vkSearchConfiguration.AgeTo, 1, _offset);
+            var users = await SearchAsync(1, _offset);
 
             if (!users.Any()) 
             {
@@ -107,15 +109,15 @@ namespace VkCelebrationApp.BLL.Services
             };
         }
 
-        public async Task<VkCollectionDto<UserDto>> SearchAsync(ushort? ageFrom, ushort? ageTo, uint? count = 1000, uint? offset = 0)
+        public async Task<VkCollectionDto<UserDto>> SearchAsync(uint? count = 1000, uint? offset = 0)
         {
-            var date = DateTime.Now;
+            var date = DateTime.UtcNow.AddHours(_currentUser.Timezone ?? 0);
 
             var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
-                AgeFrom = _vkSearchConfiguration.AgeFrom,
-                AgeTo = _vkSearchConfiguration.AgeTo,
+                AgeFrom = _vkSearchConfiguration.AgeFrom.GetValueOrDefault(),
+                AgeTo = _vkSearchConfiguration.AgeTo.GetValueOrDefault(),
                 BirthMonth = (ushort)date.Month,
                 BirthDay = (ushort)date.Day,
                 City = (int?)_currentUser.City?.Id,
@@ -124,7 +126,8 @@ namespace VkCelebrationApp.BLL.Services
                     ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate,
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
+                         | ProfileFields.Timezone,
                 Count = count,
                 Offset = offset
             });
@@ -135,11 +138,12 @@ namespace VkCelebrationApp.BLL.Services
             return userDtos;
         }
 
-        public async Task<int> DetectAgeAsync(long userId, string firstName, string lastName, ushort ageFrom, ushort ageTo)
+        public async Task<int> DetectAgeAsync(long userId, string firstName, string lastName)
         {
             var query = firstName + ' ' + lastName;
             ushort counter;
-            for (counter = ageFrom; counter <= ageTo; counter++)
+            for (counter = _vkSearchConfiguration.AgeFrom.GetValueOrDefault(); 
+                counter <= _vkSearchConfiguration.AgeTo.GetValueOrDefault(); counter++)
             {
                 if (await UserExistsAsync(userId, query, counter))
                 {

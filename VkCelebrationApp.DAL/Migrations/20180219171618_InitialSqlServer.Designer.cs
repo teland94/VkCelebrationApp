@@ -11,14 +11,15 @@ using VkCelebrationApp.DAL.EF;
 namespace VkCelebrationApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20180213160827_CongratulationDate")]
-    partial class CongratulationDate
+    [Migration("20180219171618_InitialSqlServer")]
+    partial class InitialSqlServer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("VkCelebrationApp.DAL.Entities.CongratulationTemplate", b =>
                 {

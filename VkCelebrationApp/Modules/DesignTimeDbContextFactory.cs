@@ -19,7 +19,7 @@ namespace VkCelebrationApp.Modules
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            builder.UseSqlite(connectionString);
+            builder.UseSqlServer(connectionString);
 
             return new ApplicationContext(builder.Options);
         }

@@ -49,7 +49,7 @@ namespace VkCelebrationApp.BLL.Commands
                     await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user));
 
-                    VkCelebrationStateService.Next();
+                    VkCelebrationStateService.GoForward();
                 }
                 else
                 {

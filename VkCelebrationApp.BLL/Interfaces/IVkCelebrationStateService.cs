@@ -7,7 +7,7 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         Task<VkCollectionDto<UserDto>> FindAsync();
 
-        void Next();
+        void GoForward();
 
         VkCelebrationServiceState GetState();
     }

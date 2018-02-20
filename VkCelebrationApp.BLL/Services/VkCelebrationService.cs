@@ -26,6 +26,7 @@ namespace VkCelebrationApp.BLL.Services
         private VkApi VkApi { get; }
 
         private IUnitOfWork UnitOfWork { get; }
+        private ICongratulationTemplatesService CongratulationTemplatesService { get; }
 
         private static User _currentUser;
 
@@ -35,12 +36,14 @@ namespace VkCelebrationApp.BLL.Services
         public VkCelebrationService(IVkApiConfiguration vkApiConfiguration,
             IVkSearchConfiguration vkSearchConfiguration,
             VkApi vkApi,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICongratulationTemplatesService congratulationTemplatesService)
         {
             _vkApiConfiguration = vkApiConfiguration;
             _vkSearchConfiguration = vkSearchConfiguration;
             VkApi = vkApi;
             UnitOfWork = unitOfWork;
+            CongratulationTemplatesService = congratulationTemplatesService;
         }
 
         public async Task Auth()
@@ -90,13 +93,12 @@ namespace VkCelebrationApp.BLL.Services
             return _currentUsers;
         }
 
-        public void Next()
+        public void GoForward()
         {
             _offset++;
             if (_offset >= _currentUsers.TotalCount)
             {
                 _offset = 0;
-                _currentUsers = null;
             }
         }
 
@@ -166,7 +168,8 @@ namespace VkCelebrationApp.BLL.Services
             {
                 Text = userCongratulationDto.Text,
                 CongratulationDate = DateTime.UtcNow,
-                VkUserId = userCongratulationDto.VkUserId
+                VkUserId = userCongratulationDto.VkUserId,
+                UserId = 1
             });
 
             await VkApi.Messages.DeleteDialogAsync(userCongratulationDto.VkUserId);

@@ -14,20 +14,26 @@
                     <span *ngIf="selectedUser?.age">(Возраст: {{selectedUser?.age}})</span>
                 </div>
                 <div class="form-group">
-                    <label for="templates">Заготовки</label>
-                    <ng-select id="templates"
-                               [items]="congratulationTemplates"
-                               placeholder="Найти шаблон поздравления"
-                               typeToSearchText="Введите текст для поиска"
-                               notFoundText="Поздравлений не найдено"
-                               bindLabel="text"
-                               bindValue="text"
-                               [typeahead]="typeahead"
-                               [(ngModel)]="template">
-                        <ng-template ng-option-tmp let-item="item">
-                            {{item.text}}
-                        </ng-template>
-                    </ng-select>
+                    <label for="templates">Заготовка</label>
+                    <div class="select-group">
+                        <ng-select id="templates"
+                                   [items]="congratulationTemplates"
+                                   placeholder="Найти шаблон поздравления"
+                                   typeToSearchText="Введите текст для поиска"
+                                   notFoundText="Поздравлений не найдено"
+                                   loadingText="Загрузка..."
+                                   bindLabel="text"
+                                   bindValue="text"
+                                   [typeahead]="typeahead"
+                                   [(ngModel)]="template">
+                            <ng-template ng-option-tmp let-item="item">
+                                {{item.text}}
+                            </ng-template>
+                        </ng-select>
+                        <button class="btn btn-default btn-select" type="button" (click)="editTemplateMessage()" [disabled]="!template">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="messageText">Сообщение</label>
@@ -37,8 +43,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" (click)="sendCongratulation()" 
-                        [disabled]="!messageTextRef.valid">Отправить</button>
+                <button type="button" class="btn btn-default" (click)="saveCongratulationTemplate()"
+                        [disabled]="!messageTextRef.valid">
+                    Сохранить
+                </button>
+                <button type="button" class="btn btn-primary" (click)="sendCongratulation()"
+                        [disabled]="!messageTextRef.valid && !template">
+                    Отправить
+                </button>
                 <button type="button" class="btn btn-default" (click)="congratulationModal.hide()">Отмена</button>
             </div>
         </div>

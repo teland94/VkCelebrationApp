@@ -13,16 +13,13 @@ namespace VkCelebrationApp.BLL.Commands
     public class СongratulateCommand : Command
     {
         private readonly ICongratulationTemplatesService _congratulationTemplatesService;
-        private readonly IVkCelebrationStateService _vkCelebrationStateService;
 
-        public СongratulateCommand(string botName,
-            IVkCelebrationService vkCelebrationService,
+        public СongratulateCommand(IVkCelebrationService vkCelebrationService,
             IVkCelebrationStateService vkCelebrationStateService,
             ICongratulationTemplatesService congratulationTemplatesService)
-            : base(botName, vkCelebrationService)
+            : base(vkCelebrationService, vkCelebrationStateService)
         {
             _congratulationTemplatesService = congratulationTemplatesService;
-            _vkCelebrationStateService = vkCelebrationStateService;
         }
 
         public override string Name => "congratulate";
@@ -35,7 +32,7 @@ namespace VkCelebrationApp.BLL.Commands
             
             try
             {
-                var currentState = _vkCelebrationStateService.GetState();
+                var currentState = VkCelebrationStateService.GetState();
                 if (currentState.CurrentUsers != null)
                 {
                     var currentUser = currentState.CurrentUsers.FirstOrDefault();

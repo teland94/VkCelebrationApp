@@ -4402,6 +4402,14 @@
       "resolved": "https://registry.npmjs.org/ngx-bootstrap/-/ngx-bootstrap-2.0.2.tgz",
       "integrity": "sha1-aGKy7kdku2z9NMZlKIc9DQUML6o="
     },
+    "ngx-clipboard": {
+      "version": "10.0.0",
+      "resolved": "https://registry.npmjs.org/ngx-clipboard/-/ngx-clipboard-10.0.0.tgz",
+      "integrity": "sha1-H6y6SNsv/nLw95daUK1qvhQpNzo=",
+      "requires": {
+        "ngx-window-token": "0.0.4"
+      }
+    },
     "ngx-toastr": {
       "version": "8.2.0",
       "resolved": "https://registry.npmjs.org/ngx-toastr/-/ngx-toastr-8.2.0.tgz",
@@ -4409,6 +4417,11 @@
       "requires": {
         "tslib": "1.9.0"
       }
+    },
+    "ngx-window-token": {
+      "version": "0.0.4",
+      "resolved": "https://registry.npmjs.org/ngx-window-token/-/ngx-window-token-0.0.4.tgz",
+      "integrity": "sha1-R+eqpGVBHEq197oXYBvFk8lWxzY="
     },
     "no-case": {
       "version": "2.3.1",

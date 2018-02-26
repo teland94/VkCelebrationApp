@@ -158,23 +158,28 @@ namespace VkCelebrationApp.BLL.Services
 
         public async Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto)
         {
-            var messageId = await VkApi.Messages.SendAsync(new MessagesSendParams
+            if (!string.IsNullOrWhiteSpace(userCongratulationDto.Text))
             {
-                UserId = userCongratulationDto.VkUserId,
-                Message = userCongratulationDto.Text
-            });
+                var messageId = await VkApi.Messages.SendAsync(new MessagesSendParams
+                {
+                    UserId = userCongratulationDto.VkUserId,
+                    Message = userCongratulationDto.Text
+                });
 
-            UnitOfWork.UserCongratulationsRepository.Create(new UserCongratulation
-            {
-                Text = userCongratulationDto.Text,
-                CongratulationDate = DateTime.UtcNow,
-                VkUserId = userCongratulationDto.VkUserId,
-                UserId = 1
-            });
+                UnitOfWork.UserCongratulationsRepository.Create(new UserCongratulation
+                {
+                    Text = userCongratulationDto.Text,
+                    CongratulationDate = DateTime.UtcNow,
+                    VkUserId = userCongratulationDto.VkUserId,
+                    UserId = 1
+                });
 
-            await VkApi.Messages.DeleteDialogAsync(userCongratulationDto.VkUserId);
+                await VkApi.Messages.DeleteDialogAsync(userCongratulationDto.VkUserId);
 
-            return messageId;
+                return messageId;
+            }
+
+            throw new ArgumentNullException("userCongratulationDto.Text");
         }
 
         public IEnumerable<UserCongratulationDto> GetUserCongratulations()

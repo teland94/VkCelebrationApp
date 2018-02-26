@@ -47,9 +47,9 @@ namespace VkCelebrationApp.BLL.Services
 
             var commands = new List<Command>
             {
-                new FindCommand("", _vkCelebrationService, _vkCelebrationStateService),
-                new СongratulateCommand("", _vkCelebrationService, _vkCelebrationStateService, _congratulationTemplatesService),
-                new DetectAgeCommand("", _vkCelebrationService, _vkCelebrationStateService)
+                new FindCommand(_vkCelebrationService, _vkCelebrationStateService),
+                new СongratulateCommand(_vkCelebrationService, _vkCelebrationStateService, _congratulationTemplatesService),
+                new DetectAgeCommand(_vkCelebrationService, _vkCelebrationStateService)
             };
 
             foreach (var command in commands)

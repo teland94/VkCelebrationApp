@@ -9,14 +9,14 @@ namespace VkCelebrationApp.BLL.Commands
 {
     public abstract class Command
     {
-        private readonly string _botName;
-
         protected IVkCelebrationService VkCelebrationService { get; }
+        protected IVkCelebrationStateService VkCelebrationStateService { get; }
 
-        protected Command(string botName, IVkCelebrationService vkCelebrationService)
+        protected Command(IVkCelebrationService vkCelebrationService, 
+            IVkCelebrationStateService vkCelebrationStateService)
         {
-            _botName = botName;
             VkCelebrationService = vkCelebrationService;
+            VkCelebrationStateService = vkCelebrationStateService;
         }
 
         public abstract string Name { get; }
@@ -27,7 +27,6 @@ namespace VkCelebrationApp.BLL.Commands
 
         public bool Contains(string command)
         {
-            //return command.Contains(this.Name) && command.Contains(_botName);
             return command.Contains(this.Name, StringComparison.OrdinalIgnoreCase)
                 || command.Contains(this.LocalizedName, StringComparison.OrdinalIgnoreCase);
         }

@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ModalDirective, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { User } from '../../models/user.model';
 import { VkCelebrationService } from '../../services/vk-celebration.service';
+import { CongratulationTemplatesService } from '../../services/congratulation-templates.service';
 import { VkCollection } from '../../models/vk-collection.model';
 import { UserCongratulation } from '../../models/user-congratulation.model';
 import { CongratulationTemplate } from '../../models/congratulation-template.model';
@@ -10,7 +11,6 @@ import { CongratulationTemplate } from '../../models/congratulation-template.mod
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/switchMap';
-import { CongratulationTemplatesService } from '../../services/congratulation-templates.service';
 
 @Component({
     selector: 'home',
@@ -56,7 +56,7 @@ export class HomeComponent {
     }
 
     seachUsers() {
-        this.vkCelebrationService.search(15, 25).subscribe((data: VkCollection) => {
+        this.vkCelebrationService.search().subscribe((data: VkCollection) => {
             this.usersCollection = data;
 
             window.scrollTo(0, 0);
@@ -83,7 +83,7 @@ export class HomeComponent {
     }
 
     detectAge(userId: number, firstName: string, lastName: string) {
-        this.vkCelebrationService.detectAge(userId, firstName, lastName, 15, 25).subscribe((data: number) => {
+        this.vkCelebrationService.detectAge(userId, firstName, lastName).subscribe((data: number) => {
             const user = this.usersCollection.items.find(u => u.id === userId);
             if (user) {
                 user.age = data;
@@ -96,13 +96,43 @@ export class HomeComponent {
     }
 
     sendMessageOpen(user: User) {
+        if (this.selectedUser !== user) {
+            this.messageText = '';
+            this.template = '';
+        }
         this.selectedUser = user;
         this.isModalShown = true;
+
+        this.loadTemplates('').subscribe((items: CongratulationTemplate[]) => {
+            this.congratulationTemplates = items;
+        }, (err: any) => {
+            this.congratulationTemplates = [];
+            this.showErrorToast('Ошибка загрузки заготовок поздравлений', err);
+        });
+    }
+
+    editTemplateMessage() {
+        if (this.template) {
+            this.messageText = this.template;
+        }
+    }
+
+    saveCongratulationTemplate() {
+        this.congratulationTemplatesService.createCongratulationTemplate(
+            new CongratulationTemplate(this.messageText)).subscribe(() => {
+                this.toastrService.success('Заготовка для поздравления успешно сохранена');
+            }, err => {
+                this.showErrorToast('Ошибка сохранения заготовки поздравления', err);
+            });
     }
 
     sendCongratulation() {
+        let resultMessage = this.messageText;
+        if (this.template && !this.messageText) {
+            resultMessage = this.template;
+        }
         this.vkCelebrationService.sendCongratulation
-            (new UserCongratulation(this.messageText, this.selectedUser.id)).subscribe((data: number) => {
+            (new UserCongratulation(resultMessage, this.selectedUser.id)).subscribe((data: number) => {
                 this.congratulationModal.hide();
                 this.toastrService.success('Поздравление успешно отправлено');
             }, err => {

@@ -2,6 +2,10 @@
     white-space: nowrap;
 }
 
+textarea:read-only {
+    resize: none;
+}
+
 textarea {
     resize: vertical;
 }

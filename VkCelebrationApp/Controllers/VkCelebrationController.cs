@@ -16,14 +16,14 @@ namespace VkCelebrationApp.Controllers
         }
 
         [HttpGet("Search")]
-        public async Task<IActionResult> SearchAsync(ushort ageFrom, ushort ageTo)
+        public async Task<IActionResult> SearchAsync()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var users = await VkCelebrationService.SearchAsync(ageFrom, ageTo);
+            var users = await VkCelebrationService.SearchAsync();
 
             return Ok(users);
         }

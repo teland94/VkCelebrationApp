@@ -10,20 +10,15 @@ export class VkCelebrationService {
 
     }
 
-    search(ageFrom: number, ageTo: number) {
-        return this.dataService.get(`${this.url}/search`, {
-                ageFrom: ageFrom,
-                ageTo: ageTo,
-            });
+    search() {
+        return this.dataService.get(`${this.url}/search`);
     }
 
-    detectAge(userId: number, firstName: string, lastName: string, ageFrom: number, ageTo: number) {
+    detectAge(userId: number, firstName: string, lastName: string) {
         return this.dataService.get(`${this.url}/detectAge`, {
             userId: userId,
             firstName: firstName,
-            lastName: lastName,
-            ageFrom: ageFrom,
-            ageTo: ageTo
+            lastName: lastName
         });
     }
 

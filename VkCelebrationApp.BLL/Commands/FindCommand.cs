@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,14 +13,10 @@ namespace VkCelebrationApp.BLL.Commands
 {
     public class FindCommand : Command
     {
-        private IVkCelebrationStateService VkCelebrationStateService { get; }
-
-        public FindCommand(string botName,
-            IVkCelebrationService vkCelebrationService,
+        public FindCommand(IVkCelebrationService vkCelebrationService,
             IVkCelebrationStateService vkCelebrationStateService) 
-            : base(botName, vkCelebrationService)
+            : base(vkCelebrationService, vkCelebrationStateService)
         {
-            VkCelebrationStateService = vkCelebrationStateService;
         }
 
         public override string Name => "find";

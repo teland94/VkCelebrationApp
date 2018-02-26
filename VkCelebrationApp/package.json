@@ -63,6 +63,7 @@
     "angular2-router-loader": "^0.3.5",
     "bootswatch": "^3.3.7",
     "ngx-bootstrap": "^2.0.2",
+    "ngx-clipboard": "^10.0.0",
     "ngx-toastr": "^8.2.0"
   }
 }

@@ -10,25 +10,21 @@ namespace VkCelebrationApp.BLL.Commands
 {
     public class DetectAgeCommand : Command
     {
-        private readonly IVkCelebrationStateService _vkCelebrationStateService;
-
-        public DetectAgeCommand(string botName, 
-            IVkCelebrationService vkCelebrationService, 
+        public DetectAgeCommand(IVkCelebrationService vkCelebrationService, 
             IVkCelebrationStateService vkCelebrationStateService) 
-            : base(botName, vkCelebrationService)
+            : base(vkCelebrationService, vkCelebrationStateService)
         {
-            _vkCelebrationStateService = vkCelebrationStateService;
         }
 
-        public override string Name => "detect age";
+        public override string Name => "age";
 
-        public override string LocalizedName => "определить возраст";
+        public override string LocalizedName => "возраст";
 
         public override async Task Execute(Message message, ITelegramBotClient client)
         {
             await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
-            var currentState = _vkCelebrationStateService.GetState();
+            var currentState = VkCelebrationStateService.GetState();
             if (currentState.CurrentUsers != null)
             {
                 try

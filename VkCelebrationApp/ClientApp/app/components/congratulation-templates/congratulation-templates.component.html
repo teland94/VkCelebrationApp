@@ -1,14 +1,14 @@
-﻿<h1>Congratulation Templates</h1>
-<h4 *ngIf="congratulationTemplates && tableMode">Count: {{congratulationTemplates.length}}</h4>
+﻿<h1>Заготовки поздравлений</h1>
+<h4 *ngIf="congratulationTemplates && tableMode">Количество: {{congratulationTemplates.length}}</h4>
 <div *ngIf="tableMode">
-    <input type="button" value="Add" class="btn btn-default" (click)="add()" />
+    <input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
 </div>
 <ng-container *ngIf="tableMode; else create">
     <table *ngIf="congratulationTemplates && congratulationTemplates.length > 0" class="table table-striped">
         <thead>
             <tr>
                 <th class="fit">№</th>
-                <th>Text</th>
+                <th>Текст</th>
                 <th class="fit"></th>
             </tr>
         </thead>
@@ -16,10 +16,13 @@
             <tr *ngFor="let t of congratulationTemplates">
                 <ng-template [ngIf]="congratulationTemplate?.id != t.id" [ngIfElse]="edit">
                     <td class="fit">{{t?.id}}</td>
-                    <td>{{t?.text}}</td>
+                    <td>
+                        <textarea class="form-control" readonly #congratulationTemplateElem>{{t?.text}}</textarea>
+                    </td>
                     <td class="fit">
-                        <button class="btn btn-sm btn-primary" (click)="editCongratulationTemplate(t)">Edit</button>
-                        <button class="btn btn-sm btn-danger" (click)="delete(t)">Delete</button>
+                        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateElem">Копировать</button>
+                        <button class="btn btn-sm btn-primary" (click)="editCongratulationTemplate(t)">Редактировать</button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(t)">Удалить</button>
                     </td>
                 </ng-template>
             </tr>
@@ -32,11 +35,12 @@
         {{congratulationTemplate?.id}}
     </td>
     <td>
-        <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus class="form-control"></textarea>
+        <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" #congratulationTemplateEditElem appAutofocus class="form-control"></textarea>
     </td>
     <td class="fit">
-        <input type="button" value="Save" (click)="save()" class="btn btn-sm btn-success" [disabled]="!text.valid" />
-        <input type="button" value="Cancel" (click)="cancel()" class="btn btn-sm btn-warning" />
+        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateEditElem">Копировать</button>
+        <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" [disabled]="!text.valid"/>
+        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning"/>
     </td>
 </ng-template>
 
@@ -47,12 +51,12 @@
             <textarea name="Text" #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus class="form-control"></textarea>
 
             <small [hidden]="text.valid || (text.pristine && !submitted)" class="text-danger">
-                Please enter a valid text
+                Пожалуйста, заполните поле
             </small>
         </div>
         <div>
-            <input type="button" value="Save" (click)="save()" class="btn btn-success" [disabled]="f.invalid" />
-            <input type="button" value="Cancel" (click)="cancel()" class="btn btn-warning" />
+            <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" [disabled]="f.invalid" />
+            <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
         </div>
     </form>
 </ng-template>

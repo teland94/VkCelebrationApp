@@ -9,3 +9,16 @@
 textarea {
     resize: none;
 }
+
+.select-group {
+    width: 100%;
+}
+
+ng-select {
+    width: 90%;
+    display: inline-block;
+}
+
+.btn-select {
+    height: 36px;
+}

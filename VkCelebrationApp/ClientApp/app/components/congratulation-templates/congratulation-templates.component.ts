@@ -29,7 +29,7 @@ export class CongratulationTemplatesComponent implements OnInit {
         this.congratulationTemplatesService.getCongratulationTemplates().subscribe((data: CongratulationTemplate[]) => {
             this.congratulationTemplates = data;
         }, () => {
-            this.showErrorToast('Loading templates error');
+            this.showErrorToast('Ошибка загрузки заготовок поздравлений');
         });
     }
 
@@ -39,17 +39,17 @@ export class CongratulationTemplatesComponent implements OnInit {
             this.congratulationTemplatesService.createCongratulationTemplate(this.congratulationTemplate)
                 .subscribe((data: CongratulationTemplate) => {
                     this.load();
-                    this.toastr.success('Successfull created', 'Success');
+                    this.toastr.success('Успешно создано', 'Успех');
                 }, () => {
-                    this.showErrorToast('Creating error');
+                    this.showErrorToast('Ошибка добавления');
                 });
         } else {
             this.congratulationTemplatesService.updateCongratulationTemplate(this.congratulationTemplate)
                 .finally(() => this.load())
                 .subscribe(() => {
-                    this.toastr.success('Successfull updated', 'Success');
+                    this.toastr.success('Успешно обновлено', 'Успех');
                 }, () => {
-                    this.showErrorToast('Updating error');
+                    this.showErrorToast('Ошибка обновления');
                 });
         }
         this.cancel();
@@ -60,7 +60,7 @@ export class CongratulationTemplatesComponent implements OnInit {
     }
 
     cancel() {
-        this.congratulationTemplate = new CongratulationTemplate();
+        this.congratulationTemplate = new CongratulationTemplate('');
         this.tableMode = true;
         this.submitted = false;
     }
@@ -69,9 +69,9 @@ export class CongratulationTemplatesComponent implements OnInit {
         this.congratulationTemplatesService.deleteCongratulationTemplate(t.id)
             .subscribe(() => {
                 this.load();
-                this.toastr.success('Successfull deleted', 'Success');
+                this.toastr.success('Успешно удалено', 'Успех');
             }, () => {
-                this.showErrorToast('Deleting error');
+                this.showErrorToast('Ошибка удаления');
             });
     }
 
@@ -81,7 +81,7 @@ export class CongratulationTemplatesComponent implements OnInit {
     }
 
     showErrorToast(message: string) {
-        const errToast = this.toastr.error(message, 'Error');
+        const errToast = this.toastr.error(message, 'Ошибка');
         if (errToast) {
             errToast.onTap.subscribe(() => {
                 this.load();

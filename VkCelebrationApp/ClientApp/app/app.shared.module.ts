@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ClipboardModule } from 'ngx-clipboard';
 
 import { AppComponent } from './components/app/app.component';
 import { AutofocusDirective } from './directives/autofocus.directive';
@@ -34,6 +35,7 @@ import { CongratulationTemplatesService } from './services/congratulation-templa
         ToastrModule.forRoot(),
         ModalModule.forRoot(),
         NgSelectModule,
+        ClipboardModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },

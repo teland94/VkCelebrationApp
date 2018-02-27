@@ -6,17 +6,8 @@ namespace VkCelebrationApp.Controllers
 {
     public class HomeController : Controller
     {
-        IVkCelebrationService VkCelebrationService;
-
-        public HomeController(IVkCelebrationService vkCelebrationService)
-        {
-            VkCelebrationService = vkCelebrationService;
-        }
-
         public IActionResult Index()
         {
-            VkCelebrationService.Auth();
-
             return View();
         }
 

@@ -26,14 +26,16 @@ namespace VkCelebrationApp.BLL.Services
         private VkApi VkApi { get; }
 
         private IUnitOfWork UnitOfWork { get; }
+        private IUserService UserService { get; set; }
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
 
-        private static User _currentUser;
+        private static UserDto _currentUser;
 
         private static VkCollectionDto<UserDto> _currentUsers;
         private static uint _offset;
 
         public VkCelebrationService(IVkApiConfiguration vkApiConfiguration,
+            IUserService userService,
             IVkSearchConfiguration vkSearchConfiguration,
             VkApi vkApi,
             IUnitOfWork unitOfWork,
@@ -43,6 +45,7 @@ namespace VkCelebrationApp.BLL.Services
             _vkSearchConfiguration = vkSearchConfiguration;
             VkApi = vkApi;
             UnitOfWork = unitOfWork;
+            UserService = userService;
             CongratulationTemplatesService = congratulationTemplatesService;
         }
 
@@ -62,15 +65,7 @@ namespace VkCelebrationApp.BLL.Services
                 Port = _vkApiConfiguration.Port
             });
 
-            if (VkApi.UserId != null)
-            {
-                var usersGet = await VkApi.Users.GetAsync(new List<long> { VkApi.UserId.Value }, ProfileFields.Country | ProfileFields.City);
-                _currentUser = usersGet.FirstOrDefault();
-
-                return;
-            }
-
-            throw new InvalidOperationException("Invalid Vk Authorization");
+            _currentUser = await UserService.GetUserInfoAsync();
         }
 
         public async Task<VkCollectionDto<UserDto>> FindAsync()
@@ -113,7 +108,7 @@ namespace VkCelebrationApp.BLL.Services
 
         public async Task<VkCollectionDto<UserDto>> SearchAsync(uint? count = 1000, uint? offset = 0)
         {
-            var date = DateTime.UtcNow.AddHours(_currentUser.Timezone ?? 0);
+            var date = DateTime.UtcNow.AddHours(_currentUser.TimeZone ?? 0);
 
             var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
@@ -122,14 +117,14 @@ namespace VkCelebrationApp.BLL.Services
                 AgeTo = _vkSearchConfiguration.AgeTo.GetValueOrDefault(),
                 BirthMonth = (ushort)date.Month,
                 BirthDay = (ushort)date.Day,
-                City = (int?)_currentUser.City?.Id,
-                Country = (int?)_currentUser.Country?.Id,
+                City = (int?)_currentUser?.CityId,
+                Country = (int?)_currentUser?.CountryId,
                 Sex = _vkSearchConfiguration.Sex != null && _vkSearchConfiguration.Sex >= 0 && _vkSearchConfiguration.Sex <= 2
                     ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
-                         | ProfileFields.Timezone,
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
+                         | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country,
                 Count = count,
                 Offset = offset
             });
@@ -200,8 +195,8 @@ namespace VkCelebrationApp.BLL.Services
             {
                 Query = query,
                 AgeTo = ageTo,
-                City = (int?)_currentUser.City?.Id,
-                Country = (int?)_currentUser.Country?.Id
+                City = (int?)_currentUser?.CityId,
+                Country = (int?)_currentUser?.CountryId
             });
 
             return users.TotalCount > 0 && users.Any(u => u.Id == id);

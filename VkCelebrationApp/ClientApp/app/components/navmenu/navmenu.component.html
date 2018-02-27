@@ -15,20 +15,20 @@
                 <li routerLinkActive='active'><a routerLink="/congratulation-templates">Заготовки поздравлений</a></li>
                 <li routerLinkActive='active'><a routerLink="/about">Информация</a></li>
             </ul>
-            <!--<ul *ngIf="currentUser" class="nav navbar-nav navbar-right">
+            <ul *ngIf="currentUser" class="nav navbar-nav navbar-right">
                 <li style="padding: 0; margin: 0">
-                    <a style="padding: 10px;" [href]="baseUrl + currentUser.uid" target="_blank">
+                    <a style="padding: 10px;" [href]="baseUrl + currentUser.id" target="_blank">
                         <div class="media">
                             <div class="media-left">
-                                <img [src]="currentUser.photo_50" [alt]="currentUser.uid" class="media-object img-circle" style="width:30px">
+                                <img [src]="currentUser.photo50" [alt]="currentUser.id" class="media-object img-circle" style="width:30px">
                             </div>
                             <div class="media-body" style="width:auto; vertical-align: middle">
-                                <span style="font-weight: 700">{{currentUser.first_name}} {{currentUser.last_name}}</span>
+                                <span style="font-weight: 700">{{currentUser.firstName}} {{currentUser.lastName}}</span>
                             </div>
                         </div>
                     </a>
                 </li>
-            </ul>-->
+            </ul>
         </div>
     </div>
 </div>

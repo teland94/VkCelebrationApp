@@ -16,6 +16,7 @@ namespace VkCelebrationApp.BLL.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<VkApi>().SingleInstance();
+            builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>();
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationStateService>();
             builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>();
@@ -33,7 +34,13 @@ namespace VkCelebrationApp.BLL.Modules
                 cfg.CreateMap<VkNet.Model.User, UserDto>()
                     .ForMember(
                         d => d.Age,
-                        opt => opt.MapFrom(m => ConvertBirthDateToAge(m.BirthDate)));
+                        opt => opt.MapFrom(m => ConvertBirthDateToAge(m.BirthDate)))
+                    .ForMember(
+                        d => d.CityId,
+                        opt => opt.MapFrom(m => m.City.Id))
+                    .ForMember(
+                        d => d.CountryId,
+                        opt => opt.MapFrom(m => m.Country.Id));
 
                 cfg.CreateMap(typeof(VkCollection<>), typeof(VkCollectionDto<>))
                     .ConvertUsing(typeof(VkCollectionToVkCollectionDtoConverter<,>));
@@ -66,5 +73,4 @@ namespace VkCelebrationApp.BLL.Modules
 
         #endregion
     }
-
 }

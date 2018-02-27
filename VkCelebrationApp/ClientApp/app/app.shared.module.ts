@@ -16,6 +16,7 @@ import { CongratulationTemplatesComponent } from './components/congratulation-te
 import { AboutComponent } from './components/about/about.component';
 
 import { DataService } from './services/data.service';
+import { UserService } from './services/user.service';
 import { VkCelebrationService } from './services/vk-celebration.service';
 import { CongratulationTemplatesService } from './services/congratulation-templates.service';
 
@@ -46,6 +47,7 @@ import { CongratulationTemplatesService } from './services/congratulation-templa
     ],
     providers: [
         DataService,
+        UserService,
         VkCelebrationService,
         CongratulationTemplatesService
     ]

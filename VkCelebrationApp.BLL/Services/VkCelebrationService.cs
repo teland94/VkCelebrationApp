@@ -131,6 +131,8 @@ namespace VkCelebrationApp.BLL.Services
 
             users = GetCustomFilteredUsers(users);
 
+            users = GetNoCongratulatedUsers(users);
+
             var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
             return userDtos;
         }
@@ -187,6 +189,12 @@ namespace VkCelebrationApp.BLL.Services
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
         {
             return users.Where(u => u.CanWritePrivateMessage).ToVkCollection(users.TotalCount);
+        }
+
+        private VkCollection<User> GetNoCongratulatedUsers(VkCollection<User> users)
+        {
+            var existsIds = UnitOfWork.UserCongratulationsRepository.GetExistsVkIds(users.Select(u => u.Id));
+            return users.Where(u => !existsIds.Any(eid => eid == u.Id)).ToVkCollection(users.TotalCount);
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace VkCelebrationApp.DAL.Repositories
 {
-    internal class CongratulationTemplateRepository : EfGenericRepository<CongratulationTemplate>, ICongratulationTemplateRepository
+    public class CongratulationTemplateRepository : EfGenericRepository<CongratulationTemplate>, ICongratulationTemplateRepository
     {
         public CongratulationTemplateRepository(DbContext context)
             : base(context)

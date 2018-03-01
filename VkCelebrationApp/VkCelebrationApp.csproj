@@ -32,8 +32,8 @@
     <None Remove="ClientApp\app\directives\autofocus.directive.ts" />
     <None Remove="ClientApp\app\models\congratulation-template.model.ts" />
     <None Remove="ClientApp\app\models\user-congratulation.model.ts" />
-    <None Remove="ClientApp\app\models\user.model.ts" />
     <None Remove="ClientApp\app\models\vk-collection.model.ts" />
+    <None Remove="ClientApp\app\models\vk-user.model.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,7 +45,7 @@
     <TypeScriptCompile Include="ClientApp\app\directives\autofocus.directive.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\congratulation-template.model.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\user-congratulation.model.ts" />
-    <TypeScriptCompile Include="ClientApp\app\models\user.model.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\vk-user.model.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\vk-collection.model.ts" />
   </ItemGroup>
 

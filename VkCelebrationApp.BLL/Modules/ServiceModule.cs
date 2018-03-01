@@ -16,12 +16,11 @@ namespace VkCelebrationApp.BLL.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<VkApi>().SingleInstance();
-            builder.RegisterType<UserService>().As<IUserService>();
-            builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>();
-            builder.RegisterType<VkCelebrationService>().As<IVkCelebrationStateService>();
-            builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>();
-            builder.RegisterType<CongratulationTemplatesService>().As<ICongratulationTemplatesService>();
 
+            builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>().As<IVkCelebrationStateService>();
+            builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>().As<ICongratulationTemplatesService>();
+            builder.RegisterType<UserCongratulationsService>().As<IUserCongratulationsService>();
             builder.RegisterType<VkCelebrationTelegramBotService>().As<IVkCelebrationTelegramBotService>().SingleInstance();
 
             ConfigureMapper();
@@ -31,7 +30,7 @@ namespace VkCelebrationApp.BLL.Modules
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<VkNet.Model.User, UserDto>()
+                cfg.CreateMap<VkNet.Model.User, VkUserDto>()
                     .ForMember(
                         d => d.Age,
                         opt => opt.MapFrom(m => ConvertBirthDateToAge(m.BirthDate)))

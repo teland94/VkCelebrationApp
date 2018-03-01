@@ -29,7 +29,7 @@ namespace VkCelebrationApp.Controllers
         }
 
         [HttpGet("DetectAge")]
-        public async Task<IActionResult> DetectAge(long userId, string firstName, string lastName, ushort ageFrom, ushort ageTo)
+        public async Task<IActionResult> DetectAge(long userId, string firstName, string lastName)
         {
             if (!ModelState.IsValid)
             {
@@ -52,19 +52,6 @@ namespace VkCelebrationApp.Controllers
             var messageId = await VkCelebrationService.SendCongratulationAsync(userCongratulation);
 
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
-        }
-
-        [HttpGet("GetUserCongratulations")]
-        public IActionResult GetUserCongratulations()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var congratulations = VkCelebrationService.GetUserCongratulations();
-
-            return Ok(congratulations);
         }
     }
 }

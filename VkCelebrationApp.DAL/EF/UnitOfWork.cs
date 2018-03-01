@@ -11,8 +11,8 @@ namespace VkCelebrationApp.DAL.EF
         private readonly ApplicationContext _db;
 
         private IGenericRepository<User> _usersRepository;
-        private IUserCongratulationRepository _userCongratulationsRepository;
         private ICongratulationTemplateRepository _congratulationTemplatesRepository;
+        private IUserCongratulationsRepository _userCongratulationsRepository;
 
         public UnitOfWork(IConnectionStringsConfiguration connectionStringsConfiguration)
         {
@@ -23,11 +23,11 @@ namespace VkCelebrationApp.DAL.EF
         public IGenericRepository<User> UsersRepository => 
             _usersRepository ?? (_usersRepository = new EfGenericRepository<User>(_db));
 
-        public IUserCongratulationRepository UserCongratulationsRepository => 
-            _userCongratulationsRepository ?? (_userCongratulationsRepository = new UserCongratulationRepository(_db));
-
         public ICongratulationTemplateRepository CongratulationTemplatesRepository => 
             _congratulationTemplatesRepository ?? (_congratulationTemplatesRepository = new CongratulationTemplateRepository(_db));
+
+        public IUserCongratulationsRepository UserCongratulationsRepository => 
+            _userCongratulationsRepository ?? (_userCongratulationsRepository = new UserCongratulationsRepository(_db));
 
 
         private bool _disposed;

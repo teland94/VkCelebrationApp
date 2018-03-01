@@ -1,7 +1,7 @@
 import { Component, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ModalDirective, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { User } from '../../models/user.model';
+import { VkUser } from '../../models/vk-user.model';
 import { VkCelebrationService } from '../../services/vk-celebration.service';
 import { CongratulationTemplatesService } from '../../services/congratulation-templates.service';
 import { VkCollection } from '../../models/vk-collection.model';
@@ -22,7 +22,7 @@ export class HomeComponent {
 
     usersCollection: VkCollection;
     congratulationTemplates: CongratulationTemplate[];
-    selectedUser: User;
+    selectedUser: VkUser;
 
     @ViewChild(ModalDirective) congratulationModal: ModalDirective;
     typeahead = new EventEmitter<string>();
@@ -95,7 +95,7 @@ export class HomeComponent {
         });
     }
 
-    sendMessageOpen(user: User) {
+    sendMessageOpen(user: VkUser) {
         if (this.selectedUser !== user) {
             this.messageText = '';
             this.template = '';

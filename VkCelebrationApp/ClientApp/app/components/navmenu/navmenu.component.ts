@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/user.model';
+import { VkUser } from '../../models/vk-user.model';
 
 @Component({
     selector: 'nav-menu',
@@ -9,14 +9,14 @@ import { User } from '../../models/user.model';
 })
 export class NavMenuComponent implements OnInit {
     baseUrl = 'http://vk.com/id';
-    currentUser: User;
+    currentUser: VkUser;
 
     constructor(private readonly userService: UserService) {
         
     }
 
     ngOnInit() {
-        this.userService.getUserInfo().subscribe((user: User) => {
+        this.userService.getUserInfo().subscribe((user: VkUser) => {
             this.currentUser = user;
         });
     }

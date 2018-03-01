@@ -28,10 +28,11 @@ namespace VkCelebrationApp.BLL.Services
         private IUnitOfWork UnitOfWork { get; }
         private IUserService UserService { get; set; }
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
+        private IUserCongratulationsService UserCongratulationService { get; }
 
-        private static UserDto _currentUser;
+        private static VkUserDto _currentUser;
 
-        private static VkCollectionDto<UserDto> _currentUsers;
+        private static VkCollectionDto<VkUserDto> _currentUsers;
         private static uint _offset;
 
         public VkCelebrationService(IVkApiConfiguration vkApiConfiguration,
@@ -39,7 +40,8 @@ namespace VkCelebrationApp.BLL.Services
             IVkSearchConfiguration vkSearchConfiguration,
             VkApi vkApi,
             IUnitOfWork unitOfWork,
-            ICongratulationTemplatesService congratulationTemplatesService)
+            ICongratulationTemplatesService congratulationTemplatesService,
+            IUserCongratulationsService userCongratulationService)
         {
             _vkApiConfiguration = vkApiConfiguration;
             _vkSearchConfiguration = vkSearchConfiguration;
@@ -47,6 +49,7 @@ namespace VkCelebrationApp.BLL.Services
             UnitOfWork = unitOfWork;
             UserService = userService;
             CongratulationTemplatesService = congratulationTemplatesService;
+            UserCongratulationService = userCongratulationService;
         }
 
         public async Task Auth()
@@ -68,7 +71,7 @@ namespace VkCelebrationApp.BLL.Services
             _currentUser = await UserService.GetUserInfoAsync();
         }
 
-        public async Task<VkCollectionDto<UserDto>> FindAsync()
+        public async Task<VkCollectionDto<VkUserDto>> FindAsync()
         {
             var users = await SearchAsync(1, _offset);
 
@@ -106,7 +109,7 @@ namespace VkCelebrationApp.BLL.Services
             };
         }
 
-        public async Task<VkCollectionDto<UserDto>> SearchAsync(uint? count = 1000, uint? offset = 0)
+        public async Task<VkCollectionDto<VkUserDto>> SearchAsync(uint? count = 1000, uint? offset = 0)
         {
             var date = DateTime.UtcNow.AddHours(_currentUser.TimeZone ?? 0);
 
@@ -123,7 +126,7 @@ namespace VkCelebrationApp.BLL.Services
                     ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMaxOrig | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
                          | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country,
                 Count = count,
                 Offset = offset
@@ -131,9 +134,10 @@ namespace VkCelebrationApp.BLL.Services
 
             users = GetCustomFilteredUsers(users);
 
-            users = GetNoCongratulatedUsers(users);
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
 
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<UserDto>>(users);
+            userDtos = UserCongratulationService.GetNoCongratulatedUsers(userDtos);
+
             return userDtos;
         }
 
@@ -179,22 +183,9 @@ namespace VkCelebrationApp.BLL.Services
             throw new ArgumentNullException("userCongratulationDto.Text");
         }
 
-        public IEnumerable<UserCongratulationDto> GetUserCongratulations()
-        {
-            var userCongratulations = UnitOfWork.UserCongratulationsRepository.Get();
-
-            return Mapper.Map<IEnumerable<UserCongratulation>, IEnumerable<UserCongratulationDto>>(userCongratulations);
-        }
-
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
         {
             return users.Where(u => u.CanWritePrivateMessage).ToVkCollection(users.TotalCount);
-        }
-
-        private VkCollection<User> GetNoCongratulatedUsers(VkCollection<User> users)
-        {
-            var existsIds = UnitOfWork.UserCongratulationsRepository.GetExistsVkIds(users.Select(u => u.Id));
-            return users.Where(u => !existsIds.Any(eid => eid == u.Id)).ToVkCollection(users.TotalCount);
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)

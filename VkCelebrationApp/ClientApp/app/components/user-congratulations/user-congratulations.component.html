@@ -1,0 +1,17 @@
+﻿<div *ngIf="userCongratulations">
+    <h3>Количество: {{userCongratulations.length}}</h3>
+    <div style="margin: 20px;">
+        <ul class="media-list">
+            <li *ngFor="let uc of userCongratulations" class="media">
+                <a class="pull-left" [href]="baseUrl + uc.vkUser.id" target="_blank">
+                    <img class="media-object img-circle" [alt]="uc.vkUser.id" [src]="uc.vkUser.photo100" />
+                </a>
+                <div class="media-body">
+                    <h4 class="media-heading media-bottom">{{uc.vkUser.firstName}} {{uc.vkUser.lastName}}</h4>
+                    <h4 class="media-heading media-bottom">{{uc.congratulationDate | date: 'dd.MM.yyyy'}}</h4>
+                    <h5 class="media-heading media-bottom">{{uc.text}}</h5>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

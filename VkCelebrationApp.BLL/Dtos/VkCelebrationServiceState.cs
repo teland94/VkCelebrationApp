@@ -2,7 +2,7 @@
 {
     public class VkCelebrationServiceState
     {
-        public VkCollectionDto<UserDto> CurrentUsers { get; set; }
+        public VkCollectionDto<VkUserDto> CurrentUsers { get; set; }
 
         public ulong Offset { get; set; }
     }

@@ -10,7 +10,7 @@ using VkCelebrationApp.BLL.Extensions;
 
 namespace VkCelebrationApp.BLL.Services
 {
-    internal class CongratulationTemplatesService : ICrudService<CongratulationTemplateDto>, ICongratulationTemplatesService
+    internal class CongratulationTemplatesService : ICongratulationTemplatesService
     {
         private IUnitOfWork UnitOfWork { get; }
 

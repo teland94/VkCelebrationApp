@@ -6,8 +6,8 @@ namespace VkCelebrationApp.DAL.Interfaces
     {
         IGenericRepository<User> UsersRepository { get;  }
 
-        IUserCongratulationRepository UserCongratulationsRepository { get; }
-
         ICongratulationTemplateRepository CongratulationTemplatesRepository { get; }
+
+        IUserCongratulationsRepository UserCongratulationsRepository { get; }
     }
 }

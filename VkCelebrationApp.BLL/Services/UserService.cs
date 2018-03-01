@@ -20,7 +20,7 @@ namespace VkCelebrationApp.BLL.Services
             VkApi = vkApi;
         }
 
-        public async Task<UserDto> GetUserInfoAsync()
+        public async Task<VkUserDto> GetUserInfoAsync()
         {
             if (VkApi.UserId != null)
             {
@@ -34,7 +34,7 @@ namespace VkCelebrationApp.BLL.Services
                 );
                 var user = usersGet.FirstOrDefault();
 
-                return Mapper.Map<User, UserDto>(user);
+                return Mapper.Map<User, VkUserDto>(user);
             }
 
             throw new InvalidOperationException("Invalid Vk Authorization");

@@ -39,7 +39,7 @@ namespace VkCelebrationApp.BLL.Commands
                     var user = users.FirstOrDefault();
 
                     await client.SendChatActionAsync(message.Chat.Id, ChatAction.UploadPhoto);
-                    await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMax.AbsoluteUri));
+                    await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMaxOrig.AbsoluteUri));
 
                     await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user));
@@ -58,7 +58,7 @@ namespace VkCelebrationApp.BLL.Commands
             }
         }
 
-        private string GetStrUserInfo(UserDto user)
+        private string GetStrUserInfo(VkUserDto user)
         {
             var sb = new StringBuilder();
             

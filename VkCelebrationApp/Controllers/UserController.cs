@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Interfaces;
 
@@ -17,7 +18,14 @@ namespace VkCelebrationApp.Controllers
         [HttpGet("GetUserInfo")]
         public async Task<IActionResult> GetUserInfoAsync()
         {
-            return Ok(await UserService.GetUserInfoAsync());
+            try
+            {
+                return Ok(await UserService.GetUserInfoAsync());
+            }
+            catch (Exception ex)
+            {
+                return NotFound("Vk User Not Found: " + ex.Message);
+            }
         }
     }
 }

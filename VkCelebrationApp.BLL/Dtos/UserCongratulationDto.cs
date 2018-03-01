@@ -12,6 +12,8 @@ namespace VkCelebrationApp.BLL.Dtos
 
         public long VkUserId { get; set; }
 
+        public VkUserDto VkUser { get; set; }
+
         public int? UserId { get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace VkCelebrationApp.BLL.Interfaces
 {
     public interface IVkCelebrationStateService
     {
-        Task<VkCollectionDto<UserDto>> FindAsync();
+        Task<VkCollectionDto<VkUserDto>> FindAsync();
 
         void GoForward();
 

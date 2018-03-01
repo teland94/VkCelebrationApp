@@ -4,7 +4,7 @@ using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
 {
-    public interface ICongratulationTemplatesService
+    public interface ICongratulationTemplatesService : ICrudService<CongratulationTemplateDto>
     {
         IEnumerable<CongratulationTemplateDto> Find(string text, int? maxItems = 5);
 

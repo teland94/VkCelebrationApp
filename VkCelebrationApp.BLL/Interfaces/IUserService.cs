@@ -5,6 +5,6 @@ namespace VkCelebrationApp.BLL.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDto> GetUserInfoAsync();
+        Task<VkUserDto> GetUserInfoAsync();
     }
 }

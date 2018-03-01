@@ -6,6 +6,7 @@ using VkCelebrationApp.BLL.Interfaces;
 
 namespace VkCelebrationApp.Controllers
 {
+    [Route("api/Message")]
     public class TelegramMessageController : Controller
     {
         private IVkCelebrationTelegramBotService BotService { get; }
@@ -18,13 +19,13 @@ namespace VkCelebrationApp.Controllers
             Logger = logger;
         }
 
-        [Route(@"api/message/update")]
+        [HttpPost("Update")]
         public async Task<OkResult> Update([FromBody]Update update)
         {
             Logger.LogInformation("Received Bot Message: " + update.Message.Text);
 
             await BotService.ProcessMessageAsync(update.Message);
-            
+
             return Ok();
         }
     }

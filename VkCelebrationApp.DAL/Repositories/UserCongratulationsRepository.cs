@@ -7,9 +7,9 @@ using VkCelebrationApp.DAL.Interfaces;
 
 namespace VkCelebrationApp.DAL.Repositories
 {
-    public class UserCongratulationRepository : EfGenericRepository<UserCongratulation>, IUserCongratulationRepository
+    public class UserCongratulationsRepository : EfGenericRepository<UserCongratulation>, IUserCongratulationsRepository
     {
-        public UserCongratulationRepository(DbContext context) 
+        public UserCongratulationsRepository(DbContext context) 
             : base(context)
         {
         }

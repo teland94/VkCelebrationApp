@@ -6,6 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
+using Telegram.Bot.Types.ReplyMarkups;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 
@@ -14,7 +15,7 @@ namespace VkCelebrationApp.BLL.Commands
     public class FindCommand : Command
     {
         public FindCommand(IVkCelebrationService vkCelebrationService,
-            IVkCelebrationStateService vkCelebrationStateService) 
+            IVkCelebrationStateService vkCelebrationStateService)
             : base(vkCelebrationService, vkCelebrationStateService)
         {
         }
@@ -30,8 +31,8 @@ namespace VkCelebrationApp.BLL.Commands
             try
             {
                 var users = await VkCelebrationStateService.FindAsync();
-            
-                if (users == null) 
+
+                if (users == null)
                     return;
 
                 if (users.Any())
@@ -39,10 +40,29 @@ namespace VkCelebrationApp.BLL.Commands
                     var user = users.FirstOrDefault();
 
                     await client.SendChatActionAsync(message.Chat.Id, ChatAction.UploadPhoto);
-                    await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMaxOrig.AbsoluteUri));
+                    await client.SendPhotoAsync(message.Chat.Id, new InputOnlineFile(user.PhotoMax.AbsoluteUri));
 
                     await client.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-                    await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user));
+
+                    var rkm = new ReplyKeyboardMarkup
+                    {
+                        Keyboard = new[]
+                        {
+                            new[]
+                            {
+                                new KeyboardButton("Искать"),
+                                new KeyboardButton("Определить возраст")
+                            },
+                            new[]
+                            {
+                                new KeyboardButton("Поздравить")
+                            }
+                        },
+                        ResizeKeyboard = true
+                    };
+                    
+                    await client.SendTextMessageAsync(message.Chat.Id, GetStrUserInfo(user),
+                        disableWebPagePreview: true, replyMarkup: rkm);
 
                     VkCelebrationStateService.GoForward();
                 }
@@ -61,7 +81,7 @@ namespace VkCelebrationApp.BLL.Commands
         private string GetStrUserInfo(VkUserDto user)
         {
             var sb = new StringBuilder();
-            
+
             sb.AppendLine("http://vk.com/id" + user.Id);
             sb.AppendLine(user.FirstName + " " + user.LastName);
 

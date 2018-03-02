@@ -11,7 +11,7 @@ namespace VkCelebrationApp.BLL.Dtos
         public ushort Age { get; set; }
         public Uri Photo50 { get; set; }
         public Uri Photo100 { get; set; }
-        public Uri PhotoMaxOrig { get; set; }
+        public Uri PhotoMax { get; set; }
 
         public int? TimeZone { get; set; }
         public long? CityId { get; set; }

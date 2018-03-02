@@ -126,7 +126,7 @@ namespace VkCelebrationApp.BLL.Services
                     ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMaxOrig | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
                          | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country,
                 Count = count,
                 Offset = offset

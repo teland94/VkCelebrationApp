@@ -66,7 +66,7 @@
                     <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
                 </a>
                 <div class="media-body">
-                    <h4 class="media-heading media-bottom">{{user.firstName}} {{user.lastName}}</h4>
+                    <h4 class="media-heading">{{user.firstName}} {{user.lastName}}</h4>
                     <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
                     <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
                         <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">Определить возраст</button>

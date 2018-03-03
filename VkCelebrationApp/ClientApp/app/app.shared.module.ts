@@ -7,6 +7,11 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
+import { BsDatepickerModule } from 'ngx-bootstrap';
+
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { ruLocale } from 'ngx-bootstrap/locale';
+defineLocale('ru', ruLocale);
 
 import { AppComponent } from './components/app/app.component';
 import { AutofocusDirective } from './directives/autofocus.directive';
@@ -40,6 +45,7 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         ModalModule.forRoot(),
         NgSelectModule,
         ClipboardModule,
+        BsDatepickerModule.forRoot(),
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },

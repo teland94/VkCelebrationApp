@@ -9,7 +9,10 @@ export class UserCongratulationsService {
 
     }
 
-    getUserCongratulations() {
-        return this.dataService.get(this.url + '/getUserCongratulations');
+    getUserCongratulations(congratulationDate: Date) {
+        return this.dataService.post(this.url + '/getUserCongratulations', {
+            congratulationDate: congratulationDate,
+            timezoneOffset: -(congratulationDate.getTimezoneOffset() / 60)
+        });
     }
 }

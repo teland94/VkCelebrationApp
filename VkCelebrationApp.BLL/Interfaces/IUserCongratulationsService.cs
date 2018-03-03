@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
@@ -7,6 +8,6 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         VkCollectionDto<VkUserDto> GetNoCongratulatedUsers(VkCollectionDto<VkUserDto> users);
 
-        IEnumerable<UserCongratulationDto> GetUserCongratulations();
+        IEnumerable<UserCongratulationDto> GetUserCongratulations(DateTime? congratulationDate = null, int? timezoneOffset = null);
     }
 }

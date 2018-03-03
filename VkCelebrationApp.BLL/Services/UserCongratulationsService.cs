@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VkCelebrationApp.BLL.Dtos;
@@ -29,14 +30,14 @@ namespace VkCelebrationApp.BLL.Services
             return users.Where(u => existsIds.All(eid => eid != u.Id)).ToVkCollectionDto(users.TotalCount);
         }
 
-        public IEnumerable<UserCongratulationDto> GetUserCongratulations()
+        public IEnumerable<UserCongratulationDto> GetUserCongratulations(DateTime? congratulationDate = null, int? timezoneOffset = null)
         {
-            var userCongratulations = UnitOfWork.UserCongratulationsRepository.Get(uc => uc.CongratulationDate, false);
+            var userCongratulations = GetUserCongratulationsFiltered(congratulationDate, timezoneOffset);
 
             var userCongratulationDtos = Mapper.Map<IEnumerable<UserCongratulation>, IEnumerable<UserCongratulationDto>>(userCongratulations);
 
             var ids = userCongratulations.Select(uc => uc.VkUserId);
-            var vkUsers = VkApi.Users.Get(ids, 
+            var vkUsers = VkApi.Users.Get(ids,
                 ProfileFields.Photo100 | ProfileFields.PhotoMaxOrig)
                 .ToDictionary(u => u.Id, u => u);
 
@@ -46,6 +47,28 @@ namespace VkCelebrationApp.BLL.Services
             }
 
             return userCongratulationDtos;
+        }
+
+        private IEnumerable<UserCongratulation> GetUserCongratulationsFiltered(DateTime? congratulationDate, int? timezoneOffset)
+        {
+            IEnumerable<UserCongratulation> userCongratulations;
+
+            if (congratulationDate != null)
+            {
+                userCongratulations = UnitOfWork.UserCongratulationsRepository
+                    .Get(
+                        uc => uc.CongratulationDate, 
+                        false, 
+                        uc => uc.CongratulationDate.AddHours((double)timezoneOffset).Date == congratulationDate.Value.AddHours((double)timezoneOffset).Date
+                    );
+            }
+            else
+            {
+                userCongratulations = UnitOfWork.UserCongratulationsRepository
+                    .Get(uc => uc.CongratulationDate, false);
+            }
+
+            return userCongratulations;
         }
     }
 }

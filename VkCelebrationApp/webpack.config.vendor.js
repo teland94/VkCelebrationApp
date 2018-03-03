@@ -22,7 +22,8 @@ const nonTreeShakableModules = [
     'event-source-polyfill',
     'jquery',
     'ngx-toastr/toastr.css',
-    '@ng-select/ng-select/themes/default.theme.css'
+    '@ng-select/ng-select/themes/default.theme.css',
+    'ngx-bootstrap/datepicker/bs-datepicker.css'
 ];
 const allModules = treeShakableModules.concat(nonTreeShakableModules);
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using VkCelebrationApp.BLL.Interfaces;
+using VkCelebrationApp.ViewModels;
 
 namespace VkCelebrationApp.Controllers
 {
@@ -13,15 +15,16 @@ namespace VkCelebrationApp.Controllers
             UserCongratulationsService = userCongratulationService;
         }
 
-        [HttpGet("GetUserCongratulations")]
-        public IActionResult GetUserCongratulations()
+        [HttpPost("GetUserCongratulations")]
+        public IActionResult GetUserCongratulations([FromBody] UserCongratulationsGetParams parameters)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid && parameters != null)
             {
                 return BadRequest(ModelState);
             }
 
-            var userCongratulations = UserCongratulationsService.GetUserCongratulations();
+            var userCongratulations = UserCongratulationsService
+                .GetUserCongratulations(parameters.CongratulationDate, parameters.TimezoneOffset);
             
             return Ok(userCongratulations);
         }

@@ -35,6 +35,8 @@ export class UserCongratulationsComponent implements OnInit {
         let date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), this.currentDate.getDate(), 0, 0, 0);
         this.userCongratulationsService.getUserCongratulations(date).subscribe((data: UserCongratulation[]) => {
             this.userCongratulations = data;
+
+            window.scrollTo(0, 0);
         }, () => {
             this.showErrorToast('Ошибка загрузки истории поздравлений');
         });

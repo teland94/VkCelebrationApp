@@ -4410,6 +4410,16 @@
         "ngx-window-token": "0.0.4"
       }
     },
+    "ngx-loading": {
+      "version": "1.0.14",
+      "resolved": "https://registry.npmjs.org/ngx-loading/-/ngx-loading-1.0.14.tgz",
+      "integrity": "sha1-GXWMM+o/qbuW3KH0DKGdTYa4BCw="
+    },
+    "ngx-progressbar": {
+      "version": "2.1.1",
+      "resolved": "https://registry.npmjs.org/ngx-progressbar/-/ngx-progressbar-2.1.1.tgz",
+      "integrity": "sha512-RyfW1Dhp9G+QZRhp0SsVZJOxvfXHq335aea9rAwVOORSzch6NFBuE+XYx3etlEh2avOYfigyWUX8vAlEXrHXKQ=="
+    },
     "ngx-toastr": {
       "version": "8.2.0",
       "resolved": "https://registry.npmjs.org/ngx-toastr/-/ngx-toastr-8.2.0.tgz",

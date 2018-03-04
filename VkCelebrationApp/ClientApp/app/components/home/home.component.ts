@@ -31,6 +31,8 @@ export class HomeComponent {
     messageText: string;
     template: string;
 
+    public loading = false;
+
     constructor(private readonly vkCelebrationService: VkCelebrationService,
         private readonly congratulationTemplatesService: CongratulationTemplatesService,
         private readonly toastrService: ToastrService) {
@@ -118,15 +120,19 @@ export class HomeComponent {
     }
 
     saveCongratulationTemplate() {
+        this.loading = true;
         this.congratulationTemplatesService.createCongratulationTemplate(
             new CongratulationTemplate(this.messageText)).subscribe(() => {
+                this.loading = false;
                 this.toastrService.success('Заготовка для поздравления успешно сохранена');
             }, err => {
+                this.loading = false;
                 this.showErrorToast('Ошибка сохранения заготовки поздравления', err);
             });
     }
 
     sendCongratulation() {
+        this.loading = true;
         let resultMessage = this.messageText;
         if (this.template && !this.messageText) {
             resultMessage = this.template;
@@ -136,11 +142,13 @@ export class HomeComponent {
                 this.congratulationModal.hide();
                 this.toastrService.success('Поздравление успешно отправлено');
             }, err => {
+                this.loading = false;
                 this.showErrorToast('Ошибка отправки поздравления', err);
             });
     }
 
     onHidden(event: any) {
+        this.loading = false;
         this.isModalShown = false;
     }
 

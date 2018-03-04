@@ -1,6 +1,7 @@
-﻿<div bsModal #congratulationModal="bs-modal" class="modal fade"tabindex="-1" role="dialog"
+﻿<div bsModal #congratulationModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
      *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()">
     <div class="modal-dialog modal-lg">
+        <ngx-loading [show]="loading"></ngx-loading>
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title pull-left">Написать поздравление</h4>
@@ -56,10 +57,9 @@
         </div>
     </div>
 </div>
-
 <div *ngIf="usersCollection">
     <h3>Количество: {{usersCollection.totalCount}}</h3>
-    <div style="margin: 20px;">
+    <div style="margin: 20px">
         <ul class="media-list">
             <li *ngFor="let user of usersCollection.items" class="media">
                 <a class="pull-left" [href]="baseUrl + user.id" target="_blank">

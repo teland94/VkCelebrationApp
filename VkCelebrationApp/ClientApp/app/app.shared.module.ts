@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
 import { BsDatepickerModule } from 'ngx-bootstrap';
+import { LoadingModule } from 'ngx-loading';
+import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ruLocale } from 'ngx-bootstrap/locale';
@@ -46,6 +48,8 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         NgSelectModule,
         ClipboardModule,
         BsDatepickerModule.forRoot(),
+        LoadingModule,
+        NgProgressModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
@@ -60,7 +64,8 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         UserService,
         VkCelebrationService,
         CongratulationTemplatesService,
-        UserCongratulationsService
+        UserCongratulationsService,
+        { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
     ]
 })
 export class AppModuleShared {

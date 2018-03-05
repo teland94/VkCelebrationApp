@@ -1,7 +1,9 @@
 ﻿<h1>Заготовки поздравлений</h1>
 <h4 *ngIf="congratulationTemplates && tableMode">Количество: {{congratulationTemplates.length}}</h4>
 <div *ngIf="tableMode">
-    <input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
+    <button type="button" class="btn btn-default icon-text-btn" (click)="add()">
+        <span class="glyphicon glyphicon-plus"></span>&nbsp;Добавить
+    </button>
 </div>
 <ng-container *ngIf="tableMode; else create">
     <table *ngIf="congratulationTemplates && congratulationTemplates.length > 0" class="table table-striped">
@@ -20,9 +22,15 @@
                         <textarea class="form-control" readonly #congratulationTemplateElem>{{t?.text}}</textarea>
                     </td>
                     <td class="fit">
-                        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateElem">Копировать</button>
-                        <button class="btn btn-sm btn-primary" (click)="editCongratulationTemplate(t)">Редактировать</button>
-                        <button class="btn btn-sm btn-danger" (click)="delete(t)">Удалить</button>
+                        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateElem" title="Копировать">
+                            <span class="glyphicon glyphicon-copy"></span>
+                        </button>
+                        <button class="btn btn-sm btn-primary" (click)="editCongratulationTemplate(t)" title="Редактировать">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(t)" title="Удалить">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
                     </td>
                 </ng-template>
             </tr>
@@ -38,16 +46,22 @@
         <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" #congratulationTemplateEditElem appAutofocus class="form-control"></textarea>
     </td>
     <td class="fit">
-        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateEditElem">Копировать</button>
-        <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" [disabled]="!text.valid"/>
-        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning"/>
+        <button class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateEditElem" title="Копировать">
+            <span class="glyphicon glyphicon-copy"></span>
+        </button>
+        <button (click)="save()" class="btn btn-sm btn-success" [disabled]="!text.valid" title="Сохранить">
+            <span class="glyphicon glyphicon-check"></span>
+        </button>
+        <button (click)="cancel()" class="btn btn-sm btn-warning" title="Отмена">
+            <span class="glyphicon glyphicon-ban-circle"></span>
+        </button>
     </td>
 </ng-template>
 
 <ng-template #create>
     <form #f="ngForm" novalidate>
         <div class="form-group">
-            <label>Text</label>
+            <label>Текст</label>
             <textarea name="Text" #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus class="form-control"></textarea>
 
             <small [hidden]="text.valid || (text.pristine && !submitted)" class="text-danger">
@@ -55,8 +69,12 @@
             </small>
         </div>
         <div>
-            <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" [disabled]="f.invalid" />
-            <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+            <button type="button" (click)="save()" class="btn btn-success icon-text-btn" [disabled]="f.invalid">
+                <span class="glyphicon glyphicon-ok"></span>&nbsp;Сохранить
+            </button>
+            <button type="button" value="Отмена" (click)="cancel()" class="btn btn-warning icon-text-btn">
+                <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;Отмена
+            </button>
         </div>
     </form>
 </ng-template>

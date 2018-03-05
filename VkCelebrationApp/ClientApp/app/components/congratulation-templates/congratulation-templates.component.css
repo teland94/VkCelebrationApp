@@ -16,6 +16,6 @@ textarea {
     width: 1%;
 }
 
-button, input[type=button] {
-    min-width: 80px;
+button.icon-text-btn {
+    min-width: 120px;
 }

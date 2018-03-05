@@ -1,5 +1,5 @@
 ﻿button, input[type=button] {
-    min-width: 80px;
+    min-width: 120px;
 }
 
 .close {
@@ -11,14 +11,16 @@ textarea {
 }
 
 .select-group {
-    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 ng-select {
-    width: 90%;
-    display: inline-block;
+    width: 95%;
 }
 
 .btn-select {
     height: 36px;
+    min-width: 0;
+    margin-left: 1px;
 }

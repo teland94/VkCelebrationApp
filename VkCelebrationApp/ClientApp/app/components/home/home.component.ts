@@ -141,6 +141,7 @@ export class HomeComponent {
             (new UserCongratulation(resultMessage, this.selectedUser.id)).subscribe((data: number) => {
                 this.congratulationModal.hide();
                 this.toastrService.success('Поздравление успешно отправлено');
+                this.seachUsers();
             }, err => {
                 this.loading = false;
                 this.showErrorToast('Ошибка отправки поздравления', err);

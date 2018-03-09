@@ -28,6 +28,7 @@ import { UserService } from './services/user.service';
 import { VkCelebrationService } from './services/vk-celebration.service';
 import { CongratulationTemplatesService } from './services/congratulation-templates.service';
 import { UserCongratulationsService } from './services/user-congratulations.service';
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 @NgModule({
     declarations: [
@@ -65,6 +66,7 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         VkCelebrationService,
         CongratulationTemplatesService,
         UserCongratulationsService,
+        { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
     ]
 })

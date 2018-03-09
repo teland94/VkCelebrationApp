@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\directives\autofocus.directive.ts" />
+    <None Remove="ClientApp\app\guards\auth.guard.ts" />
+    <None Remove="ClientApp\app\interceptors\token.interceptor.ts" />
     <None Remove="ClientApp\app\models\congratulation-template.model.ts" />
     <None Remove="ClientApp\app\models\user-congratulation.model.ts" />
     <None Remove="ClientApp\app\models\vk-collection.model.ts" />
@@ -43,6 +45,8 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\directives\autofocus.directive.ts" />
+    <TypeScriptCompile Include="ClientApp\app\guards\auth.guard.ts" />
+    <TypeScriptCompile Include="ClientApp\app\interceptors\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\congratulation-template.model.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\user-congratulation.model.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\vk-user.model.ts" />

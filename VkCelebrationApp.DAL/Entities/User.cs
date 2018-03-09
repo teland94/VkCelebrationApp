@@ -6,9 +6,8 @@ namespace VkCelebrationApp.DAL.Entities
     {
         public int Id { get; set; }
 
-        public string Login { get; set; }
-
-        public string Password { get; set; }
+        public string IdentityId { get; set; }
+        public AppUser Identity { get; set; }  // navigation property
 
         public ICollection<UserCongratulation> UserCongratulations { get; set; }
     }

@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using VkCelebrationApp.DAL.Configuration;
 using VkCelebrationApp.DAL.Entities;
 
 namespace VkCelebrationApp.DAL.EF
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : IdentityDbContext<AppUser>
     {
         private readonly IConnectionStringsConfiguration _connectionConfiguration;
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> VkUsers { get; set; }
         public DbSet<UserCongratulation> UserCongratulations { get; set; }
         public DbSet<CongratulationTemplate> CongratulationTemplates { get; set; }
 

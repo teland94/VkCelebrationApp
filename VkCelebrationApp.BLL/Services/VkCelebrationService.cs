@@ -60,8 +60,8 @@ namespace VkCelebrationApp.BLL.Services
             VkApi.Authorize(new ApiAuthParams
             {
                 ApplicationId = _vkApiConfiguration.AppId,
-                Login = user.Login,
-                Password = user.Password,
+                //Login = user.Login,
+                //Password = user.Password,
                 Settings = Settings.Friends | Settings.Messages,
 
                 Host = _vkApiConfiguration.Host,

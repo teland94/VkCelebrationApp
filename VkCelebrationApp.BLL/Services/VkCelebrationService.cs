@@ -94,7 +94,7 @@ namespace VkCelebrationApp.BLL.Services
         public void GoForward()
         {
             _offset++;
-            if (_offset >= _currentUsers.TotalCount)
+            if (_offset > _currentUsers.TotalCount)
             {
                 _offset = 0;
             }

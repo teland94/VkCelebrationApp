@@ -15,7 +15,7 @@ textarea {
     justify-content: space-between;
 }
 
-ng-select {
+.select-template {
     width: 95%;
 }
 

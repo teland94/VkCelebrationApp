@@ -88,5 +88,12 @@ namespace VkCelebrationApp.BLL.Services
 
             return Mapper.Map<CongratulationTemplate, CongratulationTemplateDto>(template);
         }
+
+        public async Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int? count = 5)
+        {
+            var templates = await UnitOfWork.CongratulationTemplatesRepository.GetRandomCongratulationTemplatesAsync(count ?? 5);
+
+            return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(templates);
+        }
     }
 }

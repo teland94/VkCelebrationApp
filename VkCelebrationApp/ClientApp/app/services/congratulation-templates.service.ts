@@ -14,6 +14,12 @@ export class CongratulationTemplatesService {
         return this.dataService.get(this.url);
     }
 
+    getRandomCongratulationTemplates(count: number = 5) {
+        return this.dataService.get(this.url + '/getRandomCongratulationTemplates', {
+            count: count
+        });
+    }
+
     createCongratulationTemplate(congratulationTemplate: CongratulationTemplate) {
         return this.dataService.post(this.url, congratulationTemplate);
     }

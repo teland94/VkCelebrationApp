@@ -9,5 +9,7 @@ namespace VkCelebrationApp.BLL.Interfaces
         IEnumerable<CongratulationTemplateDto> Find(string text, int? maxItems = 5);
 
         Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync();
+
+        Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int? count = 5);
     }
 }

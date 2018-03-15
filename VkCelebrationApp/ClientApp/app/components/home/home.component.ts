@@ -44,17 +44,13 @@ export class HomeComponent {
         this.typeahead
             .distinctUntilChanged()
             .debounceTime(200)
-            .switchMap((text: string) => this.loadTemplates(text))
+            .switchMap((text: string) => this.congratulationTemplatesService.findCongratulationTemplates(text))
             .subscribe((items: CongratulationTemplate[]) => {
                 this.congratulationTemplates = items;
             }, (err: any) => {
                 this.congratulationTemplates = [];
                 this.showErrorToast('Ошибка загрузки заготовок поздравлений', err);
             });
-    }
-
-    loadTemplates(text: string) {
-        return this.congratulationTemplatesService.findCongratulationTemplates(text);
     }
 
     seachUsers() {
@@ -105,7 +101,7 @@ export class HomeComponent {
         this.selectedUser = user;
         this.isModalShown = true;
 
-        this.loadTemplates('').subscribe((items: CongratulationTemplate[]) => {
+        this.congratulationTemplatesService.getRandomCongratulationTemplates().subscribe((items: CongratulationTemplate[]) => {
             this.congratulationTemplates = items;
         }, (err: any) => {
             this.congratulationTemplates = [];

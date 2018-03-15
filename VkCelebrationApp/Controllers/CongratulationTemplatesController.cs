@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
@@ -8,20 +9,17 @@ namespace VkCelebrationApp.Controllers
     [Route("api/CongratulationTemplates")]
     public class CongratulationTemplatesController : Controller
     {
-        private ICrudService<CongratulationTemplateDto> CongratulationTemplatesCrudService { get; }
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
 
-        public CongratulationTemplatesController(ICrudService<CongratulationTemplateDto> congratulationTemplatesCrudService,
-            ICongratulationTemplatesService congratulationTemplatesService)
+        public CongratulationTemplatesController(ICongratulationTemplatesService congratulationTemplatesService)
         {
-            CongratulationTemplatesCrudService = congratulationTemplatesCrudService;
             CongratulationTemplatesService = congratulationTemplatesService;
         }
 
         [HttpGet]
         public IEnumerable<CongratulationTemplateDto> GetCongratulationTemplates()
         {
-            return CongratulationTemplatesCrudService.Get();
+            return CongratulationTemplatesService.Get();
         }
 
         [HttpGet("{id}")]
@@ -32,7 +30,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var translation = CongratulationTemplatesCrudService.Get(id);
+            var translation = CongratulationTemplatesService.Get(id);
 
             return Ok(translation);
         }
@@ -45,7 +43,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesCrudService.Update(template);
+            CongratulationTemplatesService.Update(template);
 
             return NoContent();
         }
@@ -58,7 +56,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesCrudService.Create(template);
+            CongratulationTemplatesService.Create(template);
 
             return CreatedAtAction("PostCongratulationTemplate", new { id = template.Id }, template);
         }
@@ -71,7 +69,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesCrudService.Delete(id);
+            CongratulationTemplatesService.Delete(id);
 
             return NoContent();
         }
@@ -87,6 +85,19 @@ namespace VkCelebrationApp.Controllers
             var congratulationTemplatesService = CongratulationTemplatesService.Find(text, maxItems);
 
             return Ok(congratulationTemplatesService);
+        }
+
+        [HttpGet("GetRandomCongratulationTemplates")]
+        public async Task<IActionResult> GetRandomCongratulationTemplatesAsync(int? count = 5)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var templates = await CongratulationTemplatesService.GetRandomCongratulationTemplatesAsync(count);
+
+            return Ok(templates);
         }
     }
 }

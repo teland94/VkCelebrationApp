@@ -1,6 +1,6 @@
 ﻿import { VkUser } from "./vk-user.model";
 
 export class VkCollection {
-    totalNumber: number;
+    totalCount: number;
     items: VkUser[]
 }

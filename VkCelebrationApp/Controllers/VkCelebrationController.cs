@@ -15,6 +15,19 @@ namespace VkCelebrationApp.Controllers
             VkCelebrationService = vkCelebrationService;
         }
 
+        [HttpGet("GetFriendsSuggestions")]
+        public async Task<IActionResult> GetFriendsSuggestionsAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var users = await VkCelebrationService.GetFriendsSuggestionsAsync();
+
+            return Ok(users);
+        }
+
         [HttpGet("Search")]
         public async Task<IActionResult> SearchAsync()
         {

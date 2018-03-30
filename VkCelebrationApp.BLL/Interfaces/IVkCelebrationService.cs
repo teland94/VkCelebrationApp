@@ -7,6 +7,8 @@ namespace VkCelebrationApp.BLL.Interfaces
     {
         Task Auth();
 
+        Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(uint? count = 500, uint? offset = 0);
+
         Task<VkCollectionDto<VkUserDto>> SearchAsync(uint? count = 1000, uint? offset = 0);
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);

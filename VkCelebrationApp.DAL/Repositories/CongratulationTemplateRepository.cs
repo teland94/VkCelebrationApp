@@ -38,6 +38,11 @@ namespace VkCelebrationApp.DAL.Repositories
             var random = new Random();
             var randomIds = new List<int>();
 
+            if (ids.Count < count)
+            {
+                count = ids.Count;
+            }
+
             var i = 0;
             while (i < count)
             {

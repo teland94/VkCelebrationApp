@@ -109,6 +109,33 @@ namespace VkCelebrationApp.BLL.Services
             };
         }
 
+        public async Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(uint? count = 500, uint? offset = 0)
+        {
+            var date = DateTime.UtcNow.AddHours(_currentUser.TimeZone ?? 0);
+
+            var users = await VkApi.Friends.GetSuggestionsAsync(fields: UsersFields.Photo100 | UsersFields.PhotoMax | UsersFields.Photo50 | UsersFields.CanWritePrivateMessage | UsersFields.BirthDate
+                         | UsersFields.Timezone | UsersFields.City | UsersFields.Country, count: count, offset: offset);
+
+            var birthdaySuggestions = new List<User>();
+            foreach (var user in users)
+            {
+                var birthDate = user?.BirthDate.ToDateTime();
+                if (birthDate != null && birthDate.Value.Day == date.Day && birthDate.Value.Month == date.Month)
+                {
+                    birthdaySuggestions.Add(user);
+                }
+            }
+            users = birthdaySuggestions.ToVkCollection((ulong)birthdaySuggestions.Count);
+
+            users = GetCustomFilteredUsers(users);
+
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
+
+            userDtos = UserCongratulationService.GetNoCongratulatedUsers(userDtos);
+
+            return userDtos;
+        }
+
         public async Task<VkCollectionDto<VkUserDto>> SearchAsync(uint? count = 1000, uint? offset = 0)
         {
             var date = DateTime.UtcNow.AddHours(_currentUser.TimeZone ?? 0);

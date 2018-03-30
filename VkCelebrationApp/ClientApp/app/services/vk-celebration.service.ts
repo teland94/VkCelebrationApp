@@ -10,6 +10,10 @@ export class VkCelebrationService {
 
     }
 
+    getFriendsSuggestions() {
+        return this.dataService.get(`${this.url}/getFriendsSuggestions`);
+    }
+
     search() {
         return this.dataService.get(`${this.url}/search`);
     }

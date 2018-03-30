@@ -20,6 +20,7 @@ import 'rxjs/add/operator/switchMap';
 export class HomeComponent {
     baseUrl = 'http://vk.com/id';
 
+    friendsSuggestionsCollection: VkCollection;
     usersCollection: VkCollection;
     congratulationTemplates: CongratulationTemplate[];
     selectedUser: VkUser;
@@ -39,6 +40,7 @@ export class HomeComponent {
     }
 
     ngOnInit() {
+        this.loadFriendsSuggestions();
         this.seachUsers();
 
         this.typeahead
@@ -53,13 +55,23 @@ export class HomeComponent {
             });
     }
 
+    loadFriendsSuggestions() {
+        this.vkCelebrationService.getFriendsSuggestions().subscribe((data: VkCollection) => {
+            this.friendsSuggestionsCollection = data;
+
+            window.scrollTo(0, 0);
+        }, err => {
+            this.showErrorToast('Ошибка загрузки возможных друзей - именинников', err);
+        });
+    }
+
     seachUsers() {
         this.vkCelebrationService.search().subscribe((data: VkCollection) => {
             this.usersCollection = data;
 
             window.scrollTo(0, 0);
         }, err => {
-            this.showErrorToast('Ошибка загрузки пользователей', err);
+            this.showErrorToast('Ошибка загрузки именинников из поиска', err);
         });
     }
 
@@ -138,6 +150,7 @@ export class HomeComponent {
                 this.congratulationModal.hide();
                 this.toastrService.success('Поздравление успешно отправлено');
                 this.seachUsers();
+                this.loadFriendsSuggestions();
             }, err => {
                 this.loading = false;
                 this.showErrorToast('Ошибка отправки поздравления', err);

@@ -60,8 +60,36 @@
         </div>
     </div>
 </div>
+<div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
+    <h3>Возможные друзья - именинники</h3>
+    <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
+    <div style="margin: 20px">
+        <ul class="media-list">
+            <li *ngFor="let user of friendsSuggestionsCollection.items" class="media">
+                <a class="pull-left" [href]="baseUrl + user.id" target="_blank">
+                    <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
+                </a>
+                <div class="media-body">
+                    <h4 class="media-heading">{{user.firstName}} {{user.lastName}}</h4>
+                    <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
+                    <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
+                        <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">
+                            <span class="glyphicon glyphicon-user"></span>&nbsp;Определить возраст
+                        </button>
+                        <span *ngIf="user.age" class="text-info">Возраст: {{user.age}}</span>
+                    </div>
+                    <button class="btn btn-primary" (click)="sendMessageOpen(user)">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;Написать поздравление
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <hr />
+</div>
 <div *ngIf="usersCollection">
-    <h3>Количество: {{usersCollection.totalCount}}</h3>
+    <h3>Найденные именинники</h3>
+    <h4>Всего: {{usersCollection.totalCount}}</h4>
     <div style="margin: 20px">
         <ul class="media-list">
             <li *ngFor="let user of usersCollection.items" class="media">

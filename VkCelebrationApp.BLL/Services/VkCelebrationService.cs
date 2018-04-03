@@ -127,8 +127,6 @@ namespace VkCelebrationApp.BLL.Services
             }
             users = birthdaySuggestions.ToVkCollection((ulong)birthdaySuggestions.Count);
 
-            users = GetCustomFilteredUsers(users);
-
             var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
 
             userDtos = UserCongratulationService.GetNoCongratulatedUsers(userDtos);

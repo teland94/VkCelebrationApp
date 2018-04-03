@@ -78,7 +78,7 @@
                         </button>
                         <span *ngIf="user.age" class="text-info">Возраст: {{user.age}}</span>
                     </div>
-                    <button class="btn btn-primary" (click)="sendMessageOpen(user)">
+                    <button *ngIf="user.canWritePrivateMessage" class="btn btn-primary" (click)="sendMessageOpen(user)">
                         <span class="glyphicon glyphicon-pencil"></span>&nbsp;Написать поздравление
                     </button>
                 </div>

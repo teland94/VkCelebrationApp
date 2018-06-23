@@ -7,7 +7,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
-import { BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, CarouselModule, CarouselConfig } from 'ngx-bootstrap';
 import { LoadingModule } from 'ngx-loading';
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
@@ -50,6 +50,7 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         BsDatepickerModule.forRoot(),
         LoadingModule,
         NgProgressModule,
+        CarouselModule.forRoot(),
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
@@ -65,7 +66,8 @@ import { UserCongratulationsService } from './services/user-congratulations.serv
         VkCelebrationService,
         CongratulationTemplatesService,
         UserCongratulationsService,
-        { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true },
+        { provide: CarouselConfig, useValue: { interval: 0 } }
     ]
 })
 export class AppModuleShared {

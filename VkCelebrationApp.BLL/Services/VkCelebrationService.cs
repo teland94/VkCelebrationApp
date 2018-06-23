@@ -62,7 +62,7 @@ namespace VkCelebrationApp.BLL.Services
                 ApplicationId = _vkApiConfiguration.AppId,
                 Login = user.Login,
                 Password = user.Password,
-                Settings = Settings.Friends | Settings.Messages,
+                Settings = Settings.Friends | Settings.Messages | Settings.Photos,
 
                 Host = _vkApiConfiguration.Host,
                 Port = _vkApiConfiguration.Port
@@ -206,6 +206,17 @@ namespace VkCelebrationApp.BLL.Services
             }
 
             throw new ArgumentNullException("userCongratulationDto.Text");
+        }
+
+        public async Task<IEnumerable<string>> GetUserPhotoes(long userId)
+        {
+            var photoes = await VkApi.Photo.GetAllAsync(new PhotoGetAllParams
+            {
+                OwnerId = userId,
+                Count = 20
+            });
+
+            return photoes.Select(p => p?.Photo604.OriginalString);
         }
 
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)

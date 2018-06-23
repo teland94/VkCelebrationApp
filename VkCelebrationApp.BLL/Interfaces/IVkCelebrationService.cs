@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
@@ -14,5 +15,7 @@ namespace VkCelebrationApp.BLL.Interfaces
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
 
         Task<int> DetectAgeAsync(long userId, string firstName, string lastName);
+
+        Task<IEnumerable<string>> GetUserPhotoes(long userId);
     }
 }

@@ -66,5 +66,18 @@ namespace VkCelebrationApp.Controllers
 
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
+
+        [HttpGet("GetUserPhotoes")]
+        public async Task<IActionResult> GetUserPhotoes(long userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var photoes = await VkCelebrationService.GetUserPhotoes(userId);
+
+            return Ok(photoes);
+        }
     }
 }

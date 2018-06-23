@@ -29,4 +29,10 @@ export class VkCelebrationService {
     sendCongratulation(userCongratulation: UserCongratulation) {
         return this.dataService.post(`${this.url}/sendCongratulation`, userCongratulation);
     }
+
+    getUserPhotoes(userId: number) {
+        return this.dataService.get(`${this.url}/getUserPhotoes`, {
+            userId: userId
+        });
+    }
 }

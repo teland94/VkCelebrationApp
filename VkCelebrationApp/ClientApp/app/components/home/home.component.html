@@ -60,6 +60,27 @@
         </div>
     </div>
 </div>
+<div bsModal #userInfoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" *ngIf="isUserInfoModalShown" [config]="{ show: true }"
+    (onHidden)="onHidden()">
+    <div class="modal-dialog modal-lg">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Фотки <span *ngIf="slides && slides.length > 0">({{activeSlide + 1}} из {{slides.length}})</span></h4>
+                <button type="button" class="close pull-right" (click)="userInfoModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <carousel [(activeSlide)]="activeSlide">
+                    <slide *ngFor="let slide of slides; let index=index">
+                        <img [src]="slide.image" alt="image slide" style="display: block; margin: 0 auto" (click)="nextImage()">            
+                    </slide>
+                </carousel>
+            </div>
+        </div>
+    </div>
+</div>
 <div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
     <h3>Возможные друзья - именинники</h3>
     <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
@@ -70,7 +91,9 @@
                     <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
                 </a>
                 <div class="media-body">
-                    <h4 class="media-heading">{{user.firstName}} {{user.lastName}}</h4>
+                    <h4 class="media-heading">
+                        <a [href]="baseUrl + user.id" target="_blank">{{user.firstName}} {{user.lastName}}</a>
+                    </h4>
                     <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
                     <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
                         <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">
@@ -93,11 +116,13 @@
     <div style="margin: 20px">
         <ul class="media-list">
             <li *ngFor="let user of usersCollection.items" class="media">
-                <a class="pull-left" [href]="baseUrl + user.id" target="_blank">
+                <a class="pull-left" (click)="userInfoOpen(user)" href="javascript:void(0)">
                     <img class="media-object img-circle" [alt]="user.id" [src]="user.photo100" />
                 </a>
                 <div class="media-body">
-                    <h4 class="media-heading">{{user.firstName}} {{user.lastName}}</h4>
+                    <h4 class="media-heading">
+                        <a [href]="baseUrl + user.id" target="_blank">{{user.firstName}} {{user.lastName}}</a>
+                    </h4>
                     <div *ngIf="isValidDate(user.birthDate)" style="margin-bottom: 5px">Возраст: {{user.age}}</div>
                     <div *ngIf="!isValidDate(user.birthDate)" style="margin-bottom: 5px">
                         <button *ngIf="!user.age" class="btn-sm btn-default" (click)="detectAge(user.id, user.firstName, user.lastName)">

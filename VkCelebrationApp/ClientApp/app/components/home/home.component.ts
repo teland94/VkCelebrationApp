@@ -26,13 +26,19 @@ export class HomeComponent {
     selectedUser: VkUser;
 
     @ViewChild(ModalDirective) congratulationModal: ModalDirective;
+    @ViewChild(ModalDirective) userInfoModal: ModalDirective;
+
     typeahead = new EventEmitter<string>();
     isModalShown: boolean = false;
+    isUserInfoModalShown: boolean = false;
 
     messageText: string;
     template: string;
 
     public loading = false;
+
+    slides: Array<any> = [];
+    activeSlide: number;
 
     constructor(private readonly vkCelebrationService: VkCelebrationService,
         private readonly congratulationTemplatesService: CongratulationTemplatesService,
@@ -157,9 +163,40 @@ export class HomeComponent {
             });
     }
 
+    userInfoOpen(user: VkUser) {
+        if (this.selectedUser !== user) {
+            
+        }
+        this.selectedUser = user;
+        this.slides = [];
+        this.activeSlide = 0;
+        this.loading = true;
+        this.isUserInfoModalShown = true;
+
+        this.vkCelebrationService.getUserPhotoes(user.id).subscribe((photoes: Array<string>) => {
+            this.slides = photoes.map(p => {
+                return { image: p }
+            });
+            this.loading = false;
+        }, (err: any) => {
+            this.slides = [];
+            this.loading = false;
+            this.showErrorToast('Ошибка загрузки фотографий пользователя', err);
+        });        
+    }
+
+    nextImage() {
+        if (this.activeSlide < this.slides.length - 1) {
+            this.activeSlide++;
+        } else {
+            this.activeSlide = 0;
+        }
+    }
+
     onHidden(event: any) {
         this.loading = false;
         this.isModalShown = false;
+        this.isUserInfoModalShown = false;
     }
 
     isValidDate(dateStr: string) {

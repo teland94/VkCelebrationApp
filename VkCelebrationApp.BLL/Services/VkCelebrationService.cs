@@ -208,6 +208,22 @@ namespace VkCelebrationApp.BLL.Services
             throw new ArgumentNullException("userCongratulationDto.Text");
         }
 
+        public async Task<long> SendRandomUserCongratulationAsync()
+        {
+            var searchUsers = await SearchAsync();
+            var user = searchUsers.FirstOrDefault();
+            if (user != null)
+            {
+                var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync();
+                return await SendCongratulationAsync(new UserCongratulationDto 
+                { 
+                    VkUserId = user.Id,
+                    Text = template.Text
+                });
+            }
+            throw new InvalidOperationException("User not found");
+        }
+
         public async Task<IEnumerable<string>> GetUserPhotoes(long userId)
         {
             var photoes = await VkApi.Photo.GetAllAsync(new PhotoGetAllParams

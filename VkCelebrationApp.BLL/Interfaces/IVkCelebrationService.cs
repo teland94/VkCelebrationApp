@@ -14,6 +14,8 @@ namespace VkCelebrationApp.BLL.Interfaces
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
 
+        Task<long> SendRandomUserCongratulationAsync();
+
         Task<int> DetectAgeAsync(long userId, string firstName, string lastName);
 
         Task<IEnumerable<string>> GetUserPhotoes(long userId);

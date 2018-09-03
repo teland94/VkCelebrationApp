@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
@@ -65,6 +66,26 @@ namespace VkCelebrationApp.Controllers
             var messageId = await VkCelebrationService.SendCongratulationAsync(userCongratulation);
 
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
+        }
+
+        [HttpGet("SendRandomUserCongratulation")]
+        public async Task<IActionResult> SendRandomUserCongratulationAsync()
+        {
+            try
+            {
+                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync();
+
+                return Ok(messageId);
+            }
+            catch(InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetUserPhotoes")]

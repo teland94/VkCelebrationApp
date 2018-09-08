@@ -211,7 +211,7 @@ namespace VkCelebrationApp.BLL.Services
         public async Task<long> SendRandomUserCongratulationAsync()
         {
             var searchUsers = await SearchAsync();
-            var user = searchUsers.FirstOrDefault();
+            var user = searchUsers.PickRandom();
             if (user != null)
             {
                 var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync();

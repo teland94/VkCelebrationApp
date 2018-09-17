@@ -29,6 +29,7 @@ namespace VkCelebrationApp.BLL.Services
         private IUserService UserService { get; set; }
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
         private IUserCongratulationsService UserCongratulationService { get; }
+        private IFaceApiService FaceApiService { get; }
 
         private static VkUserDto _currentUser;
 
@@ -41,7 +42,8 @@ namespace VkCelebrationApp.BLL.Services
             VkApi vkApi,
             IUnitOfWork unitOfWork,
             ICongratulationTemplatesService congratulationTemplatesService,
-            IUserCongratulationsService userCongratulationService)
+            IUserCongratulationsService userCongratulationService,
+            IFaceApiService faceApiService)
         {
             _vkApiConfiguration = vkApiConfiguration;
             _vkSearchConfiguration = vkSearchConfiguration;
@@ -50,6 +52,7 @@ namespace VkCelebrationApp.BLL.Services
             UserService = userService;
             CongratulationTemplatesService = congratulationTemplatesService;
             UserCongratulationService = userCongratulationService;
+            FaceApiService = faceApiService;
         }
 
         public async Task Auth()
@@ -152,7 +155,7 @@ namespace VkCelebrationApp.BLL.Services
                 Online = true,
                 HasPhoto = true,
                 Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
-                         | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country,
+                         | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country | ProfileFields.Relation,
                 Count = count,
                 Offset = offset
             });
@@ -211,6 +214,9 @@ namespace VkCelebrationApp.BLL.Services
         public async Task<long> SendRandomUserCongratulationAsync()
         {
             var searchUsers = await SearchAsync();
+
+            searchUsers = await GetCustomFilteredUsersByFaces(searchUsers);
+
             var user = searchUsers.PickRandom();
             if (user != null)
             {
@@ -235,9 +241,33 @@ namespace VkCelebrationApp.BLL.Services
             return photoes.Select(p => p?.Photo604.OriginalString);
         }
 
+        private async Task<VkCollectionDto<VkUserDto>> GetCustomFilteredUsersByFaces(VkCollectionDto<VkUserDto> users)
+        {
+            var vkUsers = new List<VkUserDto>();
+
+            foreach (var user in users)
+            {
+                var faces = await FaceApiService.DetectAsync(user.PhotoMax);
+                if (faces != null)
+                {
+                    await Task.Delay(4000);
+                    if (faces.Any(f => f.FaceAttributes.Gender == "male")
+                        && faces.Any(f => f.FaceAttributes.Gender == "female"))
+                    {
+                        continue;
+                    }
+                }
+                vkUsers.Add(user);
+            }
+
+            return vkUsers.ToVkCollectionDto(users.TotalCount);
+        }
+
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
         {
-            return users.Where(u => u.CanWritePrivateMessage).ToVkCollection(users.TotalCount);
+            return users.Where(u => u.CanWritePrivateMessage
+                                    && (u.Relation == RelationType.Unknown || u.Relation == RelationType.NotMarried || u.Relation == RelationType.InActiveSearch))
+                                    .ToVkCollection(users.TotalCount);
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo)

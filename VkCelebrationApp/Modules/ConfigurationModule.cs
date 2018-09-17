@@ -14,6 +14,7 @@ namespace VkCelebrationApp.Modules
             builder.Register(CreateVkApiConfiguration).SingleInstance();
             builder.Register(CreateVkSearchConfiguration).SingleInstance();
             builder.Register(CreateBotConfiguration).SingleInstance();
+            builder.Register(CreateFaceApiConfiguration).SingleInstance();
         }
 
         private static IConnectionStringsConfiguration CreateConnectionStringsConfiguration(IComponentContext context)
@@ -64,6 +65,18 @@ namespace VkCelebrationApp.Modules
             return result;
         }
 
+        private static IFaceApiConfiguration CreateFaceApiConfiguration(IComponentContext context)
+        {
+            var configuration = context.Resolve<IConfiguration>();
+
+            var result = new FaceApiConfiguration();
+
+            new ConfigureFromConfigurationOptions<FaceApiConfiguration>(configuration.GetSection("FaceApi"))
+                .Configure(result);
+
+            return result;
+        }
+
         #region Nested Classes
 
         public class ConnectionStringsConfiguration : IConnectionStringsConfiguration
@@ -103,6 +116,12 @@ namespace VkCelebrationApp.Modules
             public string Url { get; set; }
             public string UpdateBaseApiPath { get; set; }
             public string Key { get; set; }
+        }
+
+        public class FaceApiConfiguration : IFaceApiConfiguration
+        {
+            public string Key { get; set; }
+            public string Endpoint { get; set; }
         }
 
         #endregion

@@ -10,6 +10,7 @@ Simple Web Application for finding and congratulating birthday persons in Vkonta
   * Automapper
   * Angular 5
   * Bootstrap 3
+  * Azure Face API
   
 ## Main Page with "Send Congratulation" Window
 <p align="center">

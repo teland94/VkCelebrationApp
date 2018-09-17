@@ -22,6 +22,7 @@ namespace VkCelebrationApp.BLL.Modules
             builder.RegisterType<CongratulationTemplatesService>().As<ICrudService<CongratulationTemplateDto>>().As<ICongratulationTemplatesService>();
             builder.RegisterType<UserCongratulationsService>().As<IUserCongratulationsService>();
             builder.RegisterType<VkCelebrationTelegramBotService>().As<IVkCelebrationTelegramBotService>().SingleInstance();
+            builder.RegisterType<FaceApiService>().As<IFaceApiService>();
 
             ConfigureMapper();
         }

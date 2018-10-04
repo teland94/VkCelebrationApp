@@ -10,9 +10,11 @@ using AutoMapper;
 using VkCelebrationApp.BLL.Configuration;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
+using VkCelebrationApp.BLL.Models;
 using VkCelebrationApp.DAL.Entities;
 using VkCelebrationApp.DAL.Interfaces;
 using VkNet.Enums;
+using VkNet.Model;
 using VkNet.Utils;
 using User = VkNet.Model.User;
 
@@ -59,6 +61,8 @@ namespace VkCelebrationApp.BLL.Services
         {
             //TODO: Change Auth
             var user = UnitOfWork.UsersRepository.FindById(1);
+
+            VkApi.VkApiVersion.SetVersion(5, 89);
 
             VkApi.Authorize(new ApiAuthParams
             {
@@ -141,20 +145,23 @@ namespace VkCelebrationApp.BLL.Services
         {
             var date = DateTime.UtcNow.AddHours(_currentUser.TimeZone ?? 0);
 
-            var users = await VkApi.Users.SearchAsync(new UserSearchParams
+            var users = await VkApi.CallAsync<VkCollection<UserEx>>("users.search", new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
                 AgeFrom = _vkSearchConfiguration.AgeFrom.GetValueOrDefault(),
                 AgeTo = _vkSearchConfiguration.AgeTo.GetValueOrDefault(),
-                BirthMonth = (ushort)date.Month,
-                BirthDay = (ushort)date.Day,
-                City = (int?)_currentUser?.CityId,
-                Country = (int?)_currentUser?.CountryId,
-                Sex = _vkSearchConfiguration.Sex != null && _vkSearchConfiguration.Sex >= 0 && _vkSearchConfiguration.Sex <= 2
-                    ? (Sex)_vkSearchConfiguration.Sex.Value : Sex.Unknown,
+                BirthMonth = (ushort) date.Month,
+                BirthDay = (ushort) date.Day,
+                City = (int?) _currentUser?.CityId,
+                Country = (int?) _currentUser?.CountryId,
+                Sex = _vkSearchConfiguration.Sex != null && _vkSearchConfiguration.Sex >= 0 &&
+                      _vkSearchConfiguration.Sex <= 2
+                    ? (Sex) _vkSearchConfiguration.Sex.Value
+                    : Sex.Unknown,
                 Online = true,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate 
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 |
+                         ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate
                          | ProfileFields.Timezone | ProfileFields.City | ProfileFields.Country | ProfileFields.Relation,
                 Count = count,
                 Offset = offset
@@ -162,7 +169,7 @@ namespace VkCelebrationApp.BLL.Services
 
             users = GetCustomFilteredUsers(users);
 
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
+            var userDtos = Mapper.Map<VkCollection<UserEx>, VkCollectionDto<VkUserDto>>(users);
 
             userDtos = UserCongratulationService.GetNoCongratulatedUsers(userDtos);
 
@@ -203,7 +210,7 @@ namespace VkCelebrationApp.BLL.Services
                     UserId = 1
                 });
 
-                await VkApi.Messages.DeleteDialogAsync(userCongratulationDto.VkUserId);
+                await VkApi.Messages.DeleteConversationAsync(userCongratulationDto.VkUserId);
 
                 return messageId;
             }
@@ -263,9 +270,10 @@ namespace VkCelebrationApp.BLL.Services
             return vkUsers.ToVkCollectionDto(users.TotalCount);
         }
 
-        private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
+        private VkCollection<UserEx> GetCustomFilteredUsers(VkCollection<UserEx> users)
         {
             return users.Where(u => u.CanWritePrivateMessage
+                                    && !u.IsClosed
                                     && (u.Relation == RelationType.Unknown || u.Relation == RelationType.NotMarried || u.Relation == RelationType.InActiveSearch))
                                     .ToVkCollection(users.TotalCount);
         }

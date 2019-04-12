@@ -2,10 +2,10 @@
 Simple Web Application for finding and congratulating birthday persons in Vkontakte.
 
 ## Used APIs and Frameworks
-  * ASP.NET Core 2.0 (API)
+  * ASP.NET Core 2.2 (API)
   * Vkontakte API for .NET
   * Telegram Bot API
-  * Entity Framework Core 2.0 with SQL Server
+  * Entity Framework Core 2.2 with SQLite
   * Autofac
   * Automapper
   * Angular 5

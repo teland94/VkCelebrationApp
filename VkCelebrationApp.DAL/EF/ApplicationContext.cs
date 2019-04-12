@@ -25,7 +25,7 @@ namespace VkCelebrationApp.DAL.EF
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (_connectionConfiguration != null)
-                optionsBuilder.UseSqlServer(_connectionConfiguration.DefaultConnection);
+                optionsBuilder.UseSqlite(_connectionConfiguration.DefaultConnection);
         }
     }
 }

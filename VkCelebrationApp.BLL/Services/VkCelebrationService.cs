@@ -62,8 +62,6 @@ namespace VkCelebrationApp.BLL.Services
             //TODO: Change Auth
             var user = UnitOfWork.UsersRepository.FindById(1);
 
-            VkApi.VkApiVersion.SetVersion(5, 89);
-
             VkApi.Authorize(new ApiAuthParams
             {
                 ApplicationId = _vkApiConfiguration.AppId,
@@ -199,7 +197,8 @@ namespace VkCelebrationApp.BLL.Services
                 var messageId = await VkApi.Messages.SendAsync(new MessagesSendParams
                 {
                     UserId = userCongratulationDto.VkUserId,
-                    Message = userCongratulationDto.Text
+                    Message = userCongratulationDto.Text,
+                    RandomId = new Random().Next(1, int.MaxValue)
                 });
 
                 UnitOfWork.UserCongratulationsRepository.Create(new UserCongratulation
@@ -210,7 +209,7 @@ namespace VkCelebrationApp.BLL.Services
                     UserId = 1
                 });
 
-                await VkApi.Messages.DeleteConversationAsync(userCongratulationDto.VkUserId);
+                //await VkApi.Messages.DeleteConversationAsync(userCongratulationDto.VkUserId);
 
                 return messageId;
             }

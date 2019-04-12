@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using Autofac;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.BLL.Services;
 using VkCelebrationApp.DAL.Entities;
 using VkNet;
+using VkNet.AudioBypassService.Extensions;
 using VkNet.Utils;
 
 namespace VkCelebrationApp.BLL.Modules
@@ -15,7 +17,9 @@ namespace VkCelebrationApp.BLL.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<VkApi>().SingleInstance();
+            var services = new ServiceCollection();
+            services.AddAudioBypass();
+            builder.Register(c => new VkApi(services)).SingleInstance();
 
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>().As<IVkCelebrationStateService>();

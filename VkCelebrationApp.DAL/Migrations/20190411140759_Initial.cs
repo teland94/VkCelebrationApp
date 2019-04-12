@@ -1,11 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
 
 namespace VkCelebrationApp.DAL.Migrations
 {
-    public partial class InitialSqlServer : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +12,7 @@ namespace VkCelebrationApp.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Login = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true)
                 },
@@ -28,9 +26,9 @@ namespace VkCelebrationApp.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedById = table.Column<int>(nullable: true),
-                    Text = table.Column<string>(nullable: true)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Text = table.Column<string>(nullable: true),
+                    CreatedById = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,11 +46,11 @@ namespace VkCelebrationApp.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CongratulationDate = table.Column<DateTime>(nullable: false),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Text = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: true),
-                    VkUserId = table.Column<long>(nullable: false)
+                    VkUserId = table.Column<long>(nullable: false),
+                    CongratulationDate = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

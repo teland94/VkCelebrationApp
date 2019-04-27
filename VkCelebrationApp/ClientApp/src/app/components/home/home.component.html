@@ -1,0 +1,76 @@
+﻿<div bsModal #congratulationModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" *ngIf="isModalShown"
+  [config]="{ show: true }" (onHidden)="onHidden()">
+  <div class="modal-dialog modal-lg">
+    <ngx-loading [show]="loading"></ngx-loading>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Написать поздравление</h4>
+        <button type="button" class="close pull-right" (click)="congratulationModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card mb-2">
+          <div class="card-body p-3">
+            {{selectedUser?.firstName + " " + selectedUser?.lastName}}
+            <span *ngIf="selectedUser?.age">(Возраст: {{selectedUser?.age}})</span>
+          </div>
+        </div>
+        <div class="form-group mb-2">
+          <label for="templates">Заготовка</label>
+          <div class="select-group">
+            <ng-select id="templates" class="select-template" [items]="congratulationTemplates" [searchable]="true"
+              placeholder="Найти шаблон поздравления" typeToSearchText="Введите текст для поиска"
+              notFoundText="Поздравлений не найдено" loadingText="Загрузка..." bindLabel="text" bindValue="text"
+              [typeahead]="typeahead" [(ngModel)]="template">
+              <ng-template ng-option-tmp let-item="item">
+                {{item.text}}
+              </ng-template>
+            </ng-select>
+            <button class="btn btn-light btn-select" type="button"
+             (click)="editTemplateMessage()" [disabled]="!template">
+              <i class="fa fa-pencil"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="messageText">Сообщение</label>
+          <textarea id="messageText" name="messageText" #messageTextRef="ngModel" [(ngModel)]="messageText"
+            class="form-control" rows="5" required appAutoFocus></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-save" class="btn btn-info"
+          (click)="saveCongratulationTemplate()" [disabled]="!messageTextRef.valid">
+          <span class="fa fa-save"></span>&nbsp;Сохранить
+        </button>
+        <button type="button" class="btn btn-primary" (click)="sendCongratulation()"
+          [disabled]="!messageTextRef.valid && !template">
+          <span class="fa fa-send"></span>&nbsp;Отправить
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="congratulationModal.hide()">
+          <span class="fa fa-ban"></span>&nbsp;Отмена
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
+  <h3>Возможные друзья - именинники</h3>
+  <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
+  <app-vk-users class="mt-3" [usersCollection]="friendsSuggestionsCollection" writeCongratulationButton="true"
+    (writeCongratulationClick)="sendMessageOpen($event)"></app-vk-users>
+  <hr />
+</div>
+<div *ngIf="usersCollection">
+  <h3>Найденные именинники</h3>
+  <h4>Всего: {{usersCollection.totalCount}}</h4>
+  <app-vk-users [usersCollection]="usersCollection" writeCongratulationButton="true"
+    (writeCongratulationClick)="sendMessageOpen($event)"></app-vk-users>
+  <button class="btn btn-primary" (click)="seachUsers()">
+    <i class="fa fa-refresh"></i>&nbsp;Обновить
+  </button>
+  <button class="btn btn-secondary ml-2" (click)="navigate()">
+    <i class="fa fa-external-link"></i>&nbsp;Перейти
+  </button>
+</div>

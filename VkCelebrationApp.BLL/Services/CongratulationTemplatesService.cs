@@ -5,93 +5,93 @@ using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.DAL.Entities;
-using VkCelebrationApp.DAL.Interfaces;
 using VkCelebrationApp.BLL.Extensions;
+using VkCelebrationApp.DAL.EF;
+using System.Linq;
+using VkCelebrationApp.DAL.Extenstions;
+using Microsoft.EntityFrameworkCore;
 
 namespace VkCelebrationApp.BLL.Services
 {
     internal class CongratulationTemplatesService : ICongratulationTemplatesService
     {
-        private IUnitOfWork UnitOfWork { get; }
+        private ApplicationContext DbContext { get; }
 
-        public CongratulationTemplatesService(IUnitOfWork unitOfWork)
+        public CongratulationTemplatesService(ApplicationContext dbContext)
         {
-            UnitOfWork = unitOfWork;
+            DbContext = dbContext;
         }
 
-        public void Create(CongratulationTemplateDto item)
+        public async Task CreateAsync(CongratulationTemplateDto item, int userId)
         {
             var congratulationTemplate = Mapper.Map<CongratulationTemplateDto, CongratulationTemplate>(item);
 
-            UnitOfWork.CongratulationTemplatesRepository.Create(congratulationTemplate);
+            congratulationTemplate.CreatedById = userId;
+
+            await DbContext.CongratulationTemplates.AddAsync(congratulationTemplate);
+            await DbContext.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            UnitOfWork.CongratulationTemplatesRepository.Remove(id);
+            var congratulationTemplate = DbContext.CongratulationTemplates.Find(id);
+            DbContext.CongratulationTemplates.Remove(congratulationTemplate);
+            await DbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<CongratulationTemplateDto> Get()
+        public async Task<CongratulationTemplateDto> GetAsync(int id)
         {
-            var congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository.Get();
-
-            return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(congratulationTemplates);
-        }
-
-        public CongratulationTemplateDto Get(int id)
-        {
-            var congratulationTemplate = UnitOfWork.CongratulationTemplatesRepository.FindById(id);
+            var congratulationTemplate = await DbContext.CongratulationTemplates.FindAsync(id);
 
             return Mapper.Map<CongratulationTemplate, CongratulationTemplateDto>(congratulationTemplate);
         }
 
-        public void Update(CongratulationTemplateDto item)
+        public async Task<IEnumerable<CongratulationTemplateDto>> GetByUserIdAsync(int userId)
+        {
+            var congratulationTemplates = DbContext.CongratulationTemplates.Where(u => u.CreatedById == userId);
+
+            return Mapper.Map<IEnumerable<CongratulationTemplate>, 
+                IEnumerable<CongratulationTemplateDto>>(await congratulationTemplates.ToListAsync());
+        }
+
+        public async Task UpdateAsync(CongratulationTemplateDto item, int userId)
         {
             var congratulationTemplate = Mapper.Map<CongratulationTemplateDto, CongratulationTemplate>(item);
 
-            UnitOfWork.CongratulationTemplatesRepository.Update(congratulationTemplate);
+            congratulationTemplate.CreatedById = userId;
+
+            DbContext.CongratulationTemplates.Update(congratulationTemplate);
+            await DbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<CongratulationTemplateDto> Find(string text, int? maxItems = 5)
+        public async Task<IEnumerable<CongratulationTemplateDto>> FindAsync(string text, int userId, int? maxItems = 5)
         {
-            IEnumerable<CongratulationTemplate> congratulationTemplates;
+            var congratulationTemplates = DbContext.CongratulationTemplates.Where(t => t.CreatedById == userId);
+
             if (!string.IsNullOrWhiteSpace(text))
             {
-                if (maxItems != null)
-                {
-                    congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository
-                        .Get(1, maxItems.Value, t => t.Text.Contains(text, StringComparison.OrdinalIgnoreCase));
-                }
-                else
-                {
-                    congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository
-                        .Get(t => t.Text.Contains(text, StringComparison.OrdinalIgnoreCase));
-                }
+                congratulationTemplates = congratulationTemplates.Where(t => t.Text.Contains(text, StringComparison.OrdinalIgnoreCase));
             }
-            else
+
+            if (maxItems != null)
             {
-                if (maxItems != null)
-                {
-                    congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository.Get(1, maxItems.Value);
-                }
-                else
-                {
-                    congratulationTemplates = UnitOfWork.CongratulationTemplatesRepository.Get();
-                }
+                congratulationTemplates = congratulationTemplates.Take(maxItems.Value);
             }
-            return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(congratulationTemplates);
+
+            return Mapper.Map<IEnumerable<CongratulationTemplate>, 
+                IEnumerable<CongratulationTemplateDto>>(await congratulationTemplates.ToListAsync());
         }
 
-        public async Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync()
+        public async Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync(int userId)
         {
-            var template = await UnitOfWork.CongratulationTemplatesRepository.GetRandomCongratulationTemplateAsync();
+            var template = await DbContext.CongratulationTemplates.GetRandomItemAsync(t => t.CreatedById == userId);
 
             return Mapper.Map<CongratulationTemplate, CongratulationTemplateDto>(template);
         }
 
-        public async Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int? count = 5)
+        public async Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int userId, int? count = 5)
         {
-            var templates = await UnitOfWork.CongratulationTemplatesRepository.GetRandomCongratulationTemplatesAsync(count ?? 5);
+            var templates = await DbContext.CongratulationTemplates.GetRandomItemsAsync(count ?? 5, t => t.CreatedById == userId);
 
             return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(templates);
         }

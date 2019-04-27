@@ -21,6 +21,7 @@ namespace VkCelebrationApp.BLL.Extensions
 
         public static T PickRandom<T>(this IList<T> source)
         {
+            if (source.Count == 0) return default;
             var r = Rnd.Next(source.Count);
             return source[r];
         }

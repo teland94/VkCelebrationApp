@@ -1,0 +1,77 @@
+<h1>Заготовки поздравлений</h1>
+<h4 *ngIf="congratulationTemplates && tableMode">Количество: {{congratulationTemplates.length}}</h4>
+<div *ngIf="tableMode" class="mb-3 mt-3">
+  <button type="button" class="btn btn-primary icon-text-btn" (click)="add()">
+    <span class="fa fa-plus"></span>&nbsp;Добавить
+  </button>
+</div>
+<ng-container *ngIf="tableMode; else create">
+  <table *ngIf="congratulationTemplates && congratulationTemplates.length > 0" class="table table-sm">
+    <thead>
+      <tr>
+        <th class="col">Текст</th>
+        <th class="col-auto"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of congratulationTemplates">
+        <ng-template [ngIf]="congratulationTemplate?.id != t.id" [ngIfElse]="edit">
+          <td class="col">
+            <textarea class="form-control" readonly #congratulationTemplateElem>{{t?.text}}</textarea>
+          </td>
+          <td class="col-auto vertical-middle">
+            <button id="btn-copy" class="btn btn-sm btn-info icon" [ngxClipboard]="congratulationTemplateElem" title="Копировать">
+              <i class="fa fa-copy"></i>
+            </button>
+            <button id="btn-edit-save" class="btn btn-sm btn-primary btn-icon margin-left-1" (click)="editCongratulationTemplate(t)" title="Редактировать">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger btn-icon margin-left-1" (click)="delete(t)" title="Удалить">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #edit>
+  <td class="col">
+    <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" #congratulationTemplateEditElem
+      appAutofocus class="form-control"></textarea>
+  </td>
+  <td class="col-auto vertical-middle">
+    <button id="btn-copy" class="btn btn-sm btn-info" [ngxClipboard]="congratulationTemplateEditElem" title="Копировать">
+      <i class="fa fa-copy"></i>
+    </button>
+    <button id="btn-save" (click)="save()" class="btn btn-sm btn-primary btn-icon margin-left-1" [disabled]="!text.valid" title="Сохранить">
+      <i class="fa fa-check"></i>
+    </button>
+    <button (click)="cancel()" class="btn btn-sm btn-secondary btn-icon margin-left-1" title="Отмена">
+      <i class="fa fa-ban"></i>
+    </button>
+  </td>
+</ng-template>
+
+<ng-template #create>
+  <form #f="ngForm" novalidate>
+    <div class="form-group">
+      <label>Текст</label>
+      <textarea name="Text" #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus
+        class="form-control"></textarea>
+
+      <small [hidden]="text.valid || (text.pristine && !submitted)" class="text-danger">
+        Пожалуйста, заполните поле
+      </small>
+    </div>
+    <div>
+      <button type="button" (click)="save()" class="btn btn-primary icon-text-btn" [disabled]="f.invalid">
+        <span class="fa fa-check"></span>&nbsp;Сохранить
+      </button>
+      <button type="button" value="Отмена" (click)="cancel()" class="btn btn-secondary icon-text-btn ml-2">
+        <span class="fa fa-ban"></span>&nbsp;Отмена
+      </button>
+    </div>
+  </form>
+</ng-template>

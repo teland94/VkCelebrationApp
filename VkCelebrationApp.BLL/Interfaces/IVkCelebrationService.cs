@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 
@@ -6,18 +7,16 @@ namespace VkCelebrationApp.BLL.Interfaces
 {
     public interface IVkCelebrationService
     {
-        Task Auth();
+        Task<Tuple<long, string>> Auth(string login, string password);
 
-        Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(uint? count = 500, uint? offset = 0);
+        Task Auth(string accessToken);
 
-        Task<VkCollectionDto<VkUserDto>> SearchAsync(uint? count = 1000, uint? offset = 0);
+        Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(int userId, uint? count = 500, uint? offset = 0);
 
-        Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto);
+        Task<VkCollectionDto<VkUserDto>> SearchAsync(int userId, uint? count = 1000, uint? offset = 0);
 
-        Task<long> SendRandomUserCongratulationAsync();
+        Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto, int userId);
 
-        Task<int> DetectAgeAsync(long userId, string firstName, string lastName);
-
-        Task<IEnumerable<string>> GetUserPhotoes(long userId);
+        Task<long> SendRandomUserCongratulationAsync(int userId);
     }
 }

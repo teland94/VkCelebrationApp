@@ -1,0 +1,22 @@
+<ul class="list-unstyled">
+  <li *ngFor="let user of usersCollection.items" class="media mb-3">
+    <a class="align-self-center mr-3" [href]="baseUrl + user.id">
+      <img class="align-self-center rounded-circle" [alt]="user.id" [src]="'data:image/jpg;base64,' + user.photo100" />
+    </a>
+    <div class="align-self-center media-body">
+      <h5 class="mt-0 mb-1">
+        <a [href]="baseUrl + user.id" target="_blank">{{user.firstName}} {{user.lastName}}</a>
+      </h5>
+      <div *ngIf="isValidDate(user.birthDate)" class="mb-1">Возраст: {{user.age}}</div>
+      <div *ngIf="!isValidDate(user.birthDate)" class="mb-1">
+        <button *ngIf="!user.age" class="btn-sm btn-light" (click)="detectAge(user.id, user.firstName, user.lastName)">
+          <span class="fa fa-user"></span>&nbsp;Определить возраст
+        </button>
+        <i *ngIf="user.age" class="text-info">Возраст: {{user.age}}</i>
+      </div>
+      <button *ngIf="writeCongratulationButton" class="btn-sm btn-primary" (click)="writeCongratulation(user)">
+        <i class="fa fa-pencil"></i>&nbsp;Написать поздравление
+      </button>
+    </div>
+  </li>
+</ul>

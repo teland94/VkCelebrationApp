@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 
 namespace VkCelebrationApp.Controllers
 {
+    [Authorize(Policy = "ApiUser")]
     [Route("api/CongratulationTemplates")]
-    public class CongratulationTemplatesController : Controller
+    public class CongratulationTemplatesController : ControllerBase
     {
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
 
@@ -17,72 +19,72 @@ namespace VkCelebrationApp.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<CongratulationTemplateDto> GetCongratulationTemplates()
+        public async Task<IEnumerable<CongratulationTemplateDto>> GetCongratulationTemplates()
         {
-            return CongratulationTemplatesService.Get();
+            return await CongratulationTemplatesService.GetByUserIdAsync(GetUserId());
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCongratulationTemplate([FromRoute] int id)
+        public async Task<IActionResult> GetCongratulationTemplate([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var translation = CongratulationTemplatesService.Get(id);
+            var congratulationTemplate = await CongratulationTemplatesService.GetAsync(id);
 
-            return Ok(translation);
+            return Ok(congratulationTemplate);
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutCongratulationTemplate([FromRoute] int id, [FromBody] CongratulationTemplateDto template)
+        public async Task<IActionResult> PutCongratulationTemplate([FromRoute] int id, [FromBody] CongratulationTemplateDto template)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesService.Update(template);
+            await CongratulationTemplatesService.UpdateAsync(template, GetUserId());
 
             return NoContent();
         }
 
         [HttpPost]
-        public IActionResult PostCongratulationTemplate([FromBody] CongratulationTemplateDto template)
+        public async Task<IActionResult> PostCongratulationTemplate([FromBody] CongratulationTemplateDto template)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesService.Create(template);
+            await CongratulationTemplatesService.CreateAsync(template, GetUserId());
 
             return CreatedAtAction("PostCongratulationTemplate", new { id = template.Id }, template);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteCongratulationTemplate([FromRoute] int id)
+        public async Task<IActionResult> DeleteCongratulationTemplate([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            CongratulationTemplatesService.Delete(id);
+            await CongratulationTemplatesService.DeleteAsync(id);
 
             return NoContent();
         }
 
         [HttpGet("Find")]
-        public IActionResult Find(string text, int? maxItems = 5)
+        public async Task<IActionResult> Find(string text, int? maxItems = 5)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var congratulationTemplatesService = CongratulationTemplatesService.Find(text, maxItems);
+            var congratulationTemplatesService = await CongratulationTemplatesService.FindAsync(text, GetUserId(), maxItems);
 
             return Ok(congratulationTemplatesService);
         }
@@ -95,7 +97,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var templates = await CongratulationTemplatesService.GetRandomCongratulationTemplatesAsync(count);
+            var templates = await CongratulationTemplatesService.GetRandomCongratulationTemplatesAsync(GetUserId(), count);
 
             return Ok(templates);
         }

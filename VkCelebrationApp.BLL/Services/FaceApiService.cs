@@ -116,9 +116,8 @@ namespace VkCelebrationApp.BLL.Services
             IList<FaceAttributeType> faceAttributes =
                 new[]
                 {
-                    FaceAttributeType.Gender, FaceAttributeType.Age,
-                    FaceAttributeType.Smile, FaceAttributeType.Emotion,
-                    FaceAttributeType.Glasses, FaceAttributeType.FacialHair
+                    FaceAttributeType.Gender,
+                    FaceAttributeType.Age
                 };
             return await FaceClient.DetectAsync(imageUri.AbsoluteUri, returnFaceAttributes: faceAttributes);
         }

@@ -1,0 +1,46 @@
+<header>
+  <nav class='navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3'>
+    <div class="container">
+      <a class="navbar-brand" [routerLink]='["/"]'>Поздравлятор</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation"
+        [attr.aria-expanded]="isExpanded" (click)="toggle()">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse" [ngClass]='{"show": isExpanded}'>
+        <ul class="navbar-nav mr-auto">
+          <ng-container *ngIf="isLoggedIn()">
+            <li class="nav-item" [routerLinkActive]='["active"]'>
+              <a class="nav-link" [routerLink]='["/home"]'>Главная</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]='["active"]'>
+              <a class="nav-link" [routerLink]='["/congratulation-templates"]'>Заготовки</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]='["active"]'>
+              <a class="nav-link" [routerLink]='["/user-congratulations"]'>История</a>
+            </li>
+          </ng-container>
+          <li class="nav-item" [routerLinkActive]='["active"]'>
+            <a class="nav-link" [routerLink]='["/about"]'>Информация</a>
+          </li>
+        </ul>
+        <ul *ngIf="currentUser" class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle p-1" href="#" id="userNavbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="media">
+                <img class="align-self-center rounded-circle avatar-top mr-1"
+                  [src]="'data:image/jpg;base64,' + currentUser.photo50" [alt]="currentUser.id">
+                <div class="media-body align-self-center">
+                  <span>{{currentUser.firstName}} {{currentUser.lastName}}</span>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="userNavbarDropdownMenuLink">
+              <a class="dropdown-item" [href]="baseUrl + currentUser.id" target="_blank">Перейти на страницу</a>
+              <button class="dropdown-item" (click)="logout()">Выйти</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

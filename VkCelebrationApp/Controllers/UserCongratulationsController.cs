@@ -1,12 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
+using VkCelebrationApp.Filters;
+using VkCelebrationApp.Helpers;
 using VkCelebrationApp.ViewModels;
 
 namespace VkCelebrationApp.Controllers
 {
+    [Authorize(Policy = "ApiUser")]
+    [VkAuth]
     [Route("api/UserCongratulations")]
-    public class UserCongratulationsController : Controller
+    public class UserCongratulationsController : ControllerBase
     {
         private IUserCongratulationsService UserCongratulationsService { get; }
 
@@ -16,17 +26,25 @@ namespace VkCelebrationApp.Controllers
         }
 
         [HttpPost("GetUserCongratulations")]
-        public IActionResult GetUserCongratulations([FromBody] UserCongratulationsGetParams parameters)
+        public async Task<IActionResult> GetUserCongratulationsAsync([FromBody] UserCongratulationsGetViewModel parameters)
         {
             if (!ModelState.IsValid && parameters != null)
             {
                 return BadRequest(ModelState);
             }
 
-            var userCongratulations = UserCongratulationsService
-                .GetUserCongratulations(parameters.CongratulationDate, parameters.TimezoneOffset);
-            
-            return Ok(userCongratulations);
+            var userCongratulations = (await UserCongratulationsService
+                .GetUserCongratulationsAsync(GetUserId(), parameters.CongratulationDate, parameters.TimezoneOffset)).ToList();
+            var userCongratulationVms = Mapper.Map<IEnumerable<UserCongratulationDto>,
+                IEnumerable<UserCongratulationViewModel>>(userCongratulations).ToList();
+
+            for (int i = 0; i < userCongratulations.Count; i++)
+            {
+                userCongratulationVms[i].VkUser.Photo100 = 
+                    await ImageHelpers.Download(userCongratulations[i].VkUser.Photo100);
+            }
+
+            return Ok(userCongratulationVms);
         }
     }
 }

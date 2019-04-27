@@ -7,5 +7,7 @@
         ushort? AgeTo { get; set; }
 
         ushort? Sex { get; set; }
+
+        long? CityId { get; set; }
     }
 }

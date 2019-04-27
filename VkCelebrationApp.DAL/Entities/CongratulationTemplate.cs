@@ -1,9 +1,7 @@
 ﻿namespace VkCelebrationApp.DAL.Entities
 {
-    public class CongratulationTemplate
+    public class CongratulationTemplate : EntityBase
     {
-        public int Id { get; set; }
-
         public string Text { get; set; }
 
         public int? CreatedById { get; set; }

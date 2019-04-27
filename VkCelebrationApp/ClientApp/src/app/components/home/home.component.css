@@ -1,0 +1,40 @@
+﻿button, input[type=button] {
+    min-width: 120px;
+}
+
+.close {
+    min-width: inherit;
+}
+
+textarea {
+    resize: none;
+}
+
+.select-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.select-template {
+  width: 95%;
+}
+
+.btn-select {
+  height: 36px;
+  min-width: 0;
+  margin-left: 1px;
+}
+
+@media only screen and (max-width: 768px) {
+  .select-template {
+    width: 100%;
+  }
+
+  .btn-select {
+    display: none;
+  }
+
+  #btn-save {
+    display: none;
+  }
+}

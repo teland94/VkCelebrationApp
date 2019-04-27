@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-6">
+        <h2>Вход</h2>
+    </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <form [formGroup]="form" novalidate (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="login">Логин</label>
+        <input id="login" type="text" name="login" class="form-control" placeholder="Введите email или номер телефона"
+          formControlName="login" (focus)="focus($event)">
+        <small *ngIf="login.invalid && (login.dirty || login.touched)" class="text-danger">Пожалуйста, введите корректный email или номер телефона</small>
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" class="form-control" id="password" name="password"
+          placeholder="Введите пароль" formControlName="password" (focus)="focus($event)">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isRequesting">Войти</button>
+        <ngx-loading [show]="isRequesting"></ngx-loading>
+      </div>
+      <div *ngIf="errors" class="alert alert-danger" role="alert">
+          <strong>Упс!</strong> {{errors}}
+      </div>
+    </form>
+  </div>
+</div>

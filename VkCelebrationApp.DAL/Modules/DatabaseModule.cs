@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using VkCelebrationApp.DAL.EF;
-using VkCelebrationApp.DAL.Interfaces;
 
 namespace VkCelebrationApp.DAL.Modules
 {
@@ -8,7 +7,7 @@ namespace VkCelebrationApp.DAL.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
+            builder.RegisterType<ApplicationContext>();
         }
     }
 }

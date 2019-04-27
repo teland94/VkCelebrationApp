@@ -37,9 +37,11 @@ namespace VkCelebrationApp.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Login");
+                    b.Property<string>("AccessToken");
 
-                    b.Property<string>("Password");
+                    b.Property<string>("UserName");
+
+                    b.Property<long>("VkUserId");
 
                     b.HasKey("Id");
 
@@ -55,7 +57,7 @@ namespace VkCelebrationApp.DAL.Migrations
 
                     b.Property<string>("Text");
 
-                    b.Property<int?>("UserId");
+                    b.Property<int>("UserId");
 
                     b.Property<long>("VkUserId");
 
@@ -77,7 +79,8 @@ namespace VkCelebrationApp.DAL.Migrations
                 {
                     b.HasOne("VkCelebrationApp.DAL.Entities.User", "User")
                         .WithMany("UserCongratulations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

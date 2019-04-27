@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.BLL.Interfaces;
+using VkCelebrationApp.DAL.EF;
 using VkCelebrationApp.DAL.Entities;
-using VkCelebrationApp.DAL.Interfaces;
 using VkNet;
 using VkNet.Enums.Filters;
 
@@ -14,25 +16,29 @@ namespace VkCelebrationApp.BLL.Services
 {
     public class UserCongratulationsService : IUserCongratulationsService
     {
-        private IUnitOfWork UnitOfWork { get; }
+        private ApplicationContext DbContext { get; }
         private VkApi VkApi { get; }
 
-        public UserCongratulationsService(IUnitOfWork unitOfWork,
+        public UserCongratulationsService(ApplicationContext dbContext,
             VkApi vkApi)
         {
-            UnitOfWork = unitOfWork;
+            DbContext = dbContext;
             VkApi = vkApi;
         }
 
-        public VkCollectionDto<VkUserDto> GetNoCongratulatedUsers(VkCollectionDto<VkUserDto> users)
+        public async Task<VkCollectionDto<VkUserDto>> GetNoCongratulatedUsersAsync(VkCollectionDto<VkUserDto> users, int userId)
         {
-            var existsIds = UnitOfWork.UserCongratulationsRepository.GetExistsVkIds(users.Select(u => u.Id));
+            var vkIds = users.Select(u => u.Id);
+            var existsIds = await DbContext.UserCongratulations.Where(uc => vkIds.Any(vid => vid == uc.VkUserId))
+                .Where(uc => uc.UserId == userId)
+                .Select(uc => uc.VkUserId)
+                .ToListAsync();
             return users.Where(u => existsIds.All(eid => eid != u.Id)).ToVkCollectionDto(users.TotalCount);
         }
 
-        public IEnumerable<UserCongratulationDto> GetUserCongratulations(DateTime? congratulationDate = null, int? timezoneOffset = null)
+        public async Task<IEnumerable<UserCongratulationDto>> GetUserCongratulationsAsync(int userId, DateTime? congratulationDate = null, int? timezoneOffset = null)
         {
-            var userCongratulations = GetUserCongratulationsFiltered(congratulationDate, timezoneOffset);
+            var userCongratulations = await GetUserCongratulationsFiltered(userId, congratulationDate, timezoneOffset);
 
             var userCongratulationDtos = Mapper.Map<IEnumerable<UserCongratulation>, IEnumerable<UserCongratulationDto>>(userCongratulations);
 
@@ -49,26 +55,18 @@ namespace VkCelebrationApp.BLL.Services
             return userCongratulationDtos;
         }
 
-        private IEnumerable<UserCongratulation> GetUserCongratulationsFiltered(DateTime? congratulationDate, int? timezoneOffset)
+        private async Task<IEnumerable<UserCongratulation>> GetUserCongratulationsFiltered(int userId, DateTime? congratulationDate, int? timezoneOffset)
         {
-            IEnumerable<UserCongratulation> userCongratulations;
+            var userCongratulations = DbContext.UserCongratulations.Where(uc => uc.UserId == userId);
 
             if (congratulationDate != null)
             {
-                userCongratulations = UnitOfWork.UserCongratulationsRepository
-                    .Get(
-                        uc => uc.CongratulationDate, 
-                        false, 
-                        uc => uc.CongratulationDate.AddHours((double)timezoneOffset).Date == congratulationDate.Value.AddHours((double)timezoneOffset).Date
-                    );
-            }
-            else
-            {
-                userCongratulations = UnitOfWork.UserCongratulationsRepository
-                    .Get(uc => uc.CongratulationDate, false);
+                userCongratulations = userCongratulations.Where(uc => uc.CongratulationDate.AddHours((double)timezoneOffset).Date == congratulationDate.Value.AddHours((double)timezoneOffset).Date);
             }
 
-            return userCongratulations;
+            userCongratulations = userCongratulations.OrderByDescending(uc => uc.CongratulationDate);
+
+            return await userCongratulations.ToListAsync();
         }
     }
 }

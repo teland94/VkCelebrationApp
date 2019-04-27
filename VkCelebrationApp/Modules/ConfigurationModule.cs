@@ -11,9 +11,7 @@ namespace VkCelebrationApp.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.Register(CreateConnectionStringsConfiguration).SingleInstance();
-            builder.Register(CreateVkApiConfiguration).SingleInstance();
             builder.Register(CreateVkSearchConfiguration).SingleInstance();
-            builder.Register(CreateBotConfiguration).SingleInstance();
             builder.Register(CreateFaceApiConfiguration).SingleInstance();
         }
 
@@ -29,18 +27,6 @@ namespace VkCelebrationApp.Modules
             return result;
         }
 
-        private static IVkApiConfiguration CreateVkApiConfiguration(IComponentContext context)
-        {
-            var configuration = context.Resolve<IConfiguration>();
-
-            var result = new VkApiConfiguration();
-
-            new ConfigureFromConfigurationOptions<VkApiConfiguration>(configuration.GetSection("VkApi"))
-                .Configure(result);
-
-            return result;
-        }
-
         private static IVkSearchConfiguration CreateVkSearchConfiguration(IComponentContext context)
         {
             var configuration = context.Resolve<IConfiguration>();
@@ -48,18 +34,6 @@ namespace VkCelebrationApp.Modules
             var result = new VkSearchConfiguration();
 
             new ConfigureFromConfigurationOptions<VkSearchConfiguration>(configuration.GetSection("VkSearch"))
-                .Configure(result);
-
-            return result;
-        }
-
-        private static IBotConfiguration CreateBotConfiguration(IComponentContext context)
-        {
-            var configuration = context.Resolve<IConfiguration>();
-
-            var result = new BotConfiguration();
-
-            new ConfigureFromConfigurationOptions<BotConfiguration>(configuration.GetSection("Bot"))
                 .Configure(result);
 
             return result;
@@ -84,13 +58,6 @@ namespace VkCelebrationApp.Modules
             public string DefaultConnection { get; set; }
         }
 
-        public class VkApiConfiguration : IVkApiConfiguration
-        {
-            public ulong AppId { get; set; }
-            public string Host { get; set; }
-            public int? Port { get; set; }
-        }
-
         public class VkSearchConfiguration : IVkSearchConfiguration
         {
             private ushort? _ageFrom;
@@ -98,24 +65,19 @@ namespace VkCelebrationApp.Modules
 
             public ushort? AgeFrom
             {
-                get => _ageFrom ?? 15;
+                get => _ageFrom ?? 18;
                 set => _ageFrom = value;
             }
 
             public ushort? AgeTo
             {
-                get => _ageTo ?? 25;
+                get => _ageTo ?? 30;
                 set => _ageTo = value;
             }
 
             public ushort? Sex { get; set; }
-        }
 
-        public class BotConfiguration : IBotConfiguration
-        {
-            public string Url { get; set; }
-            public string UpdateBaseApiPath { get; set; }
-            public string Key { get; set; }
+            public long? CityId { get; set; }
         }
 
         public class FaceApiConfiguration : IFaceApiConfiguration

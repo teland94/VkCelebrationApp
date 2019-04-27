@@ -1,19 +1,34 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
+using VkCelebrationApp.Filters;
+using VkCelebrationApp.Helpers;
+using VkCelebrationApp.ViewModels;
 
 namespace VkCelebrationApp.Controllers
 {
+    [Authorize(Policy = "ApiUser")]
+    [VkAuth]
     [Route("api/VkCelebration")]
-    public class VkCelebrationController : Controller
+    public class VkCelebrationController : ControllerBase
     {
         private IVkCelebrationService VkCelebrationService { get; }
 
         public VkCelebrationController(IVkCelebrationService vkCelebrationService)
         {
             VkCelebrationService = vkCelebrationService;
+        }
+
+        [HttpPost("Auth")]
+        public async Task<IActionResult> Auth([FromBody]CredentialsViewModel loginViewModel)
+        {
+            var info = await VkCelebrationService.Auth(loginViewModel.Login, loginViewModel.Password);
+            return CreatedAtAction(nameof(Auth), new { VkUserId = info.Item1, AccessToken = info.Item2 });
         }
 
         [HttpGet("GetFriendsSuggestions")]
@@ -24,7 +39,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var users = await VkCelebrationService.GetFriendsSuggestionsAsync();
+            var users = await VkCelebrationService.GetFriendsSuggestionsAsync(GetUserId());
 
             return Ok(users);
         }
@@ -37,22 +52,16 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var users = await VkCelebrationService.SearchAsync();
+            var users = await VkCelebrationService.SearchAsync(GetUserId());
+            var userVms = Mapper.Map<VkCollectionDto<VkUserDto>,
+                VkCollectionViewModel<VkUserViewModel>>(users);
 
-            return Ok(users);
-        }
-
-        [HttpGet("DetectAge")]
-        public async Task<IActionResult> DetectAge(long userId, string firstName, string lastName)
-        {
-            if (!ModelState.IsValid)
+            for (int i = 0; i < users.Count; i++)
             {
-                return BadRequest(ModelState);
+                userVms[i].Photo100 = await ImageHelpers.Download(users[i].Photo100);
             }
 
-            var age = await VkCelebrationService.DetectAgeAsync(userId, firstName, lastName);
-
-            return Ok(age);
+            return Ok(userVms);
         }
 
         [HttpPost("SendCongratulation")]
@@ -63,7 +72,7 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var messageId = await VkCelebrationService.SendCongratulationAsync(userCongratulation);
+            var messageId = await VkCelebrationService.SendCongratulationAsync(userCongratulation, GetUserId());
 
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
@@ -73,7 +82,7 @@ namespace VkCelebrationApp.Controllers
         {
             try
             {
-                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync();
+                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync(GetUserId());
 
                 return Ok(messageId);
             }
@@ -86,19 +95,6 @@ namespace VkCelebrationApp.Controllers
                 Console.WriteLine(ex);
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpGet("GetUserPhotoes")]
-        public async Task<IActionResult> GetUserPhotoes(long userId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var photoes = await VkCelebrationService.GetUserPhotoes(userId);
-
-            return Ok(photoes);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
 {
     public interface IUserCongratulationsService
     {
-        VkCollectionDto<VkUserDto> GetNoCongratulatedUsers(VkCollectionDto<VkUserDto> users);
+        Task<VkCollectionDto<VkUserDto>> GetNoCongratulatedUsersAsync(VkCollectionDto<VkUserDto> users, int userId);
 
-        IEnumerable<UserCongratulationDto> GetUserCongratulations(DateTime? congratulationDate = null, int? timezoneOffset = null);
+        Task<IEnumerable<UserCongratulationDto>> GetUserCongratulationsAsync(int userId, DateTime? congratulationDate = null, int? timezoneOffset = null);
     }
 }

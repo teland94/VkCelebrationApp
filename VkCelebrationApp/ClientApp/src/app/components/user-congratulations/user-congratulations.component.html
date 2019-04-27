@@ -1,0 +1,37 @@
+﻿<div *ngIf="userCongratulations">
+  <div class="row">
+    <div class="col-md-8">
+      <h3>Количество: {{userCongratulations.length}}</h3>
+    </div>
+    <div class="col-md-4">
+      <input class="form-control pull-right" placeholder="Выберите дату" [minDate]="minDate" [maxDate]="maxDate"
+        #dp="bsDatepicker" bsDatepicker [bsValue]="currentDate" [bsConfig]="{ containerClass: 'theme-dark-blue' }"
+        (bsValueChange)="dateChanged($event)">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-unstyled users">
+        <li *ngFor="let uc of userCongratulations" class="media mb-3">
+          <a class="align-self-center mr-3" [href]="baseUrl + uc.vkUser.id" target="_blank">
+            <img class="rounded-circle" [alt]="uc.vkUser.id" [src]="'data:image/jpg;base64,' + uc.vkUser.photo100" />
+          </a>
+          <div class="media-body">
+            <h4 class="mt-0 mb-1">
+              <a [href]="baseUrl + uc.vkUser.id" target="_blank">{{uc.vkUser.firstName}} {{uc.vkUser.lastName}}</a>
+            </h4>
+            <div class="text-secondary">{{uc.congratulationDate | date:'HH:mm'}}</div>
+            <div class="text-info">{{uc.text}}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <button class="btn btn-primary" (click)="load()">
+        <i class="fa fa-refresh"></i>&nbsp;Обновить
+      </button>
+    </div>
+  </div>
+</div>

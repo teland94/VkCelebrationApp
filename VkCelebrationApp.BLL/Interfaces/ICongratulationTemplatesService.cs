@@ -4,12 +4,22 @@ using VkCelebrationApp.BLL.Dtos;
 
 namespace VkCelebrationApp.BLL.Interfaces
 {
-    public interface ICongratulationTemplatesService : ICrudService<CongratulationTemplateDto>
+    public interface ICongratulationTemplatesService
     {
-        IEnumerable<CongratulationTemplateDto> Find(string text, int? maxItems = 5);
+        Task<CongratulationTemplateDto> GetAsync(int id);
 
-        Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync();
+        Task<IEnumerable<CongratulationTemplateDto>> GetByUserIdAsync(int userId);
 
-        Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int? count = 5);
+        Task CreateAsync(CongratulationTemplateDto item, int userId);
+
+        Task DeleteAsync(int id);
+
+        Task<IEnumerable<CongratulationTemplateDto>> FindAsync(string text, int userId, int? maxItems = 5);
+
+        Task<CongratulationTemplateDto> GetRandomCongratulationTemplateAsync(int userId);
+
+        Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int userId, int? count = 5);
+
+        Task UpdateAsync(CongratulationTemplateDto item, int userId);
     }
 }

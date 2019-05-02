@@ -4,12 +4,11 @@ Simple Web Application for finding and congratulating birthday persons in Vkonta
 ## Used APIs and Frameworks
   * ASP.NET Core 2.2 (API)
   * Vkontakte API for .NET
-  * Telegram Bot API
   * Entity Framework Core 2.2 with SQLite
   * Autofac
   * Automapper
-  * Angular 5
-  * Bootstrap 3
+  * Angular 7
+  * Bootstrap 4
   * Azure Face API
   
 ## Main Page with "Send Congratulation" Window

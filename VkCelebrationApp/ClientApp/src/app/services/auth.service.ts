@@ -9,7 +9,8 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
 
   private url = 'auth';
-  private tokenName = 'auth_token';
+  private tokenName = 'authToken';
+  private userInfoName = 'userInfo';
 
   // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
@@ -48,6 +49,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.tokenName);
+    localStorage.removeItem(this.userInfoName);
     this.loggedIn = false;
     this._authNavStatusSource.next(false);
   }

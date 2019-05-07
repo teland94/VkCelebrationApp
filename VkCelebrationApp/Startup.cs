@@ -162,9 +162,7 @@ namespace VkCelebrationApp
                 cfg.CreateMap(typeof(VkCollectionDto<>), typeof(VkCollectionViewModel<>))
                     .ConvertUsing(typeof(VkCollectionDtoToVkCollectionViewModelConverter<,>));
 
-                cfg.CreateMap<VkUserDto, VkUserViewModel>()
-                    .ForMember(x => x.Photo50, opt => opt.Ignore())
-                    .ForMember(x => x.Photo100, opt => opt.Ignore());
+                cfg.CreateMap<VkUserDto, VkUserViewModel>();
 
                 cfg.CreateMap<UserCongratulationDto, UserCongratulationViewModel>();
             });

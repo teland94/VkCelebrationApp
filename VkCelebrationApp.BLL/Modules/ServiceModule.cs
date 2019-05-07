@@ -1,11 +1,9 @@
 ﻿using Autofac;
 using Microsoft.Extensions.DependencyInjection;
-using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.BLL.Services;
 using VkNet;
 using VkNet.AudioBypassService.Extensions;
-using VkNet.Enums;
 
 namespace VkCelebrationApp.BLL.Modules
 {
@@ -23,6 +21,7 @@ namespace VkCelebrationApp.BLL.Modules
             builder.RegisterType<VkCelebrationService>().As<IVkCelebrationService>();
             builder.RegisterType<CongratulationTemplatesService>().As<ICongratulationTemplatesService>();
             builder.RegisterType<UserCongratulationsService>().As<IUserCongratulationsService>();
+            builder.RegisterType<VkDatabaseService>().As<IVkDatabaseService>();
             builder.RegisterType<FaceApiService>().As<IFaceApiService>();
         }
     }

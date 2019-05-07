@@ -1,0 +1,79 @@
+<form [formGroup]="searchSettingsForm" (submit)="onSubmit()">
+  <div class="form-group">
+    <label class="d-block">Возраст</label>
+    <div class="d-flex">
+      <ng-select class="flex-fill" formControlName="ageFrom" [searchable]="false" [items]="fromAges"
+        [markFirst]="false" [placeholder]="'от'"></ng-select>
+      <span class="ml-1 mr-1 align-self-center">-</span>
+      <ng-select class="flex-fill" formControlName="ageTo" [searchable]="false" [items]="toAges"
+        [markFirst]="false" [placeholder]="'до'"></ng-select>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" formControlName="online" class="custom-control-input" id="online" name="online">
+      <label class="custom-control-label" for="online">Сейчас на сайте</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="from">Пол</label>
+    <div class="custom-control custom-radio">
+      <input type="radio" class="custom-control-input" id="woman" name="sex"
+        formControlName="sex" [value]="sex.Female">
+      <label class="custom-control-label" for="woman">Женский</label>
+    </div>
+    <div class="custom-control custom-radio">
+      <input type="radio" class="custom-control-input" id="man" name="sex"
+        formControlName="sex" [value]="sex.Male">
+      <label class="custom-control-label" for="man">Мужской</label>
+    </div>
+    <div class="custom-control custom-radio">
+      <input type="radio" class="custom-control-input" id="any" name="sex"
+        formControlName="sex" [value]="sex.All">
+      <label class="custom-control-label" for="any">Любой</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="relationTypes">Семейное положение</label>
+    <ng-select id="relationTypes" formControlName="relationTypes" [searchable]="false" [items]="filteredRelationTypes"
+      bindValue="type" [markFirst]="false" placeholder="Выбор статуса" multiple="true">
+    </ng-select>
+  </div>
+  <div class="form-group">
+    <label for="city">Город</label>
+    <ng-select id="city" formControlName="cityId" placeholder="Выбор города"
+      bindValue="id" bindLabel="title"
+      notFoundText="Город не найден" [items]="cities?.items"
+      [typeahead]="citiesTypeahead" (change)="loadUniversities()">
+    </ng-select>
+  </div>
+  <div class="form-group">
+    <label for="university">Университет</label>
+    <ng-select id="university" formControlName="universityId" placeholder="Выбор университета"
+      bindValue="id" bindLabel="name"
+      notFoundText="Университет не найден" [items]="universities?.items"
+      [typeahead]="universititesTypeahead">
+    </ng-select>
+  </div>
+  <hr />
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" formControlName="canWritePrivateMessage" class="custom-control-input" id="canWritePrivateMessage" name="canWritePrivateMessage">
+      <label class="custom-control-label" for="canWritePrivateMessage">Возможность написать в ЛС</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" formControlName="isOpened" class="custom-control-input" id="isOpened" name="isOpened">
+      <label class="custom-control-label" for="isOpened">Открытый профиль</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit">
+      <span class="fa fa-save"></span> Сохранить
+    </button>
+    <button class="btn btn-secondary ml-2" type="button" (click)="onReset()">
+      <span class="fa fa-undo"></span> Сбросить
+    </button>
+  </div>
+</form>

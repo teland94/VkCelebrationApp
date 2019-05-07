@@ -14,7 +14,7 @@
       <ul class="list-unstyled users">
         <li *ngFor="let uc of userCongratulations" class="media mb-3">
           <a class="align-self-center mr-3" [href]="baseUrl + uc.vkUser.id" target="_blank">
-            <img class="rounded-circle" [alt]="uc.vkUser.id" [src]="'data:image/jpg;base64,' + uc.vkUser.photo100" />
+            <img class="rounded-circle" [alt]="uc.vkUser.id" [src]="getImageData(uc.vkUser.photo100)" />
           </a>
           <div class="media-body">
             <h4 class="mt-0 mb-1">

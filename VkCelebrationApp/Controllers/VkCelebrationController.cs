@@ -44,24 +44,24 @@ namespace VkCelebrationApp.Controllers
             return Ok(users);
         }
 
-        [HttpGet("Search")]
-        public async Task<IActionResult> SearchAsync()
+        [HttpPost("Search")]
+        public async Task<IActionResult> SearchAsync([FromBody] SearchViewModel searchViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var users = await VkCelebrationService.SearchAsync(GetUserId());
+            var users = await VkCelebrationService.SearchAsync(GetUserId(), searchViewModel.SearchParams,
+                searchViewModel.PageSize, searchViewModel.PageSize * (searchViewModel.PageNumber - 1));
             var userVms = Mapper.Map<VkCollectionDto<VkUserDto>,
-                VkCollectionViewModel<VkUserViewModel>>(users);
+                VkCollectionViewModel<VkUserViewModel>>(users.Item1);
 
-            for (int i = 0; i < users.Count; i++)
+            return Ok(new PagedVkCollectionViewModel<VkUserViewModel>
             {
-                userVms[i].Photo100 = await ImageHelpers.Download(users[i].Photo100);
-            }
-
-            return Ok(userVms);
+                VkCollection = userVms,
+                TotalCount = users.Item2
+            });
         }
 
         [HttpPost("SendCongratulation")]
@@ -77,12 +77,12 @@ namespace VkCelebrationApp.Controllers
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
 
-        [HttpGet("SendRandomUserCongratulation")]
-        public async Task<IActionResult> SendRandomUserCongratulationAsync()
+        [HttpPost("SendRandomUserCongratulation")]
+        public async Task<IActionResult> SendRandomUserCongratulationAsync([FromBody] SearchParamsDto searchParams = null)
         {
             try
             {
-                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync(GetUserId());
+                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync(GetUserId(), searchParams ?? new SearchParamsDto());
 
                 return Ok(messageId);
             }

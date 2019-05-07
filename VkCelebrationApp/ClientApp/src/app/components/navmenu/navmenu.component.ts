@@ -3,6 +3,7 @@ import { UserService } from '../../services/user.service';
 import { VkUser } from '../../models/vk-user.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
     selector: 'nav-menu',
@@ -17,7 +18,8 @@ export class NavMenuComponent implements OnInit {
 
     constructor(private readonly router: Router,
       private readonly authService: AuthService,
-      private readonly userService: UserService) {
+      private readonly userService: UserService,
+      private utilitiesService: UtilitiesService) {
     }
 
     ngOnInit() {
@@ -39,6 +41,10 @@ export class NavMenuComponent implements OnInit {
 
     toggle() {
       this.isExpanded = !this.isExpanded;
+    }
+
+    getImageData(url: string) {
+      return this.utilitiesService.getImageData(url);
     }
 
     logout() {

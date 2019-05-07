@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.DAL.Entities;
+using VkNet.Model;
 using VkNet.Utils;
 
 namespace VkCelebrationApp.BLL.MappingProfiles
@@ -25,14 +26,17 @@ namespace VkCelebrationApp.BLL.MappingProfiles
             CreateMap(typeof(VkCollection<>), typeof(VkCollectionDto<>))
                 .ConvertUsing(typeof(VkCollectionToVkCollectionDtoConverter<,>));
 
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
+            CreateMap<DAL.Entities.User, UserDto>();
+            CreateMap<UserDto, DAL.Entities.User>();
 
             CreateMap<CongratulationTemplate, CongratulationTemplateDto>();
             CreateMap<CongratulationTemplateDto, CongratulationTemplate>();
 
             CreateMap<UserCongratulation, UserCongratulationDto>();
             CreateMap<UserCongratulationDto, UserCongratulation>();
+
+            CreateMap<City, VkCityDto>();
+            CreateMap<University, VkUniversityDto>();
         }
 
         private static ushort? ConvertBirthDateToAge(string birthDate)

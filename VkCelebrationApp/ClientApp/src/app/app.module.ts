@@ -7,7 +7,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
-import { BsDatepickerModule, CarouselModule, CarouselConfig, BsDropdownModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, CarouselModule, CarouselConfig, PaginationModule } from 'ngx-bootstrap';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { NgxLoadingModule } from 'ngx-loading';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
@@ -23,6 +24,7 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { VkUsersComponent } from './components/vk-users/vk-users.component';
+import { SearchSettingsComponent } from './components/search-settings/search-settings.component';
 import { CongratulationTemplatesComponent } from './components/congratulation-templates/congratulation-templates.component';
 import { UserCongratulationsComponent } from './components/user-congratulations/user-congratulations.component';
 import { AboutComponent } from './components/about/about.component';
@@ -33,6 +35,8 @@ import { VkCelebrationService } from './services/vk-celebration.service';
 import { CongratulationTemplatesService } from './services/congratulation-templates.service';
 import { UserCongratulationsService } from './services/user-congratulations.service';
 import { AuthService } from './services/auth.service';
+import { VkDatabaseService } from './services/vk-database.service';
+import { UtilitiesService } from './services/utilities.service';
 import { AuthGuard } from './guards/auth.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
@@ -45,6 +49,7 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     LoginComponent,
     HomeComponent,
     VkUsersComponent,
+    SearchSettingsComponent,
     CongratulationTemplatesComponent,
     UserCongratulationsComponent,
     AboutComponent
@@ -63,7 +68,9 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     NgxLoadingModule,
     NgProgressModule,
     NgProgressHttpModule,
+    AccordionModule.forRoot(),
     CarouselModule.forRoot(),
+    PaginationModule.forRoot(),
     routing
   ],
   providers: [
@@ -74,6 +81,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     VkCelebrationService,
     CongratulationTemplatesService,
     UserCongratulationsService,
+    VkDatabaseService,
+    UtilitiesService,
     { provide: CarouselConfig, useValue: { interval: 0 } },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true }

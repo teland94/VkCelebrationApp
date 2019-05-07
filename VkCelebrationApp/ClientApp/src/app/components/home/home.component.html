@@ -19,16 +19,12 @@
         <div class="form-group mb-2">
           <label for="templates">Заготовка</label>
           <div class="select-group">
-            <ng-select id="templates" class="select-template" [items]="congratulationTemplates" [searchable]="true"
-              placeholder="Найти шаблон поздравления" typeToSearchText="Введите текст для поиска"
-              notFoundText="Поздравлений не найдено" loadingText="Загрузка..." bindLabel="text" bindValue="text"
-              [typeahead]="typeahead" [(ngModel)]="template">
-              <ng-template ng-option-tmp let-item="item">
-                {{item.text}}
-              </ng-template>
+            <ng-select id="templates" class="select-template" [items]="congratulationTemplates"
+              placeholder="Найти шаблон поздравления" notFoundText="Поздравлений не найдено"
+              bindLabel="text" bindValue="text" [typeahead]="typeahead" [(ngModel)]="template">
             </ng-select>
-            <button class="btn btn-light btn-select" type="button"
-             (click)="editTemplateMessage()" [disabled]="!template">
+            <button class="btn btn-light btn-select" type="button" (click)="editTemplateMessage()"
+              [disabled]="!template">
               <i class="fa fa-pencil"></i>
             </button>
           </div>
@@ -40,8 +36,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="btn-save" class="btn btn-info"
-          (click)="saveCongratulationTemplate()" [disabled]="!messageTextRef.valid">
+        <button type="button" id="btn-save" class="btn btn-info" (click)="saveCongratulationTemplate()"
+          [disabled]="!messageTextRef.valid">
           <span class="fa fa-save"></span>&nbsp;Сохранить
         </button>
         <button type="button" class="btn btn-primary" (click)="sendCongratulation()"
@@ -55,22 +51,46 @@
     </div>
   </div>
 </div>
-<div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
-  <h3>Возможные друзья - именинники</h3>
-  <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
-  <app-vk-users class="mt-3" [usersCollection]="friendsSuggestionsCollection" writeCongratulationButton="true"
-    (writeCongratulationClick)="sendMessageOpen($event)"></app-vk-users>
-  <hr />
+<div class="row" *ngIf="!isMobileDevice(); else mobileLayout">
+  <div class="col-8">
+    <div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
+      <h3>Возможные друзья - именинники</h3>
+      <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
+      <app-vk-users class="mt-3" [usersCollection]="friendsSuggestionsCollection" (writeCongratulationClick)="sendMessageOpen($event)">
+      </app-vk-users>
+      <hr />
+    </div>
+    <div *ngIf="usersCollection">
+      <h3>Найденные именинники</h3>
+      <h4>Всего: {{usersCollection.totalCount}}</h4>
+      <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
+        [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
+      </app-vk-users>
+      <button class="btn btn-primary" (click)="seachUsers()">
+        <i class="fa fa-refresh"></i>&nbsp;Обновить
+      </button>
+    </div>
+  </div>
+  <div class="col-4">
+    <h3>Параметры поиска</h3>
+    <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"
+      (settingsSaveClick)="saveSearchSettings()" (settingsResetClick)="resetSearchSettings()"></app-search-settings>
+  </div>
 </div>
-<div *ngIf="usersCollection">
-  <h3>Найденные именинники</h3>
-  <h4>Всего: {{usersCollection.totalCount}}</h4>
-  <app-vk-users [usersCollection]="usersCollection" writeCongratulationButton="true"
-    (writeCongratulationClick)="sendMessageOpen($event)"></app-vk-users>
-  <button class="btn btn-primary" (click)="seachUsers()">
-    <i class="fa fa-refresh"></i>&nbsp;Обновить
-  </button>
-  <button class="btn btn-secondary ml-2" (click)="navigate()">
-    <i class="fa fa-external-link"></i>&nbsp;Перейти
-  </button>
-</div>
+<ng-template #mobileLayout>
+  <accordion [isAnimated]="true">
+    <accordion-group heading="Параметры поиска">
+      <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"></app-search-settings>
+    </accordion-group>
+    <accordion-group *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0"
+      heading="Возможные друзья - именинники" [isOpen]="true">
+      <app-vk-users [usersCollection]="friendsSuggestionsCollection" (writeCongratulationClick)="sendMessageOpen($event)">
+      </app-vk-users>
+    </accordion-group>
+    <accordion-group heading="Найденные именинники" [isOpen]="true">
+      <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
+        [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
+      </app-vk-users>
+    </accordion-group>
+  </accordion>
+</ng-template>

@@ -13,10 +13,10 @@ namespace VkCelebrationApp.BLL.Interfaces
 
         Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(int userId, uint? count = 500, uint? offset = 0);
 
-        Task<VkCollectionDto<VkUserDto>> SearchAsync(int userId, uint? count = 1000, uint? offset = 0);
+        Task<Tuple<VkCollectionDto<VkUserDto>, uint>> SearchAsync(int userId, SearchParamsDto searchParams, uint? count = 1000, uint? offset = 0);
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto, int userId);
 
-        Task<long> SendRandomUserCongratulationAsync(int userId);
+        Task<long> SendRandomUserCongratulationAsync(int userId, SearchParamsDto searchParams);
     }
 }

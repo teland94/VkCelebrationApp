@@ -28,7 +28,7 @@
             <a class="nav-link dropdown-toggle p-1" href="#" id="userNavbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <div class="media">
                 <img class="align-self-center rounded-circle avatar-top mr-1"
-                  [src]="'data:image/jpg;base64,' + currentUser.photo50" [alt]="currentUser.id">
+                  [src]="getImageData(currentUser.photo50)" [alt]="currentUser.id">
                 <div class="media-body align-self-center">
                   <span>{{currentUser.firstName}} {{currentUser.lastName}}</span>
                 </div>

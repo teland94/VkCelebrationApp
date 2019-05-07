@@ -38,12 +38,6 @@ namespace VkCelebrationApp.Controllers
             var userCongratulationVms = Mapper.Map<IEnumerable<UserCongratulationDto>,
                 IEnumerable<UserCongratulationViewModel>>(userCongratulations).ToList();
 
-            for (int i = 0; i < userCongratulations.Count; i++)
-            {
-                userCongratulationVms[i].VkUser.Photo100 = 
-                    await ImageHelpers.Download(userCongratulations[i].VkUser.Photo100);
-            }
-
             return Ok(userCongratulationVms);
         }
     }

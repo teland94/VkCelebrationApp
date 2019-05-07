@@ -30,7 +30,6 @@ namespace VkCelebrationApp.Controllers
             {
                 var user = await UserService.GetUserInfoAsync(true);
                 var userVm = Mapper.Map<VkUserDto, VkUserViewModel>(user);
-                userVm.Photo50 = await ImageHelpers.Download(user.Photo50);
 
                 return Ok(userVm);
             }

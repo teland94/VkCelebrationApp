@@ -17,13 +17,12 @@ using VkNet.Utils;
 using User = VkNet.Model.User;
 using VkNet.Exception;
 using VkCelebrationApp.DAL.EF;
+using LinqKit;
 
 namespace VkCelebrationApp.BLL.Services
 {
     public class VkCelebrationService : IVkCelebrationService
     {
-        private readonly IVkSearchConfiguration _vkSearchConfiguration;
-
         private VkApi VkApi { get; }
         private ApplicationContext DbContext { get; }
 
@@ -33,14 +32,12 @@ namespace VkCelebrationApp.BLL.Services
         private IFaceApiService FaceApiService { get; }
 
         public VkCelebrationService(IUserService userService,
-            IVkSearchConfiguration vkSearchConfiguration,
             VkApi vkApi,
             ApplicationContext dbContext,
             ICongratulationTemplatesService congratulationTemplatesService,
             IUserCongratulationsService userCongratulationService,
             IFaceApiService faceApiService)
         {
-            _vkSearchConfiguration = vkSearchConfiguration;
             VkApi = vkApi;
             DbContext = dbContext;
             UserService = userService;
@@ -93,10 +90,12 @@ namespace VkCelebrationApp.BLL.Services
 
         public async Task<VkCollectionDto<VkUserDto>> GetFriendsSuggestionsAsync(int userId, uint? count = 500, uint? offset = 0)
         {
-            var date = DateTime.UtcNow;//.AddHours(_currentUser.TimeZone ?? 0);
+            var currentUser = (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.Timezone)).FirstOrDefault();
 
-            var users = await VkApi.Friends.GetSuggestionsAsync(fields: UsersFields.Photo100 | UsersFields.PhotoMax | UsersFields.Photo50 | UsersFields.CanWritePrivateMessage | UsersFields.BirthDate
-                         | UsersFields.Timezone | UsersFields.City | UsersFields.Country, count: count, offset: offset);
+            var date = DateTime.UtcNow.AddHours(currentUser.Timezone ?? 0);
+
+            var users = await VkApi.Friends.GetSuggestionsAsync(fields: UsersFields.Photo100 | UsersFields.Photo50 | UsersFields.CanWritePrivateMessage | UsersFields.BirthDate,
+                         count: count, offset: offset);
 
             var birthdaySuggestions = new List<User>();
             foreach (var user in users)
@@ -109,45 +108,45 @@ namespace VkCelebrationApp.BLL.Services
             }
             users = birthdaySuggestions.ToVkCollection((ulong)birthdaySuggestions.Count);
 
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
+            var userDtos = Mapper.Map<VkCollection<VkNet.Model.User>, VkCollectionDto<VkUserDto>>(users);
 
             userDtos = await UserCongratulationService.GetNoCongratulatedUsersAsync(userDtos, userId);
 
             return userDtos;
         }
 
-        public async Task<VkCollectionDto<VkUserDto>> SearchAsync(int userId, uint? count = 1000, uint? offset = 0)
+        public async Task<Tuple<VkCollectionDto<VkUserDto>, uint>> SearchAsync(int userId, SearchParamsDto searchParams,
+            uint? count = 1000, uint? offset = 0)
         {
-            var user = (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.City | ProfileFields.Timezone)).FirstOrDefault();
-
+            var user = (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.Timezone)).FirstOrDefault();
             var date = DateTime.UtcNow.AddHours(user.Timezone ?? 0);
             var users = await VkApi.CallAsync<VkCollection<User>>("users.search", new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
-                AgeFrom = _vkSearchConfiguration.AgeFrom.GetValueOrDefault(),
-                AgeTo = _vkSearchConfiguration.AgeTo.GetValueOrDefault(),
+                AgeFrom = searchParams.AgeFrom,
+                AgeTo = searchParams.AgeTo,
                 BirthMonth = (ushort)date.Month,
                 BirthDay = (ushort)date.Day,
-                City = _vkSearchConfiguration.CityId != null ? (int?)_vkSearchConfiguration.CityId : (int?)user.City.Id,
-                Sex = _vkSearchConfiguration.Sex != null && _vkSearchConfiguration.Sex >= 0 &&
-                      _vkSearchConfiguration.Sex <= 2
-                    ? (Sex)_vkSearchConfiguration.Sex.Value
-                    : Sex.Unknown,
-                Online = true,
+                City = (int?)searchParams.CityId,
+                University = (int?)searchParams.UniversityId,
+                Sex = (Sex)searchParams.Sex,
+                Online = searchParams.Online,
                 HasPhoto = true,
                 Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 |
                          ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate | ProfileFields.Relation,
-                Count = count,
-                Offset = offset
+                Count = 1000,
+                //Offset = offset
             });
 
-            users = GetCustomFilteredUsers(users);
+            var filteredUsers = GetCustomFilteredUsers(users, searchParams);
 
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(users);
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(filteredUsers);
 
             userDtos = await UserCongratulationService.GetNoCongratulatedUsersAsync(userDtos, userId);
 
-            return userDtos;
+            return new Tuple<VkCollectionDto<VkUserDto>, uint>(
+                userDtos.Skip((int)offset).Take((int)count).ToVkCollectionDto(users.TotalCount), 
+                (uint)userDtos.Count);
         }
 
         public async Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto, int userId)
@@ -176,13 +175,13 @@ namespace VkCelebrationApp.BLL.Services
             throw new ArgumentNullException("userCongratulationDto.Text");
         }
 
-        public async Task<long> SendRandomUserCongratulationAsync(int userId)
+        public async Task<long> SendRandomUserCongratulationAsync(int userId, SearchParamsDto searchParams)
         {
-            var searchUsers = await SearchAsync(userId);
+            var searchUsers = await SearchAsync(userId, searchParams);
 
-            searchUsers = await GetCustomFilteredUsersByFaces(searchUsers);
+            //searchUsers = await GetCustomFilteredUsersByFaces(searchUsers);
 
-            var user = searchUsers.PickRandom();
+            var user = searchUsers.Item1.PickRandom();
             if (user != null)
             {
                 var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync(userId);
@@ -221,12 +220,28 @@ namespace VkCelebrationApp.BLL.Services
             return vkUsers.ToVkCollectionDto(users.TotalCount);
         }
 
-        private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users)
+        private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users, SearchParamsDto searchParam)
         {
-            return users.Where(u => u.CanWritePrivateMessage
-                                    && (u.IsClosed == null || !u.IsClosed.Value)
-                                    && (u.Relation == RelationType.Unknown || u.Relation == RelationType.NotMarried || u.Relation == RelationType.InActiveSearch))
-                                    .ToVkCollection(users.TotalCount);
+            var usersRes = users.AsEnumerable();
+            if (searchParam.CanWritePrivateMessage)
+            {
+                usersRes = usersRes.Where(u => u.CanWritePrivateMessage);
+            }
+            if (searchParam.IsOpened)
+            {
+                usersRes = usersRes.Where(u => u.IsClosed != null && !u.IsClosed.Value);
+            }
+            if (searchParam.RelationTypes != null)
+            {
+                var rtPredicate = PredicateBuilder.New<User>();
+                rtPredicate.Or(u => u.Relation == RelationType.Unknown);
+                foreach (var relationType in searchParam.RelationTypes)
+                {
+                    rtPredicate = rtPredicate.Or(u => u.Relation == (RelationType)relationType);
+                }
+                usersRes = usersRes.Where(rtPredicate);
+            }
+            return usersRes.ToVkCollection(users.TotalCount);
         }
     }
 }

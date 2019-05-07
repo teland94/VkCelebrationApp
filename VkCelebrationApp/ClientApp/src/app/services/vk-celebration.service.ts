@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { UserCongratulation } from '../models/user-congratulation.model';
+import { SearchParams } from '../models/search-params.model';
 
 @Injectable()
 export class VkCelebrationService {
@@ -14,8 +15,12 @@ export class VkCelebrationService {
         return this.dataService.get(`${this.url}/getFriendsSuggestions`);
     }
 
-    search() {
-        return this.dataService.get(`${this.url}/search`);
+    search(searchParams: SearchParams, pageNumber?: number, pageSize?: number) {
+        return this.dataService.post(`${this.url}/search`, {
+          searchParams,
+          pageNumber,
+          pageSize
+        });
     }
 
     sendCongratulation(userCongratulation: UserCongratulation) {

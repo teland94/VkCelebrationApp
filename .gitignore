@@ -267,3 +267,4 @@ __pycache__/
 *.db
 */Properties/PublishProfiles
 */logs
+dist/

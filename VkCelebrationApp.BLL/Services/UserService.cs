@@ -18,16 +18,12 @@ namespace VkCelebrationApp.BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly IVkSearchConfiguration _vkSearchConfiguration;
-
         private VkApi VkApi { get; }
         private ApplicationContext DbContext { get; }
 
-        public UserService(IVkSearchConfiguration vkSearchConfiguration,
-            VkApi vkApi,
+        public UserService(VkApi vkApi,
             ApplicationContext dbContext)
         {
-            _vkSearchConfiguration = vkSearchConfiguration;
             VkApi = vkApi;
             DbContext = dbContext;
         }
@@ -38,7 +34,7 @@ namespace VkCelebrationApp.BLL.Services
                 new long[] { },
                 withProfileFields != null ?
                     (withProfileFields.Value
-                    ? ProfileFields.Photo100 | ProfileFields.Photo50 | ProfileFields.BirthDate
+                    ? ProfileFields.Photo100 | ProfileFields.Photo50 | ProfileFields.BirthDate | ProfileFields.City
                     : null) 
                 : null);
 
@@ -54,8 +50,8 @@ namespace VkCelebrationApp.BLL.Services
 
             long cityId = await GetCityId();
 
-            for (counter = _vkSearchConfiguration.AgeFrom.GetValueOrDefault();
-                counter <= _vkSearchConfiguration.AgeTo.GetValueOrDefault(); counter++)
+            for (counter = 18;
+                counter <= 28; counter++)
             {
                 if (await UserExistsAsync(userId, query, counter, cityId))
                 {
@@ -97,14 +93,7 @@ namespace VkCelebrationApp.BLL.Services
 
         private async Task<long> GetCityId()
         {
-            if (_vkSearchConfiguration.CityId == null)
-            {
-                return (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.City)).FirstOrDefault().City.Id.Value;
-            }
-            else
-            {
-                return _vkSearchConfiguration.CityId.Value;
-            }
+            return (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.City)).FirstOrDefault().City.Id.Value;
         }
 
         private async Task<bool> UserExistsAsync(long id, string query, ushort ageTo, long cityId)

@@ -29,8 +29,8 @@ namespace VkCelebrationApp.BLL.Services
         public async Task<VkCollectionDto<VkUserDto>> GetNoCongratulatedUsersAsync(VkCollectionDto<VkUserDto> users, int userId)
         {
             var vkIds = users.Select(u => u.Id);
-            var existsIds = await DbContext.UserCongratulations.Where(uc => vkIds.Any(vid => vid == uc.VkUserId))
-                .Where(uc => uc.UserId == userId)
+            var existsIds = await DbContext.UserCongratulations.Where(uc => 
+                vkIds.Any(vid => vid == uc.VkUserId) && uc.UserId == userId)
                 .Select(uc => uc.VkUserId)
                 .ToListAsync();
             return users.Where(u => existsIds.All(eid => eid != u.Id)).ToVkCollectionDto(users.TotalCount);

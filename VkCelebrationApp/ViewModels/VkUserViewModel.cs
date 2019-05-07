@@ -9,8 +9,8 @@
 
         public ushort Age { get; set; }
 
-        public byte[] Photo50 { get; set; }
-        public byte[] Photo100 { get; set; }
+        public string Photo50 { get; set; }
+        public string Photo100 { get; set; }
 
         public bool CanWritePrivateMessage { get; set; }
 

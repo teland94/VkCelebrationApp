@@ -8,6 +8,9 @@ import { VkCollection } from '../../models/vk-collection.model';
 import { UserCongratulation } from '../../models/user-congratulation.model';
 import { CongratulationTemplate } from '../../models/congratulation-template.model';
 import { distinctUntilChanged, debounceTime, switchMap } from 'rxjs/operators';
+import { SearchParams } from 'src/app/models/search-params.model';
+import { UserService } from 'src/app/services/user.service';
+import { PagedVkCollection } from 'src/app/models/paged-vk-collection';
 
 @Component({
   selector: 'home',
@@ -16,10 +19,14 @@ import { distinctUntilChanged, debounceTime, switchMap } from 'rxjs/operators';
 })
 export class HomeComponent implements OnInit {
 
+  private searchSettingsKey = 'searchSettings';
+
   friendsSuggestionsCollection: VkCollection<VkUser>;
-  usersCollection: VkCollection<VkUser>;
+  usersCollection: PagedVkCollection<VkUser>;
   congratulationTemplates: CongratulationTemplate[];
   selectedUser: VkUser;
+  searchParams: SearchParams;
+  pageNumber: number;
 
   @ViewChild(ModalDirective) congratulationModal: ModalDirective;
   @ViewChild(ModalDirective) userInfoModal: ModalDirective;
@@ -31,15 +38,18 @@ export class HomeComponent implements OnInit {
   messageText: string;
   template: string;
 
-  public loading = false;
+  loading = false;
 
   constructor(private readonly vkCelebrationService: VkCelebrationService,
     private readonly congratulationTemplatesService: CongratulationTemplatesService,
+    private userService: UserService,
     private readonly toastrService: ToastrService) {
   }
 
-  ngOnInit() {
-    this.loadFriendsSuggestions();
+  async ngOnInit() {
+    await this.loadSearchSettings();
+
+    // this.loadFriendsSuggestions();
     this.seachUsers();
 
     this.typeahead
@@ -59,38 +69,30 @@ export class HomeComponent implements OnInit {
   loadFriendsSuggestions() {
     this.vkCelebrationService.getFriendsSuggestions().subscribe((data: VkCollection<VkUser>) => {
       this.friendsSuggestionsCollection = data;
-
-      window.scrollTo(0, 0);
     }, err => {
       this.showErrorToast('Ошибка загрузки возможных друзей - именинников', err);
     });
   }
 
   seachUsers() {
-    this.vkCelebrationService.search().subscribe((data: VkCollection<VkUser>) => {
+    this.vkCelebrationService.search(this.searchParams, this.pageNumber)
+      .subscribe((data: PagedVkCollection<VkUser>) => {
       this.usersCollection = data;
-
-      window.scrollTo(0, 0);
     }, err => {
       this.showErrorToast('Ошибка загрузки именинников из поиска', err);
     });
   }
 
-  navigate() {
-    const date = new Date();
-    const link = 'https://vk.com/friends' +
-      '?act=find&c%5Bbday%5D=' + date.getDate() +
-      '&c%5Bbmonth%5D=' + (date.getMonth() + 1) +
-      '&c%5Bcity%5D=280&c%5Bcountry%5D=2&c%5Bname%5D=1&c%5Bonline%5D=1&c%5Bphoto%5D=1&c%5Bsection%5D=people&c%5Bsex%5D=1&c%5Bsort%5D=1';
+  settingsChanged() {
+    this.seachUsers();
+  }
 
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      window.location.replace(link);
-    } else {
-      window.open(
-        link,
-        '_blank'
-      );
-    }
+  pageChanged() {
+    this.seachUsers();
+  }
+
+  isMobileDevice() {
+    return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
   }
 
   sendMessageOpen(user: VkUser) {
@@ -149,6 +151,28 @@ export class HomeComponent implements OnInit {
     this.loading = false;
     this.isModalShown = false;
     this.isUserInfoModalShown = false;
+  }
+
+  saveSearchSettings() {
+    localStorage.setItem(this.searchSettingsKey, JSON.stringify(this.searchParams));
+    this.toastrService.success('Настройки поиска успешно сохранено', 'Успех');
+  }
+
+  async resetSearchSettings() {
+    localStorage.removeItem(this.searchSettingsKey);
+    this.searchParams = new SearchParams();
+  }
+
+  private async loadSearchSettings() {
+    const userInfo = <VkUser>await this.userService.getUserInfo().toPromise();
+    this.searchSettingsKey += '_' + userInfo.id;
+
+    const settings = localStorage.getItem(this.searchSettingsKey);
+    if (settings) {
+      this.searchParams = JSON.parse(settings);
+    } else {
+      this.searchParams = new SearchParams(userInfo.cityId);
+    }
   }
 
   private showErrorToast(message: string, error: any) {

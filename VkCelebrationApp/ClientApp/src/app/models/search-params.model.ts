@@ -26,8 +26,6 @@ export class SearchParams {
   universityId?: number;
   canWritePrivateMessage: boolean;
   isOpened: boolean;
-  pageNumber: number;
-  pageSize: number;
 
   constructor(cityId?: number, universityId?: number) {
     this.ageFrom = 18;
@@ -42,7 +40,5 @@ export class SearchParams {
       RelationType.NotMarried,
       RelationType.InActiveSearch
     ];
-    this.pageNumber = 1;
-    this.pageSize = 20;
   }
 }

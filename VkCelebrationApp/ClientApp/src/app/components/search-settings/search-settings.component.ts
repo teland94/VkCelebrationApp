@@ -35,8 +35,8 @@ export class SearchSettingsComponent implements OnInit {
 
   searchSettingsForm: FormGroup;
   sex = Sex;
-  fromAges = new Array<number>();
-  toAges = new Array<number>();
+  fromAges: Array<number>;
+  toAges: Array<number>;
   filteredRelationTypes: any;
 
   cities: VkCollection<VkCity>;
@@ -46,17 +46,8 @@ export class SearchSettingsComponent implements OnInit {
 
   @Input()
   set settings(settings: SearchParams) {
-    this.fromAges = new Array<number>();
-    this.toAges = new Array<number>();
-    const ageFrom = settings ? settings.ageFrom : this.minAge;
-    const ageTo = settings ? settings.ageTo : this.maxAge;
-    for (let i = this.minAge; i <= ageTo; i++) {
-      this.fromAges.push(i);
-    }
-    for (let i = ageFrom; i <= this.maxAge; i++) {
-      this.toAges.push(i);
-    }
     if (settings) {
+      this.loadAges(settings);
       this.searchSettingsForm.patchValue(settings, { emitEvent: false });
       this.setRelationTypes();
     }
@@ -118,6 +109,19 @@ export class SearchSettingsComponent implements OnInit {
     this.settingsResetClick.emit();
   }
 
+  private loadAges(settings?: SearchParams) {
+    this.fromAges = new Array();
+    this.toAges = new Array();
+    const ageFrom = settings ? settings.ageFrom : this.minAge;
+    const ageTo = settings ? settings.ageTo : this.maxAge;
+    for (let i = this.minAge; i <= ageTo; i++) {
+      this.fromAges.push(i);
+    }
+    for (let i = ageFrom; i <= this.maxAge; i++) {
+      this.toAges.push(i);
+    }
+  }
+
   private setRelationTypes() {
     let filterSex = this.searchSettingsForm.get('sex').value;
     if (filterSex === Sex.All) { filterSex = Sex.Male; }
@@ -150,6 +154,7 @@ export class SearchSettingsComponent implements OnInit {
 
   private onChanges() {
     this.searchSettingsForm.valueChanges.subscribe(val => {
+      if (val.canWritePrivateMessage == null) { return; }
       this.settingsChange.emit(val);
     });
   }

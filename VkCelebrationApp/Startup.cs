@@ -1,33 +1,24 @@
 using System;
-using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Swagger;
 using VkCelebrationApp.Autofac;
-using VkCelebrationApp.Helpers;
-using VkCelebrationApp.Configuration;
-using Microsoft.Extensions.Options;
 using AutoMapper;
 using VkCelebrationApp.BLL.Dtos;
 using System.Collections.Generic;
 using VkCelebrationApp.ViewModels;
 using VkCelebrationApp.BLL.MappingProfiles;
+using VkCelebrationApp.Extensions;
 
 namespace VkCelebrationApp
 {
     public class Startup
     {
-        private const string SecretKey = "iNivDmHLpUA22rtsjrdiffahse5illo3sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
-        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -48,51 +39,9 @@ namespace VkCelebrationApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Vk Celebration API", Version = "v1" });
-            });
+            services.AddSwaggerDocumentation();
 
-            var jwtConfiguration = new JwtIssuerConfiguration();
-
-            new ConfigureFromConfigurationOptions<JwtIssuerConfiguration>(Configuration.GetSection("JwtIssuer"))
-                .Configure(jwtConfiguration);
-            jwtConfiguration.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
-
-            services.AddSingleton(jwtConfiguration);
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtConfiguration.Issuer,
-
-                ValidateAudience = true,
-                ValidAudience = jwtConfiguration.Audience,
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _signingKey,
-
-                RequireExpirationTime = false,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(configureOptions =>
-            {
-                configureOptions.ClaimsIssuer = jwtConfiguration.Audience;
-                configureOptions.TokenValidationParameters = tokenValidationParameters;
-                configureOptions.SaveToken = true;
-            });
-
-            // api user claim policy
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
-            });
+            services.AddAppAuth(Configuration);
 
             ApplicationContainer = services.AddAutofac(Configuration);
 
@@ -113,17 +62,13 @@ namespace VkCelebrationApp
                 app.UseHsts();
             }
 
-            app.UseAuthentication();
+            app.UseAppAuth();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vk Celebration API V1");
-            });
+            app.UseSwaggerDocumentation();
 
             loggerFactory.AddFile("logs/logger-info.txt");
             loggerFactory.AddFile("logs/logger.txt", LogLevel.Error);
@@ -165,6 +110,11 @@ namespace VkCelebrationApp
                 cfg.CreateMap<VkUserDto, VkUserViewModel>();
 
                 cfg.CreateMap<UserCongratulationDto, UserCongratulationViewModel>();
+
+                cfg.CreateMap<SearchParamsViewModel, SearchParamsDto>()
+                    .BeforeMap((s, d) => d.CanWritePrivateMessage = true);
+
+                cfg.CreateMap<SearchUserParamsViewModel, SearchParamsDto>();
             });
         }
 

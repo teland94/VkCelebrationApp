@@ -52,7 +52,8 @@ namespace VkCelebrationApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var users = await VkCelebrationService.SearchAsync(GetUserId(), searchViewModel.SearchParams,
+            var users = await VkCelebrationService.SearchAsync(GetUserId(), 
+                Mapper.Map<SearchUserParamsViewModel, SearchParamsDto>(searchViewModel.SearchParams),
                 searchViewModel.PageSize, searchViewModel.PageSize * (searchViewModel.PageNumber - 1));
             var userVms = Mapper.Map<VkCollectionDto<VkUserDto>,
                 VkCollectionViewModel<VkUserViewModel>>(users.Item1);
@@ -78,11 +79,12 @@ namespace VkCelebrationApp.Controllers
         }
 
         [HttpPost("SendRandomUserCongratulation")]
-        public async Task<IActionResult> SendRandomUserCongratulationAsync([FromBody] SearchParamsDto searchParams = null)
+        public async Task<IActionResult> SendRandomUserCongratulationAsync([FromBody] SearchParamsViewModel searchParams)
         {
             try
             {
-                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync(GetUserId(), searchParams ?? new SearchParamsDto());
+                var messageId = await VkCelebrationService.SendRandomUserCongratulationAsync(GetUserId(), 
+                    Mapper.Map<SearchParamsViewModel, SearchParamsDto>(searchParams));
 
                 return Ok(messageId);
             }

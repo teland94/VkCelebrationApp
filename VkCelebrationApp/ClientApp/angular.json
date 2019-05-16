@@ -106,25 +106,27 @@
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist-server",
-            "main": "src/main.ts",
+            "main": "src/main.server.ts",
             "tsConfig": "src/tsconfig.server.json"
           },
           "configurations": {
             "dev": {
-              "optimization": true,
-              "outputHashing": "all",
+              "optimization": false,
+              "outputHashing": "media",
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": true
+              "vendorChunk": false,
+              "bundleDependencies": "all"
             },
             "production": {
-              "optimization": true,
-              "outputHashing": "all",
+              "optimization": false,
+              "outputHashing": "media",
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false
+              "vendorChunk": false,
+              "bundleDependencies": "all"
             }
           }
         }

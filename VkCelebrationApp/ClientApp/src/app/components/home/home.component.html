@@ -71,7 +71,7 @@
       </button>
     </div>
   </div>
-  <div class="col-4">
+  <div *ngIf="searchParams" class="col-4">
     <h3>Параметры поиска</h3>
     <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"
       (settingsSaveClick)="saveSearchSettings()" (settingsResetClick)="resetSearchSettings()"></app-search-settings>
@@ -79,15 +79,17 @@
 </div>
 <ng-template #mobileLayout>
   <accordion [isAnimated]="true">
-    <accordion-group heading="Параметры поиска">
-      <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"></app-search-settings>
+    <accordion-group *ngIf="searchParams" heading="Параметры поиска">
+      <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"
+        (settingsSaveClick)="saveSearchSettings()" (settingsResetClick)="resetSearchSettings()"></app-search-settings>
     </accordion-group>
     <accordion-group *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0"
       heading="Возможные друзья - именинники" [isOpen]="true">
       <app-vk-users [usersCollection]="friendsSuggestionsCollection" (writeCongratulationClick)="sendMessageOpen($event)">
       </app-vk-users>
     </accordion-group>
-    <accordion-group heading="Найденные именинники" [isOpen]="true">
+    <accordion-group *ngIf="usersCollection"
+      [heading]="'Найденные именинники' + ' (Всего: ' + usersCollection.totalCount + ')'" [isOpen]="true">
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>

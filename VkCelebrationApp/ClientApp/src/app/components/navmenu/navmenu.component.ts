@@ -24,10 +24,13 @@ export class NavMenuComponent implements OnInit {
 
     ngOnInit() {
       this.authService.authNavStatus$.subscribe(res => {
-        if (!res) { return; }
-        this.userService.getUserInfo().subscribe((user: VkUser) => {
-          this.currentUser = user;
-        });
+        if (res) {
+          this.userService.getUserInfo().subscribe((user: VkUser) => {
+            this.currentUser = user;
+          });
+        } else {
+          this.currentUser = null;
+        }
       });
     }
 

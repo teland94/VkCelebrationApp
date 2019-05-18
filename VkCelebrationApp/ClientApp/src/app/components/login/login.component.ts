@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Credentials } from 'src/app/models/credentials.model';
 import { ToastrService } from 'ngx-toastr';
@@ -20,6 +19,7 @@ export class LoginComponent implements OnInit {
 
   form: FormGroup;
   login = new FormControl('');
+  password = new FormControl('');
 
   constructor(private readonly router: Router,
     private fb: FormBuilder,
@@ -28,12 +28,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/home'], { replaceUrl: true });
     }
 
     this.form = this.fb.group({
       login: this.login,
-      password: ['']
+      password: this.password
     });
   }
 
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
         .subscribe(
         result => {
           if (result) {
-            this.router.navigate(['/home']);
+            this.router.navigate(['/home'], { replaceUrl: true });
           }
         },
         error => {

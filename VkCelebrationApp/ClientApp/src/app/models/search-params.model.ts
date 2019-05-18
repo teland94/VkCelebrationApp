@@ -16,10 +16,15 @@ export enum RelationType {
   CivilMarriage = 8
 }
 
+export enum LastSeenMode {
+  Online = 0,
+  Last24Hours = 1
+}
+
 export class SearchParams {
   ageFrom: number;
   ageTo: number;
-  online: boolean;
+  lastSeenMode: LastSeenMode;
   sex: Sex;
   relationTypes: Array<RelationType>;
   cityId?: number;
@@ -30,7 +35,7 @@ export class SearchParams {
   constructor(cityId?: number, universityId?: number) {
     this.ageFrom = 18;
     this.ageTo = 28;
-    this.online = true;
+    this.lastSeenMode = LastSeenMode.Online;
     this.sex = Sex.Female;
     this.cityId = cityId;
     this.universityId = universityId;

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { Sex, SearchParams, RelationType } from '../../models/search-params.model';
+import { Sex, SearchParams, RelationType, LastSeenMode } from '../../models/search-params.model';
 import { VkDatabaseService } from 'src/app/services/vk-database.service';
 import { distinctUntilChanged, debounceTime, switchMap } from 'rxjs/operators';
 import { VkCollection } from 'src/app/models/vk-collection.model';
@@ -35,6 +35,7 @@ export class SearchSettingsComponent implements OnInit {
 
   searchSettingsForm: FormGroup;
   sex = Sex;
+  lastSeenMode = LastSeenMode;
   fromAges: Array<number>;
   toAges: Array<number>;
   filteredRelationTypes: any;
@@ -62,11 +63,11 @@ export class SearchSettingsComponent implements OnInit {
     this.searchSettingsForm = this.fb.group({
       ageFrom: new FormControl(),
       ageTo: new FormControl(),
-      online: new FormControl(),
+      lastSeenMode: new FormControl(),
       sex: new FormControl(),
       relationTypes: new FormControl(),
       cityId: new FormControl(),
-      universityId: new FormControl({ value: '', disabled: true }),
+      universityId: new FormControl({ value: null, disabled: true }),
       canWritePrivateMessage: new FormControl(),
       isOpened: new FormControl(),
     });
@@ -112,8 +113,8 @@ export class SearchSettingsComponent implements OnInit {
   private loadAges(settings?: SearchParams) {
     this.fromAges = new Array();
     this.toAges = new Array();
-    const ageFrom = settings ? settings.ageFrom : this.minAge;
-    const ageTo = settings ? settings.ageTo : this.maxAge;
+    const ageFrom = settings && settings.ageFrom ? settings.ageFrom : this.minAge;
+    const ageTo = settings && settings.ageTo ? settings.ageTo : this.maxAge;
     for (let i = this.minAge; i <= ageTo; i++) {
       this.fromAges.push(i);
     }

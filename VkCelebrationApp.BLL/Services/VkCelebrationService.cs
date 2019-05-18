@@ -130,9 +130,9 @@ namespace VkCelebrationApp.BLL.Services
                 City = (int?)searchParams.CityId,
                 University = (int?)searchParams.UniversityId,
                 Sex = (Sex)searchParams.Sex,
-                Online = searchParams.Online,
+                Online = searchParams.LastSeenMode == LastSeenMode.Online,
                 HasPhoto = true,
-                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 |
+                Fields = ProfileFields.Photo100 | ProfileFields.PhotoMax | ProfileFields.Photo50 | ProfileFields.LastSeen |
                          ProfileFields.CanWritePrivateMessage | ProfileFields.BirthDate | ProfileFields.Relation,
                 Count = 1000,
                 //Offset = offset
@@ -223,6 +223,12 @@ namespace VkCelebrationApp.BLL.Services
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users, SearchParamsDto searchParam)
         {
             var usersRes = users.AsEnumerable();
+
+            if (searchParam.LastSeenMode == LastSeenMode.Last24Hours)
+            {
+                usersRes = usersRes.Where(u => u.LastSeen.Time > DateTime.Now.AddDays(-1));
+            }
+
             if (searchParam.CanWritePrivateMessage)
             {
                 usersRes = usersRes.Where(u => u.CanWritePrivateMessage);

@@ -10,13 +10,20 @@
     </div>
   </div>
   <div class="form-group">
-    <div class="custom-control custom-checkbox">
-      <input type="checkbox" formControlName="online" class="custom-control-input" id="online" name="online">
-      <label class="custom-control-label" for="online">Сейчас на сайте</label>
+    <label for="online">Последний визит</label>
+    <div class="custom-control custom-radio">
+      <input type="radio" class="custom-control-input" id="online" name="lastSeenMode"
+        formControlName="lastSeenMode" [value]="lastSeenMode.Online">
+      <label class="custom-control-label" for="online">Онлайн</label>
+    </div>
+    <div class="custom-control custom-radio">
+      <input type="radio" class="custom-control-input" id="last24Hours" name="lastSeenMode"
+        formControlName="lastSeenMode" [value]="lastSeenMode.Last24Hours">
+      <label class="custom-control-label" for="last24Hours">Последние сутки</label>
     </div>
   </div>
   <div class="form-group">
-    <label for="from">Пол</label>
+    <label for="woman">Пол</label>
     <div class="custom-control custom-radio">
       <input type="radio" class="custom-control-input" id="woman" name="sex"
         formControlName="sex" [value]="sex.Female">

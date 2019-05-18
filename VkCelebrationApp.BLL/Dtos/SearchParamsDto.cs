@@ -8,9 +8,9 @@ namespace VkCelebrationApp.BLL.Dtos
 
         public ushort? AgeTo { get; set; }
 
-        public bool Online { get; set; }
+        public LastSeenMode LastSeenMode { get; set; }
 
-        public ushort Sex { get; set; }
+        public SexDto Sex { get; set; }
 
         public IEnumerable<RelationTypeDto> RelationTypes { get; set; }
 
@@ -21,6 +21,12 @@ namespace VkCelebrationApp.BLL.Dtos
         public bool CanWritePrivateMessage { get; set; }
 
         public bool IsOpened { get; set; }
+    }
+
+    public enum LastSeenMode
+    {
+        Online = 0,
+        Last24Hours = 1
     }
 
     public enum RelationTypeDto
@@ -34,5 +40,12 @@ namespace VkCelebrationApp.BLL.Dtos
         InActiveSearch = 6,
         Amorous = 7,
         CivilMarriage = 8
+    }
+
+    public enum SexDto
+    {
+        All = 0,
+        Female = 1,
+        Male = 2
     }
 }

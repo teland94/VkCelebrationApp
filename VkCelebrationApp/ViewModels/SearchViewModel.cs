@@ -23,9 +23,9 @@ namespace VkCelebrationApp.ViewModels
 
         public ushort? AgeTo { get; set; }
 
-        public bool Online { get; set; }
+        public LastSeenMode LastSeenMode { get; set; }
 
-        public ushort Sex { get; set; }
+        public SexDto Sex { get; set; }
 
         public IEnumerable<RelationTypeDto> RelationTypes { get; set; }
 

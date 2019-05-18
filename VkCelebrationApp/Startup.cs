@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using VkCelebrationApp.ViewModels;
 using VkCelebrationApp.BLL.MappingProfiles;
 using VkCelebrationApp.Extensions;
+using VkCelebrationApp.Filters;
 
 namespace VkCelebrationApp
 {
@@ -31,7 +32,11 @@ namespace VkCelebrationApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+                options.Filters.Add(typeof(CustomExceptionFilterAttribute));
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

@@ -49,9 +49,6 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
     await this.loadSearchSettings();
 
-    // this.loadFriendsSuggestions();
-    this.seachUsers();
-
     this.typeahead
       .pipe(
         distinctUntilChanged(),
@@ -140,7 +137,7 @@ export class HomeComponent implements OnInit {
         this.congratulationModal.hide();
         this.toastrService.success('Поздравление успешно отправлено');
         this.seachUsers();
-        this.loadFriendsSuggestions();
+        // this.loadFriendsSuggestions();
       }, err => {
         this.loading = false;
         this.showErrorToast('Ошибка отправки поздравления', err);

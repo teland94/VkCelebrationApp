@@ -12,6 +12,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { NgxLoadingModule } from 'ngx-loading';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { routing } from './app.routing';
 
 import { defineLocale } from 'ngx-bootstrap/chronos';
@@ -40,6 +41,7 @@ import { UtilitiesService } from './services/utilities.service';
 import { AuthGuard } from './guards/auth.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -71,6 +73,7 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     AccordionModule.forRoot(),
     CarouselModule.forRoot(),
     PaginationModule.forRoot(),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     routing
   ],
   providers: [

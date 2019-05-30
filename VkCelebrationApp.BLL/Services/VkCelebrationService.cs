@@ -169,6 +169,8 @@ namespace VkCelebrationApp.BLL.Services
                 });
                 await DbContext.SaveChangesAsync();
 
+                await VkApi.Messages.DeleteAsync(new[] { (ulong)messageId });
+
                 return messageId;
             }
 

@@ -26,4 +26,8 @@ export class VkCelebrationService {
     sendCongratulation(userCongratulation: UserCongratulation) {
         return this.dataService.post(`${this.url}/sendCongratulation`, userCongratulation);
     }
+
+    sendRandomCongratulation(vkUserId: number) {
+      return this.dataService.post(`${this.url}/sendRandomCongratulation`, { vkUserId });
+    }
 }

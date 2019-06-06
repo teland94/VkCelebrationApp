@@ -1,5 +1,4 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { VkCollection } from '../../models/vk-collection.model';
 import { VkUser } from '../../models/vk-user.model';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../services/user.service';
@@ -20,8 +19,10 @@ export class VkUsersComponent implements OnInit {
   @Input() usersCollection: PagedVkCollection<VkUser>;
   @Input() currentPage: number;
   @Input() totalItems: number;
+  @Input() sendRandomCongratulationEnabled: boolean;
 
   @Output() writeCongratulationClick = new EventEmitter<VkUser>();
+  @Output() sendRandomCongratulationClick = new EventEmitter<VkUser>();
   @Output() currentPageChange = new EventEmitter();
   @Output() pageChanged = new EventEmitter();
 
@@ -35,8 +36,12 @@ export class VkUsersComponent implements OnInit {
   ngOnInit() {
   }
 
-  writeCongratulation(user) {
+  writeCongratulation(user: VkUser) {
     this.writeCongratulationClick.emit(user);
+  }
+
+  sendRandomCongratulation(user: VkUser) {
+    this.sendRandomCongratulationClick.emit(user);
   }
 
   getImageData(url: string) {

@@ -95,5 +95,10 @@ namespace VkCelebrationApp.BLL.Services
 
             return Mapper.Map<IEnumerable<CongratulationTemplate>, IEnumerable<CongratulationTemplateDto>>(templates);
         }
+
+        public async Task<bool> CongratulationTemplatesExistsAsync(int userId)
+        {
+            return await DbContext.CongratulationTemplates.AnyAsync(t => t.CreatedById == userId);
+        }
     }
 }

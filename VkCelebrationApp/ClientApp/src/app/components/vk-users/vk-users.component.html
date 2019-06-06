@@ -8,15 +8,21 @@
         <a [href]="baseUrl + user.id" target="_blank">{{user.firstName}} {{user.lastName}}</a>
       </h5>
       <div *ngIf="isValidDate(user.birthDate)" class="mb-1">Возраст: {{user.age}}</div>
-      <div *ngIf="!isValidDate(user.birthDate)" class="mb-1">
-        <button *ngIf="!user.age" class="btn-sm btn-light" (click)="detectAge(user.id, user.firstName, user.lastName)">
-          <span class="fa fa-user"></span>&nbsp;Определить возраст
+      <div *ngIf="!isValidDate(user.birthDate) && user.age" class="text-info mb-1">Возраст: {{user.age}}</div>
+      <div class="mb-1">
+        <button [disabled]="isValidDate(user.birthDate) || user.age" class="btn btn-info" tooltip="Определить возраст"
+          (click)="detectAge(user.id, user.firstName, user.lastName)">
+          <span class="fa fa-user"></span>
         </button>
-        <i *ngIf="user.age" class="text-info">Возраст: {{user.age}}</i>
+        <button *ngIf="user.canWritePrivateMessage" class="btn btn-primary ml-1" tooltip="Написать поздравление"
+          (click)="writeCongratulation(user)">
+          <i class="fa fa-pencil"></i>
+        </button>
+        <button [disabled]="!sendRandomCongratulationEnabled" *ngIf="user.canWritePrivateMessage" class="btn btn-secondary ml-1" tooltip="Поздравить"
+          (click)="sendRandomCongratulation(user)">
+          <i class="fa fa-random"></i>
+        </button>
       </div>
-      <button *ngIf="user.canWritePrivateMessage" class="btn-sm btn-primary" (click)="writeCongratulation(user)">
-        <i class="fa fa-pencil"></i>&nbsp;Написать поздравление
-      </button>
     </div>
   </li>
 </ul>

@@ -78,6 +78,26 @@ namespace VkCelebrationApp.Controllers
             return CreatedAtAction("SendCongratulationAsync", new { id = messageId });
         }
 
+        [HttpPost("SendRandomCongratulation")]
+        public async Task<IActionResult> SendRandomUserCongratulationAsync([FromBody] SendRandomCongratulationViewModel sendRandomCongratulationViewModel)
+        {
+            try
+            {
+                var messageId = await VkCelebrationService.SendRandomCongratulationAsync(GetUserId(), sendRandomCongratulationViewModel.VkUserId);
+
+                return Ok(messageId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("SendRandomUserCongratulation")]
         public async Task<IActionResult> SendRandomUserCongratulationAsync([FromBody] SearchParamsViewModel searchParams)
         {

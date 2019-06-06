@@ -101,5 +101,16 @@ namespace VkCelebrationApp.Controllers
 
             return Ok(templates);
         }
+
+        [HttpGet("CongratulationTemplatesExists")]
+        public async Task<IActionResult> CongratulationTemplatesExists()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await CongratulationTemplatesService.CongratulationTemplatesExistsAsync(GetUserId()));
+        }
     }
 }

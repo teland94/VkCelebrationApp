@@ -7,7 +7,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
-import { BsDatepickerModule, CarouselModule, CarouselConfig, PaginationModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, PaginationModule, TooltipModule } from 'ngx-bootstrap';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { NgxLoadingModule } from 'ngx-loading';
 import { NgProgressModule } from '@ngx-progressbar/core';
@@ -71,8 +71,8 @@ import { environment } from '../environments/environment';
     NgProgressModule,
     NgProgressHttpModule,
     AccordionModule.forRoot(),
-    CarouselModule.forRoot(),
     PaginationModule.forRoot(),
+    TooltipModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     routing
   ],
@@ -86,7 +86,6 @@ import { environment } from '../environments/environment';
     UserCongratulationsService,
     VkDatabaseService,
     UtilitiesService,
-    { provide: CarouselConfig, useValue: { interval: 0 } },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true }
   ],

@@ -34,6 +34,7 @@ export class HomeComponent implements OnInit {
   typeahead = new EventEmitter<string>();
   isModalShown = false;
   isUserInfoModalShown = false;
+  isCongratulationTemplatesExists = false;
 
   messageText: string;
   template: string;
@@ -61,6 +62,10 @@ export class HomeComponent implements OnInit {
         this.congratulationTemplates = [];
         this.showErrorToast('Ошибка загрузки заготовок поздравлений', err);
       });
+
+    this.congratulationTemplatesService.congratulationTemplatesExists().subscribe((data: boolean) => {
+      this.isCongratulationTemplatesExists = data;
+    });
   }
 
   loadFriendsSuggestions() {
@@ -142,6 +147,20 @@ export class HomeComponent implements OnInit {
         this.loading = false;
         this.showErrorToast('Ошибка отправки поздравления', err);
       });
+  }
+
+  sendRandomCongratulation(user: VkUser) {
+    this.vkCelebrationService.sendRandomCongratulation(user.id).subscribe((data: number) => {
+      this.toastrService.success('Поздравление успешно отправлено');
+      this.seachUsers();
+    }, err => {
+      this.loading = false;
+      if (err.status === 404) {
+        this.showErrorToast('Отсутствуют заготовки поздравлений', err);
+      } else {
+        this.showErrorToast('Ошибка отправки поздравления', err);
+      }
+    });
   }
 
   onHidden(event: any) {

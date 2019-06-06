@@ -177,49 +177,57 @@ namespace VkCelebrationApp.BLL.Services
             throw new ArgumentNullException("userCongratulationDto.Text");
         }
 
+        public async Task<long> SendRandomCongratulationAsync(int userId, long vkUserId)
+        {
+            var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync(userId);
+            if (template != null)
+            {
+                return await SendCongratulationAsync(new UserCongratulationDto
+                {
+                    VkUserId = vkUserId,
+                    Text = template.Text
+                }, userId);
+            }
+            throw new InvalidOperationException("Random Template not found");
+        }
+
         public async Task<long> SendRandomUserCongratulationAsync(int userId, SearchParamsDto searchParams)
         {
             var searchUsers = await SearchAsync(userId, searchParams);
 
-            //searchUsers = await GetCustomFilteredUsersByFaces(searchUsers);
-
-            var user = searchUsers.Item1.PickRandom();
-            if (user != null)
+            VkUserDto user;
+            var users = new List<VkUserDto>(searchUsers.Item1);
+            bool isInvalid = false;
+            do
             {
-                var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync(userId);
-                if (template != null)
-                {
-                    return await SendCongratulationAsync(new UserCongratulationDto
-                    {
-                        VkUserId = user.Id,
-                        Text = template.Text
-                    }, userId);
-                }
-                throw new InvalidOperationException("Random Template not found");
+                user = users.PickRandom();
+                if (user == null) throw new InvalidOperationException("Random User not found");
+                users.Remove(user);
+                if (isInvalid) await Task.Delay(4000);
             }
-            throw new InvalidOperationException("Random User not found");
+            while (isInvalid = !await ValidatePhoto(user.Photo100));
+
+            var template = await CongratulationTemplatesService.GetRandomCongratulationTemplateAsync(userId);
+            if (template != null)
+            {
+                return await SendCongratulationAsync(new UserCongratulationDto
+                {
+                    VkUserId = user.Id,
+                    Text = template.Text
+                }, userId);
+            }
+            throw new InvalidOperationException("Random Template not found");
         }
 
-        private async Task<VkCollectionDto<VkUserDto>> GetCustomFilteredUsersByFaces(VkCollectionDto<VkUserDto> users)
+        private async Task<bool> ValidatePhoto(Uri photo)
         {
-            var vkUsers = new List<VkUserDto>();
-
-            foreach (var user in users)
+            var faces = await FaceApiService.DetectAsync(photo);
+            if (faces != null && faces.Count > 1)
             {
-                var faces = await FaceApiService.DetectAsync(user.PhotoMax);
-                if (faces != null)
-                {
-                    await Task.Delay(4000);
-                    if (faces.Any(f => f.FaceAttributes.Gender == "male")
-                        && faces.Any(f => f.FaceAttributes.Gender == "female"))
-                    {
-                        continue;
-                    }
-                }
-                vkUsers.Add(user);
+                return false;
             }
 
-            return vkUsers.ToVkCollectionDto(users.TotalCount);
+            return true;
         }
 
         private VkCollection<User> GetCustomFilteredUsers(VkCollection<User> users, SearchParamsDto searchParam)

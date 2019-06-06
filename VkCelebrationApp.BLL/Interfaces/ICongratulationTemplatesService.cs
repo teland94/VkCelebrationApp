@@ -21,5 +21,7 @@ namespace VkCelebrationApp.BLL.Interfaces
         Task<IEnumerable<CongratulationTemplateDto>> GetRandomCongratulationTemplatesAsync(int userId, int? count = 5);
 
         Task UpdateAsync(CongratulationTemplateDto item, int userId);
+
+        Task<bool> CongratulationTemplatesExistsAsync(int userId);
     }
 }

@@ -64,6 +64,7 @@
       <h3>Найденные именинники</h3>
       <h4>Всего: {{usersCollection.totalCount}}</h4>
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
+        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>
       <button class="btn btn-primary" (click)="seachUsers()">
@@ -91,6 +92,7 @@
     <accordion-group *ngIf="usersCollection"
       [heading]="'Найденные именинники' + ' (Всего: ' + usersCollection.totalCount + ')'" [isOpen]="true">
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
+        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>
     </accordion-group>

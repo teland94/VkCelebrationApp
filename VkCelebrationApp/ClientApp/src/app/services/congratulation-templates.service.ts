@@ -37,4 +37,8 @@ export class CongratulationTemplatesService {
             maxItems: maxItems
         });
     }
+
+    congratulationTemplatesExists() {
+      return this.dataService.get(`${this.url}/congratulationTemplatesExists`);
+    }
 }

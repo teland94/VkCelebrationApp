@@ -17,6 +17,8 @@ namespace VkCelebrationApp.BLL.Interfaces
 
         Task<long> SendCongratulationAsync(UserCongratulationDto userCongratulationDto, int userId);
 
+        Task<long> SendRandomCongratulationAsync(int userId, long vkUserId);
+
         Task<long> SendRandomUserCongratulationAsync(int userId, SearchParamsDto searchParams);
     }
 }

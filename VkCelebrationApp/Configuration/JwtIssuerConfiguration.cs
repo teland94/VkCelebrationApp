@@ -39,7 +39,7 @@ namespace VkCelebrationApp.Configuration
         /// <summary>
         /// Set the timespan the token will be valid for (default is 120 min)
         /// </summary>
-        public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(1440);
+        public TimeSpan ValidFor { get; set; } = TimeSpan.FromDays(30);
 
 
 

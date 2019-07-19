@@ -28,8 +28,7 @@ export class HomeComponent implements OnInit {
   searchParams: SearchParams;
   pageNumber: number;
 
-  @ViewChild(ModalDirective) congratulationModal: ModalDirective;
-  @ViewChild(ModalDirective) userInfoModal: ModalDirective;
+  @ViewChild(ModalDirective, { static: false }) congratulationModal: ModalDirective;
 
   typeahead = new EventEmitter<string>();
   isModalShown = false;
@@ -150,7 +149,9 @@ export class HomeComponent implements OnInit {
   }
 
   sendRandomCongratulation(user: VkUser) {
+    this.loading = true;
     this.vkCelebrationService.sendRandomCongratulation(user.id).subscribe((data: number) => {
+      this.loading = false;
       this.toastrService.success('Поздравление успешно отправлено');
       this.seachUsers();
     }, err => {

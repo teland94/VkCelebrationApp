@@ -19,6 +19,7 @@ export class VkUsersComponent implements OnInit {
   @Input() usersCollection: PagedVkCollection<VkUser>;
   @Input() currentPage: number;
   @Input() totalItems: number;
+  @Input() writeCongratulationEnabled: boolean;
   @Input() sendRandomCongratulationEnabled: boolean;
 
   @Output() writeCongratulationClick = new EventEmitter<VkUser>();

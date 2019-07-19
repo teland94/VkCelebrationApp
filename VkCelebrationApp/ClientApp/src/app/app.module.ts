@@ -9,7 +9,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ClipboardModule } from 'ngx-clipboard';
 import { BsDatepickerModule, PaginationModule, TooltipModule } from 'ngx-bootstrap';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
-import { NgxLoadingModule } from 'ngx-loading';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -67,7 +66,6 @@ import { environment } from '../environments/environment';
     NgSelectModule,
     ClipboardModule,
     BsDatepickerModule.forRoot(),
-    NgxLoadingModule,
     NgProgressModule,
     NgProgressHttpModule,
     AccordionModule.forRoot(),

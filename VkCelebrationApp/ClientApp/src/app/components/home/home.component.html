@@ -1,7 +1,6 @@
 ﻿<div bsModal #congratulationModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" *ngIf="isModalShown"
   [config]="{ show: true }" (onHidden)="onHidden()">
   <div class="modal-dialog modal-lg">
-    <ngx-loading [show]="loading"></ngx-loading>
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title pull-left">Написать поздравление</h4>
@@ -37,11 +36,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" id="btn-save" class="btn btn-info" (click)="saveCongratulationTemplate()"
-          [disabled]="!messageTextRef.valid">
+          [disabled]="!messageTextRef.valid || loading">
           <span class="fa fa-save"></span>&nbsp;Сохранить
         </button>
         <button type="button" class="btn btn-primary" (click)="sendCongratulation()"
-          [disabled]="!messageTextRef.valid && !template">
+          [disabled]="(!messageTextRef.valid && !template) || loading">
           <span class="fa fa-send"></span>&nbsp;Отправить
         </button>
         <button type="button" class="btn btn-secondary" (click)="congratulationModal.hide()">
@@ -64,7 +63,8 @@
       <h3>Найденные именинники</h3>
       <h4>Всего: {{usersCollection.totalCount}}</h4>
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
-        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
+        [writeCongratulationEnabled]="!loading"
+        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists && !loading" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>
       <button class="btn btn-primary" (click)="seachUsers()">
@@ -92,7 +92,8 @@
     <accordion-group *ngIf="usersCollection"
       [heading]="'Найденные именинники' + ' (Всего: ' + usersCollection.totalCount + ')'" [isOpen]="true">
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
-        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
+        [writeCongratulationEnabled]="!loading"
+        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists && !loading" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>
     </accordion-group>

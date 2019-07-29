@@ -4,9 +4,19 @@
       <h3>Количество: {{userCongratulations.length}}</h3>
     </div>
     <div class="col-md-4">
-      <input class="form-control pull-right" placeholder="Выберите дату" [minDate]="minDate" [maxDate]="maxDate"
-        #dp="bsDatepicker" bsDatepicker [bsValue]="currentDate" [bsConfig]="{ containerClass: 'theme-dark-blue' }"
-        (bsValueChange)="dateChanged($event)">
+      <div class="input-group">
+        <input [disabled]="loading" class="form-control pull-right" placeholder="Выберите дату" [minDate]="minDate" [maxDate]="maxDate"
+          #dp="bsDatepicker" bsDatepicker [bsValue]="currentDate" [bsConfig]="{ containerClass: 'theme-dark-blue' }"
+          (bsValueChange)="dateChanged($event)">
+        <div class="input-group-append">
+          <button [disabled]="loading" class="btn btn-outline-secondary" (click)="export()" tooltip="Экспортировать">
+            <i class="fa fa fa-file-text-o"></i>
+          </button>
+          <button [disabled]="loading" class="btn btn-outline-secondary" (click)="exportAll()" tooltip="Экспортировать все">
+            <i class="fa fa-file-excel-o"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">

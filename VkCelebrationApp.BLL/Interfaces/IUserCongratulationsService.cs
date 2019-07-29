@@ -10,5 +10,7 @@ namespace VkCelebrationApp.BLL.Interfaces
         Task<VkCollectionDto<VkUserDto>> GetNoCongratulatedUsersAsync(VkCollectionDto<VkUserDto> users, int userId);
 
         Task<IEnumerable<UserCongratulationDto>> GetUserCongratulationsAsync(int userId, DateTime? congratulationDate = null, int? timezoneOffset = null);
+
+        Task<byte[]> GetUserCongratulationsExcelDataAsync(int userId, int timezoneOffset, DateTime? congratulationDate = null);
     }
 }

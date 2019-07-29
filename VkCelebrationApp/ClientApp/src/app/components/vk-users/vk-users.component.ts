@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PagedVkCollection } from 'src/app/models/paged-vk-collection';
 import { PaginationConfig } from 'ngx-bootstrap';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-vk-users',
@@ -19,11 +20,12 @@ export class VkUsersComponent implements OnInit {
   @Input() usersCollection: PagedVkCollection<VkUser>;
   @Input() currentPage: number;
   @Input() totalItems: number;
-  @Input() writeCongratulationEnabled: boolean;
+  @Input() disabled: boolean;
   @Input() sendRandomCongratulationEnabled: boolean;
 
   @Output() writeCongratulationClick = new EventEmitter<VkUser>();
   @Output() sendRandomCongratulationClick = new EventEmitter<VkUser>();
+  @Output() userBlacklisted = new EventEmitter<VkUser>();
   @Output() currentPageChange = new EventEmitter();
   @Output() pageChanged = new EventEmitter();
 
@@ -45,6 +47,19 @@ export class VkUsersComponent implements OnInit {
     this.sendRandomCongratulationClick.emit(user);
   }
 
+  addToIgnoreList(user: VkUser) {
+    this.disabled = true;
+    this.userService.addToIgnoreList(user.id)
+      .pipe(finalize(() => this.disabled = false))
+      .subscribe(data => {
+        this.toastrService.success('Пользователь успешно заблокирован');
+        this.userBlacklisted.emit(user);
+      }, err => {
+        this.toastrService.error('Ошибка блокировки пользователя', 'Ошибка');
+        console.log(err);
+      });
+  }
+
   getImageData(url: string) {
     return this.utilitiesService.getImageData(url);
   }
@@ -55,17 +70,20 @@ export class VkUsersComponent implements OnInit {
   }
 
   detectAge(userId: number, firstName: string, lastName: string) {
-    this.userService.detectAge(userId, firstName, lastName).subscribe((data: number) => {
-      const user = this.usersCollection.vkCollection.items.find(u => u.id === userId);
-      if (user) {
-        user.age = data;
-      }
+    this.disabled = true;
+    this.userService.detectAge(userId, firstName, lastName)
+      .pipe(finalize(() => this.disabled = false))
+      .subscribe((data: number) => {
+        const user = this.usersCollection.vkCollection.items.find(u => u.id === userId);
+        if (user) {
+          user.age = data;
+        }
 
-      this.toastrService.success('Возраст успешно определен');
-    }, err => {
-      this.toastrService.error('Ошибка определения возраста', 'Ошибка');
-      console.log(err);
-    });
+        this.toastrService.success('Возраст успешно определен');
+      }, err => {
+        this.toastrService.error('Ошибка определения возраста', 'Ошибка');
+        console.log(err);
+      });
   }
 
   isValidDate(dateStr: string) {

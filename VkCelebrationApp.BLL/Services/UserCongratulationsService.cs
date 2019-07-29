@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
+using VkCelebrationApp.BLL.Helpers;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.DAL.EF;
 using VkCelebrationApp.DAL.Entities;
@@ -42,17 +44,36 @@ namespace VkCelebrationApp.BLL.Services
 
             var userCongratulationDtos = Mapper.Map<IEnumerable<UserCongratulation>, IEnumerable<UserCongratulationDto>>(userCongratulations);
 
-            var ids = userCongratulations.Select(uc => uc.VkUserId);
-            var vkUsers = VkApi.Users.Get(ids,
-                ProfileFields.Photo100 | ProfileFields.PhotoMaxOrig)
-                .ToDictionary(u => u.Id, u => u);
+            var ids = userCongratulations.Select(uc => uc.VkUserId).ToList();
+            var vkUsers = await GetVkUsers(ids);
 
-            foreach(var uc in userCongratulationDtos)
+            foreach (var uc in userCongratulationDtos)
             {
                 uc.VkUser = Mapper.Map<VkNet.Model.User, VkUserDto>(vkUsers[uc.VkUserId]);
             }
 
             return userCongratulationDtos;
+        }
+
+        public async Task<byte[]> GetUserCongratulationsExcelDataAsync(int userId, int timezoneOffset, DateTime? congratulationDate = null)
+        {
+            var userCongrats = await GetUserCongratulationsAsync(userId, congratulationDate, timezoneOffset);
+
+            var userCongratsExcel = new List<ExportUserCongratulationDto>();
+            foreach (var uc in userCongrats)
+            {
+                var congratExcel = new ExportUserCongratulationDto
+                {
+                    VkUserId = uc.VkUserId,
+                    Name = $"{uc.VkUser.FirstName} {uc.VkUser.LastName}",
+                    Photo = new Bitmap(await ImageHelpers.DownloadStreamAsync(uc.VkUser.Photo100)),
+                    Text = uc.Text,
+                    CongratulationDate = uc.CongratulationDate.AddHours(timezoneOffset)
+                };
+                userCongratsExcel.Add(congratExcel);
+            }
+
+            return ExcelHelpers.GetExportFile(userCongratsExcel, "Поздравленные");
         }
 
         private async Task<IEnumerable<UserCongratulation>> GetUserCongratulationsFiltered(int userId, DateTime? congratulationDate, int? timezoneOffset)
@@ -67,6 +88,23 @@ namespace VkCelebrationApp.BLL.Services
             userCongratulations = userCongratulations.OrderByDescending(uc => uc.CongratulationDate);
 
             return await userCongratulations.ToListAsync();
+        }
+
+        private async Task<Dictionary<long, VkNet.Model.User>> GetVkUsers(IList<long> ids)
+        {
+            const int getUsersLimitCount = 900;
+            var iterations = Math.Ceiling(ids.Count / (decimal)getUsersLimitCount);
+            var vkUsers = new Dictionary<long, VkNet.Model.User>();
+            for (var i = 0; i < iterations; i++)
+            {
+                var iteratedIds = ids.Skip(getUsersLimitCount * i).Take(getUsersLimitCount);
+                var users = (await VkApi.Users.GetAsync(iteratedIds,
+                    ProfileFields.Photo100 | ProfileFields.PhotoMaxOrig))
+                    .ToDictionary(u => u.Id, u => u);
+                vkUsers.AddRange(users);
+            }
+
+            return vkUsers;
         }
     }
 }

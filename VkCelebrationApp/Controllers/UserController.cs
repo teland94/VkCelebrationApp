@@ -51,5 +51,31 @@ namespace VkCelebrationApp.Controllers
 
             return Ok(age);
         }
+
+        [HttpPost("AddToIngoreList")]
+        public async Task<IActionResult> AddToIngoreList([FromBody] AddToIngoreListViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await UserService.AddToIngoreListAsync(vm.VkUserId, GetUserId());
+
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteFromIgnoreList")]
+        public async Task<IActionResult> DeleteFromIgnoreList(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await UserService.DeleteFromIngoreListAsync(id);
+
+            return NoContent();
+        }
     }
 }

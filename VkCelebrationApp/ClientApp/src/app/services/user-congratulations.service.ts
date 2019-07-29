@@ -5,23 +5,35 @@ import { UserCongratulation } from '../models/user-congratulation.model';
 
 @Injectable()
 export class UserCongratulationsService {
-    private url = 'UserCongratulations';
+  private url = 'UserCongratulations';
 
-    constructor(private readonly dataService: DataService) {
+  constructor(private readonly dataService: DataService) {
 
-    }
+  }
 
-    getUserCongratulations(congratulationDate: Date) {
-      const timezoneOffset = -(congratulationDate.getTimezoneOffset() / 60);
-        return this.dataService.post(this.url + '/getUserCongratulations', {
-            congratulationDate: congratulationDate,
-            timezoneOffset: timezoneOffset
-        }).pipe(map((data: UserCongratulation[]) => {
-          data.forEach(uc => {
-            uc.congratulationDate = new Date(uc.congratulationDate);
-            uc.congratulationDate.setHours(uc.congratulationDate.getHours() + timezoneOffset);
-          });
-          return data;
-        }));
-    }
+  getUserCongratulations(congratulationDate: Date) {
+    const timezoneOffset = this.getTimezoneOffset();
+    return this.dataService.post(this.url + '/getUserCongratulations', {
+      congratulationDate,
+      timezoneOffset
+    }).pipe(map((data: UserCongratulation[]) => {
+      data.forEach(uc => {
+        uc.congratulationDate = new Date(uc.congratulationDate);
+        uc.congratulationDate.setHours(uc.congratulationDate.getHours() + timezoneOffset);
+      });
+      return data;
+    }));
+  }
+
+  getUserCongratulationsExcelData(congratulationDate: Date = null) {
+    const timezoneOffset = this.getTimezoneOffset();
+    return this.dataService.post(this.url + '/getUserCongratulationsExcelData', {
+      congratulationDate,
+      timezoneOffset
+    }, true);
+  }
+
+  private getTimezoneOffset() {
+    return -(new Date().getTimezoneOffset() / 60);
+  }
 }

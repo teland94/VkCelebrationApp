@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VkCelebrationApp.Helpers;
+using VkCelebrationApp.BLL.Helpers;
 
 namespace VkCelebrationApp.Controllers
 {
@@ -14,7 +14,7 @@ namespace VkCelebrationApp.Controllers
         [HttpGet(nameof(GetImageData))]
         public async Task<IActionResult> GetImageData(string url)
         {
-            return File(await ImageHelpers.Download(new Uri(url)), "image/jpeg");
+            return File(await ImageHelpers.DownloadAsync(new Uri(url)), "image/jpeg");
         }
     }
 }

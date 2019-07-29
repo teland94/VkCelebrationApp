@@ -52,19 +52,13 @@
 </div>
 <div class="row" *ngIf="!isMobileDevice(); else mobileLayout">
   <div class="col-8">
-    <div *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0">
-      <h3>Возможные друзья - именинники</h3>
-      <h4>Всего: {{friendsSuggestionsCollection.totalCount}}</h4>
-      <app-vk-users class="mt-3" [usersCollection]="friendsSuggestionsCollection" (writeCongratulationClick)="sendMessageOpen($event)">
-      </app-vk-users>
-      <hr />
-    </div>
     <div *ngIf="usersCollection">
       <h3>Найденные именинники</h3>
       <h4>Всего: {{usersCollection.totalCount}}</h4>
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
-        [writeCongratulationEnabled]="!loading"
-        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists && !loading" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
+        [disabled]="loading"
+        (userBlacklisted)="userBlacklisted($event)"
+        [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>
       <button class="btn btn-primary" (click)="seachUsers()">
@@ -84,15 +78,11 @@
       <app-search-settings [(settings)]="searchParams" (settingsChange)="settingsChanged()"
         (settingsSaveClick)="saveSearchSettings()" (settingsResetClick)="resetSearchSettings()"></app-search-settings>
     </accordion-group>
-    <accordion-group *ngIf="friendsSuggestionsCollection && friendsSuggestionsCollection.totalCount > 0"
-      heading="Возможные друзья - именинники" [isOpen]="true">
-      <app-vk-users [usersCollection]="friendsSuggestionsCollection" (writeCongratulationClick)="sendMessageOpen($event)">
-      </app-vk-users>
-    </accordion-group>
     <accordion-group *ngIf="usersCollection"
       [heading]="'Найденные именинники' + ' (Всего: ' + usersCollection.totalCount + ')'" [isOpen]="true">
       <app-vk-users [usersCollection]="usersCollection" (writeCongratulationClick)="sendMessageOpen($event)"
-        [writeCongratulationEnabled]="!loading"
+        [disabled]="loading"
+        (userBlacklisted)="userBlacklisted($event)"
         [sendRandomCongratulationEnabled]="isCongratulationTemplatesExists && !loading" (sendRandomCongratulationClick)="sendRandomCongratulation($event)"
         [totalItems]="usersCollection.totalCount" [(currentPage)]="pageNumber" (pageChanged)="pageChanged()">
       </app-vk-users>

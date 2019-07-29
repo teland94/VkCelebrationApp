@@ -11,10 +11,6 @@ export class VkCelebrationService {
 
     }
 
-    getFriendsSuggestions() {
-        return this.dataService.get(`${this.url}/getFriendsSuggestions`);
-    }
-
     search(searchParams: SearchParams, pageNumber?: number, pageSize?: number) {
         return this.dataService.post(`${this.url}/search`, {
           searchParams,

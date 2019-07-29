@@ -14,5 +14,11 @@ namespace VkCelebrationApp.BLL.Interfaces
         Task<UserDto> GetUserAsync(int id);
 
         Task<UserDto> GetByVkUserIdAsync(long vkUserId);
+
+        Task AddToIngoreListAsync(long vkUserId, int userId);
+
+        Task<VkCollectionDto<VkUserDto>> GetNoBlacklistedUsersAsync(VkCollectionDto<VkUserDto> users, int userId);
+
+        Task DeleteFromIngoreListAsync(int id);
     }
 }

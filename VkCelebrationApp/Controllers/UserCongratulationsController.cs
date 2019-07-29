@@ -40,5 +40,17 @@ namespace VkCelebrationApp.Controllers
 
             return Ok(userCongratulationVms);
         }
+
+        [HttpPost(nameof(GetUserCongratulationsExcelData))]
+        public async Task<IActionResult> GetUserCongratulationsExcelData([FromBody] ExportUserCongratulationsGetViewModel parameters)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var data = await UserCongratulationsService.GetUserCongratulationsExcelDataAsync(GetUserId(), parameters.TimezoneOffset, parameters.CongratulationDate);
+            return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "User_Congratulations.xlsx");
+        }
     }
 }

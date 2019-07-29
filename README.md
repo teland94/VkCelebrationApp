@@ -7,7 +7,8 @@ Simple Web Application for finding and congratulating birthday persons in Vkonta
   * Entity Framework Core 2.2 with SQLite
   * Autofac
   * Automapper
-  * Angular 7
+  * ClosedXML
+  * Angular 8
   * Bootstrap 4
   * Azure Face API
   

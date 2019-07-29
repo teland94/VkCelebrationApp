@@ -11,6 +11,7 @@ namespace VkCelebrationApp.DAL.EF
         public DbSet<User> Users { get; set; }
         public DbSet<UserCongratulation> UserCongratulations { get; set; }
         public DbSet<CongratulationTemplate> CongratulationTemplates { get; set; }
+        public DbSet<IgnoredUser> IgnoredUsers { get; set; }
 
         public ApplicationContext(DbContextOptions options)
             : base(options)

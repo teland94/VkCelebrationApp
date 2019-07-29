@@ -143,6 +143,7 @@ namespace VkCelebrationApp.BLL.Services
             var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(filteredUsers);
 
             userDtos = await UserCongratulationService.GetNoCongratulatedUsersAsync(userDtos, userId);
+            userDtos = await UserService.GetNoBlacklistedUsersAsync(userDtos, userId); 
 
             return new Tuple<VkCollectionDto<VkUserDto>, uint>(
                 userDtos.Skip((int)offset).Take((int)count).ToVkCollectionDto(users.TotalCount), 

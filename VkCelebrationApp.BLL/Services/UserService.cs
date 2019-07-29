@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using VkCelebrationApp.BLL.Configuration;
 using VkCelebrationApp.BLL.Dtos;
+using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.DAL.EF;
 using VkCelebrationApp.DAL.Entities;
@@ -89,6 +90,36 @@ namespace VkCelebrationApp.BLL.Services
         public async Task<UserDto> GetByVkUserIdAsync(long vkUserId)
         {
             return Mapper.Map<User, UserDto>(await DbContext.Users.FirstOrDefaultAsync(u => u.VkUserId == vkUserId));
+        }
+
+        public async Task AddToIngoreListAsync(long vkUserId, int userId)
+        {
+            await DbContext.IgnoredUsers.AddAsync(new IgnoredUser
+            {
+                VkUserId = vkUserId,
+                Date = DateTime.UtcNow,
+                UserId = userId
+            });
+            await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<VkCollectionDto<VkUserDto>> GetNoBlacklistedUsersAsync(VkCollectionDto<VkUserDto> users, int userId)
+        {
+            var vkIds = users.Select(u => u.Id);
+            var existsIds = await DbContext.IgnoredUsers.Where(iu =>
+                vkIds.Any(vid => vid == iu.VkUserId) && iu.UserId == userId)
+                .Select(iu => iu.VkUserId)
+                .ToListAsync();
+            return users.Where(u => existsIds.All(eid => eid != u.Id)).ToVkCollectionDto(users.TotalCount);
+        }
+
+        public async Task DeleteFromIngoreListAsync(int id)
+        {
+            DbContext.IgnoredUsers.Remove(new IgnoredUser
+            {
+                Id = id
+            });
+            await DbContext.SaveChangesAsync();
         }
 
         private async Task<long> GetCityId()

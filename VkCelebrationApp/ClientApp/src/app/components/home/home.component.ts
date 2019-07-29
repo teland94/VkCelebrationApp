@@ -7,10 +7,11 @@ import { CongratulationTemplatesService } from '../../services/congratulation-te
 import { VkCollection } from '../../models/vk-collection.model';
 import { UserCongratulation } from '../../models/user-congratulation.model';
 import { CongratulationTemplate } from '../../models/congratulation-template.model';
-import { distinctUntilChanged, debounceTime, switchMap } from 'rxjs/operators';
-import { SearchParams } from 'src/app/models/search-params.model';
-import { UserService } from 'src/app/services/user.service';
-import { PagedVkCollection } from 'src/app/models/paged-vk-collection';
+import { distinctUntilChanged, debounceTime, switchMap, finalize } from 'rxjs/operators';
+import { SearchParams } from '../../models/search-params.model';
+import { UserService } from '../../services/user.service';
+import { PagedVkCollection } from '../../models/paged-vk-collection';
+import { isMobileDevice } from '../../utils';
 
 @Component({
   selector: 'home',
@@ -21,7 +22,6 @@ export class HomeComponent implements OnInit {
 
   private searchSettingsKey = 'searchSettings';
 
-  friendsSuggestionsCollection: VkCollection<VkUser>;
   usersCollection: PagedVkCollection<VkUser>;
   congratulationTemplates: CongratulationTemplate[];
   selectedUser: VkUser;
@@ -67,14 +67,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  loadFriendsSuggestions() {
-    this.vkCelebrationService.getFriendsSuggestions().subscribe((data: VkCollection<VkUser>) => {
-      this.friendsSuggestionsCollection = data;
-    }, err => {
-      this.showErrorToast('Ошибка загрузки возможных друзей - именинников', err);
-    });
-  }
-
   seachUsers() {
     this.vkCelebrationService.search(this.searchParams, this.pageNumber)
       .subscribe((data: PagedVkCollection<VkUser>) => {
@@ -93,7 +85,7 @@ export class HomeComponent implements OnInit {
   }
 
   isMobileDevice() {
-    return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    return isMobileDevice();
   }
 
   sendMessageOpen(user: VkUser) {
@@ -121,13 +113,13 @@ export class HomeComponent implements OnInit {
   saveCongratulationTemplate() {
     this.loading = true;
     this.congratulationTemplatesService.createCongratulationTemplate(
-      new CongratulationTemplate(this.messageText)).subscribe(() => {
-        this.loading = false;
-        this.toastrService.success('Заготовка для поздравления успешно сохранена');
-      }, err => {
-        this.loading = false;
-        this.showErrorToast('Ошибка сохранения заготовки поздравления', err);
-      });
+      new CongratulationTemplate(this.messageText))
+        .pipe(finalize(() => this.loading = false))
+        .subscribe(() => {
+          this.toastrService.success('Заготовка для поздравления успешно сохранена');
+        }, err => {
+          this.showErrorToast('Ошибка сохранения заготовки поздравления', err);
+        });
   }
 
   sendCongratulation() {
@@ -137,31 +129,35 @@ export class HomeComponent implements OnInit {
       resultMessage = this.template;
     }
     this.vkCelebrationService.sendCongratulation
-      (new UserCongratulation(resultMessage, this.selectedUser.id)).subscribe((data: number) => {
+      (new UserCongratulation(resultMessage, this.selectedUser.id))
+      .pipe(finalize(() => this.loading = false))
+      .subscribe((data: number) => {
         this.congratulationModal.hide();
         this.toastrService.success('Поздравление успешно отправлено');
         this.seachUsers();
-        // this.loadFriendsSuggestions();
       }, err => {
-        this.loading = false;
         this.showErrorToast('Ошибка отправки поздравления', err);
       });
   }
 
   sendRandomCongratulation(user: VkUser) {
     this.loading = true;
-    this.vkCelebrationService.sendRandomCongratulation(user.id).subscribe((data: number) => {
-      this.loading = false;
-      this.toastrService.success('Поздравление успешно отправлено');
-      this.seachUsers();
-    }, err => {
-      this.loading = false;
-      if (err.status === 404) {
-        this.showErrorToast('Отсутствуют заготовки поздравлений', err);
-      } else {
-        this.showErrorToast('Ошибка отправки поздравления', err);
-      }
-    });
+    this.vkCelebrationService.sendRandomCongratulation(user.id)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe((data: number) => {
+        this.toastrService.success('Поздравление успешно отправлено');
+        this.seachUsers();
+      }, err => {
+        if (err.status === 404) {
+          this.showErrorToast('Отсутствуют заготовки поздравлений', err);
+        } else {
+          this.showErrorToast('Ошибка отправки поздравления', err);
+        }
+      });
+  }
+
+  userBlacklisted(user: VkUser) {
+    this.seachUsers();
   }
 
   onHidden(event: any) {

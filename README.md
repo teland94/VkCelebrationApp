@@ -14,15 +14,15 @@ Simple Web Application for finding and congratulating birthday persons in Vkonta
   
 ## Main Page with "Send Congratulation" Window
 <p align="center">
- <img src="https://d.radikal.ru/d01/1803/3a/de20d3b7e3c7.png" alt="Main Page with Sending Congratulation Window" />
+ <img src="https://d.radikal.ru/d08/1909/5e/7655fbe7ccb0.png" alt="Main Page with Sending Congratulation Window" />
 </p>
 
 ## Congratulation Templates Page
 <p align="center">
- <img src="https://d.radikal.ru/d13/1803/b8/afb606c4719c.png" alt="Congratulation Templates Page" />
+ <img src="https://a.radikal.ru/a30/1909/a6/bfd14f64c361.png" alt="Congratulation Templates Page" />
 </p>
 
 ## History Page
 <p align="center">
- <img src="https://a.radikal.ru/a32/1803/a8/2c850930f7e8.png" alt="History Page" />
+ <img src="https://d.radikal.ru/d30/1909/f9/188d91c54e4f.png" alt="History Page" />
 </p>

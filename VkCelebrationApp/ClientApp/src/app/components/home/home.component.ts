@@ -168,7 +168,7 @@ export class HomeComponent implements OnInit {
 
   saveSearchSettings() {
     localStorage.setItem(this.searchSettingsKey, JSON.stringify(this.searchParams));
-    this.toastrService.success('Настройки поиска успешно сохранено', 'Успех');
+    this.toastrService.success('Настройки поиска успешно сохранено');
   }
 
   async resetSearchSettings() {

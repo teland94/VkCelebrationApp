@@ -8,18 +8,21 @@ using VkCelebrationApp.DAL.Entities;
 using VkCelebrationApp.BLL.Extensions;
 using VkCelebrationApp.DAL.EF;
 using System.Linq;
-using VkCelebrationApp.DAL.Extenstions;
 using Microsoft.EntityFrameworkCore;
+using VkCelebrationApp.DAL.Extensions;
 
 namespace VkCelebrationApp.BLL.Services
 {
     internal class CongratulationTemplatesService : ICongratulationTemplatesService
     {
         private ApplicationContext DbContext { get; }
+        private IMapper Mapper { get; }
 
-        public CongratulationTemplatesService(ApplicationContext dbContext)
+        public CongratulationTemplatesService(ApplicationContext dbContext,
+            IMapper mapper)
         {
             DbContext = dbContext;
+            Mapper = mapper;
         }
 
         public async Task CreateAsync(CongratulationTemplateDto item, int userId)

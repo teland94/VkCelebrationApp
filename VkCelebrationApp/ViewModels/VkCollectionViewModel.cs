@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
-using VkCelebrationApp.Utils;
+using VkNet.Utils.JsonConverter;
 
-namespace VkCelebrationApp.BLL.Dtos
+namespace VkCelebrationApp.ViewModels
 {
     [Serializable]
     [JsonConverter(typeof(VkCollectionJsonConverter))]

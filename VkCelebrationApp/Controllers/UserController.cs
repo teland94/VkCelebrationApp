@@ -17,10 +17,13 @@ namespace VkCelebrationApp.Controllers
     public class UserController : ControllerBase
     {
         private IUserService UserService { get; }
+        private IMapper Mapper { get; }
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService,
+            IMapper mapper)
         {
             UserService = userService;
+            Mapper = mapper;
         }
 
         [HttpGet("GetUserInfo")]

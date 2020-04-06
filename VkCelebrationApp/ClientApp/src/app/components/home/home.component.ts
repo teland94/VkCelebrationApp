@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   searchParams: SearchParams;
   pageNumber: number;
 
-  @ViewChild(ModalDirective, { static: false }) congratulationModal: ModalDirective;
+  @ViewChild(ModalDirective) congratulationModal: ModalDirective;
 
   typeahead = new EventEmitter<string>();
   isModalShown = false;

@@ -30,13 +30,15 @@ namespace VkCelebrationApp.BLL.Services
         private ICongratulationTemplatesService CongratulationTemplatesService { get; }
         private IUserCongratulationsService UserCongratulationService { get; }
         private IFaceApiService FaceApiService { get; }
+        private IMapper Mapper { get; }
 
         public VkCelebrationService(IUserService userService,
             VkApi vkApi,
             ApplicationContext dbContext,
             ICongratulationTemplatesService congratulationTemplatesService,
             IUserCongratulationsService userCongratulationService,
-            IFaceApiService faceApiService)
+            IFaceApiService faceApiService,
+            IMapper mapper)
         {
             VkApi = vkApi;
             DbContext = dbContext;
@@ -44,6 +46,7 @@ namespace VkCelebrationApp.BLL.Services
             CongratulationTemplatesService = congratulationTemplatesService;
             UserCongratulationService = userCongratulationService;
             FaceApiService = faceApiService;
+            Mapper = mapper;
         }
 
         public async Task<Tuple<long, string>> Auth(string login, string password)
@@ -120,7 +123,7 @@ namespace VkCelebrationApp.BLL.Services
         {
             var user = (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.Timezone)).FirstOrDefault();
             var date = DateTime.UtcNow.AddHours(user.Timezone ?? 0);
-            var users = await VkApi.CallAsync<VkCollection<User>>("users.search", new UserSearchParams
+            var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
                 AgeFrom = searchParams.AgeFrom,

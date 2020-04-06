@@ -12,10 +12,13 @@ namespace VkCelebrationApp.BLL.Services
     public class VkDatabaseService : IVkDatabaseService
     {
         private VkApi VkApi { get; }
+        private IMapper Mapper { get; }
 
-        public VkDatabaseService(VkApi vkApi)
+        public VkDatabaseService(VkApi vkApi,
+            IMapper mapper)
         {
             VkApi = vkApi;
+            Mapper = mapper;
         }
 
         public async Task<VkCollectionDto<VkCityDto>> GetCitiesAsync(int countryId, string query = "")

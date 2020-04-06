@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Interfaces;
 using VkCelebrationApp.Filters;
+using VkCelebrationApp.ViewModels;
 
 namespace VkCelebrationApp.Controllers
 {
@@ -14,10 +15,13 @@ namespace VkCelebrationApp.Controllers
     public class VkDatabaseController : Controller
     {
         private IVkDatabaseService VkDatabaseService { get; }
+        private IMapper Mapper { get; }
 
-        public VkDatabaseController(IVkDatabaseService vkDatabaseService)
+        public VkDatabaseController(IVkDatabaseService vkDatabaseService,
+            IMapper mapper)
         {
             VkDatabaseService = vkDatabaseService;
+            Mapper = mapper;
         }
 
         [HttpGet(nameof(GetCities))]

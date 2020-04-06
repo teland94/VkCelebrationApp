@@ -2,19 +2,19 @@
 Simple Web Application for finding and congratulating birthday persons in Vkontakte.
 
 ## Used APIs and Frameworks
-  * ASP.NET Core 2.2 (API)
+  * ASP.NET Core 3.1 (API)
   * Vkontakte API for .NET
-  * Entity Framework Core 2.2 with SQLite
+  * Entity Framework Core 3.1 with SQLite
   * Autofac
   * Automapper
   * ClosedXML
-  * Angular 8
+  * Angular 9
   * Bootstrap 4
   * Azure Face API
   
-## Main Page with "Send Congratulation" Window
+## Main Page
 <p align="center">
- <img src="https://d.radikal.ru/d08/1909/5e/7655fbe7ccb0.png" alt="Main Page with Sending Congratulation Window" />
+ <img src="https://d.radikal.ru/d08/1909/5e/7655fbe7ccb0.png" alt="Main Page" />
 </p>
 
 ## Congratulation Templates Page

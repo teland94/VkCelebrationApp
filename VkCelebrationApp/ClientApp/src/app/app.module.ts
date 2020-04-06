@@ -6,11 +6,13 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NgProgressModule } from 'ngx-progressbar';
+import { NgProgressHttpModule } from 'ngx-progressbar/http';
 import { ClipboardModule } from 'ngx-clipboard';
-import { BsDatepickerModule, PaginationModule, TooltipModule } from 'ngx-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
-import { NgProgressModule } from '@ngx-progressbar/core';
-import { NgProgressHttpModule } from '@ngx-progressbar/http';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { routing } from './app.routing';
 
@@ -67,10 +69,10 @@ import { environment } from '../environments/environment';
     }),
     ModalModule.forRoot(),
     NgSelectModule,
-    ClipboardModule,
-    BsDatepickerModule.forRoot(),
     NgProgressModule,
     NgProgressHttpModule,
+    ClipboardModule,
+    BsDatepickerModule.forRoot(),
     AccordionModule.forRoot(),
     PaginationModule.forRoot(),
     TooltipModule.forRoot(),

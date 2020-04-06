@@ -18,10 +18,13 @@ namespace VkCelebrationApp.Controllers
     public class VkCelebrationController : ControllerBase
     {
         private IVkCelebrationService VkCelebrationService { get; }
+        private IMapper Mapper { get; }
 
-        public VkCelebrationController(IVkCelebrationService vkCelebrationService)
+        public VkCelebrationController(IVkCelebrationService vkCelebrationService,
+            IMapper mapper)
         {
             VkCelebrationService = vkCelebrationService;
+            Mapper = mapper;
         }
 
         [HttpPost("Auth")]

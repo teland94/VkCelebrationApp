@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
-using System.Collections.Generic;
+using Microsoft.OpenApi.Models;
 
 namespace VkCelebrationApp.Extensions
 {
@@ -11,20 +10,31 @@ namespace VkCelebrationApp.Extensions
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1.0", new Info { Title = "VK API", Version = "v2.0" });
+                c.SwaggerDoc("v2.0", new OpenApiInfo { Title = "VK API", Version = "v2.0" });
 
-                var security = new Dictionary<string, IEnumerable<string>>
+                var security = new OpenApiSecurityRequirement
                 {
-                    {"Bearer", new string[] { }},
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
                 };
 
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
                 });
+
                 c.AddSecurityRequirement(security);
             });
 

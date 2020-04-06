@@ -21,12 +21,15 @@ namespace VkCelebrationApp.BLL.Services
     {
         private VkApi VkApi { get; }
         private ApplicationContext DbContext { get; }
+        private IMapper Mapper { get; }
 
         public UserService(VkApi vkApi,
-            ApplicationContext dbContext)
+            ApplicationContext dbContext,
+            IMapper mapper)
         {
             VkApi = vkApi;
             DbContext = dbContext;
+            Mapper = mapper;
         }
 
         public async Task<VkUserDto> GetUserInfoAsync(bool? withProfileFields = null)

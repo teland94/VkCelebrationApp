@@ -9,12 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using VkCelebrationApp.Autofac;
 using AutoMapper;
-using VkCelebrationApp.BLL.Dtos;
-using System.Collections.Generic;
-using VkCelebrationApp.ViewModels;
+using System.Reflection;
+using Microsoft.Extensions.Hosting;
 using VkCelebrationApp.BLL.MappingProfiles;
 using VkCelebrationApp.Extensions;
 using VkCelebrationApp.Filters;
+using VkCelebrationApp.MappingProfiles;
 
 namespace VkCelebrationApp
 {
@@ -36,7 +36,7 @@ namespace VkCelebrationApp
             {
                 options.EnableEndpointRouting = false;
                 options.Filters.Add(typeof(CustomExceptionFilterAttribute));
-            });
+            }).AddNewtonsoftJson();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -48,13 +48,15 @@ namespace VkCelebrationApp
 
             services.AddAppAuth(Configuration);
 
+            services.AddAutoMapper(typeof(AppProfile).GetTypeInfo().Assembly, typeof(ServiceProfile).GetTypeInfo().Assembly);
+
             ApplicationContainer = services.AddAutofac(Configuration);
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -99,42 +101,6 @@ namespace VkCelebrationApp
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-
-            ConfigureMappings();
         }
-
-        private void ConfigureMappings()
-        {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<ServiceProfile>();
-
-                cfg.CreateMap(typeof(VkCollectionDto<>), typeof(VkCollectionViewModel<>))
-                    .ConvertUsing(typeof(VkCollectionDtoToVkCollectionViewModelConverter<,>));
-
-                cfg.CreateMap<VkUserDto, VkUserViewModel>();
-
-                cfg.CreateMap<UserCongratulationDto, UserCongratulationViewModel>();
-
-                cfg.CreateMap<SearchParamsViewModel, SearchParamsDto>()
-                    .BeforeMap((s, d) => d.CanWritePrivateMessage = true);
-
-                cfg.CreateMap<SearchUserParamsViewModel, SearchParamsDto>();
-            });
-        }
-
-        #region Nested Classes
-
-        private class VkCollectionDtoToVkCollectionViewModelConverter<TDto, TVm> : ITypeConverter<VkCollectionDto<TDto>, VkCollectionViewModel<TVm>>
-        {
-            public VkCollectionViewModel<TVm> Convert(VkCollectionDto<TDto> source, VkCollectionViewModel<TVm> destination, ResolutionContext context)
-            {
-                var usersVms = context.Mapper.Map<IEnumerable<TDto>, IEnumerable<TVm>>(source);
-
-                return new VkCollectionViewModel<TVm>(source.TotalCount, usersVms);
-            }
-        }
-
-        #endregion
     }
 }

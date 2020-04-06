@@ -20,12 +20,15 @@ namespace VkCelebrationApp.BLL.Services
     {
         private ApplicationContext DbContext { get; }
         private VkApi VkApi { get; }
+        private IMapper Mapper { get; }
 
         public UserCongratulationsService(ApplicationContext dbContext,
-            VkApi vkApi)
+            VkApi vkApi,
+            IMapper mapper)
         {
             DbContext = dbContext;
             VkApi = vkApi;
+            Mapper = mapper;
         }
 
         public async Task<VkCollectionDto<VkUserDto>> GetNoCongratulatedUsersAsync(VkCollectionDto<VkUserDto> users, int userId)

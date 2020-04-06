@@ -19,10 +19,13 @@ namespace VkCelebrationApp.Controllers
     public class UserCongratulationsController : ControllerBase
     {
         private IUserCongratulationsService UserCongratulationsService { get; }
+        private IMapper Mapper { get; }
 
-        public UserCongratulationsController(IUserCongratulationsService userCongratulationService)
+        public UserCongratulationsController(IUserCongratulationsService userCongratulationService,
+            IMapper mapper)
         {
             UserCongratulationsService = userCongratulationService;
+            Mapper = mapper;
         }
 
         [HttpPost("GetUserCongratulations")]

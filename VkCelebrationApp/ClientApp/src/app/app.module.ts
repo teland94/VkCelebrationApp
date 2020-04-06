@@ -13,6 +13,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { AutosizeModule } from 'ngx-autosize';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { routing } from './app.routing';
 
@@ -76,6 +77,7 @@ import { environment } from '../environments/environment';
     AccordionModule.forRoot(),
     PaginationModule.forRoot(),
     TooltipModule.forRoot(),
+    AutosizeModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     routing
   ],

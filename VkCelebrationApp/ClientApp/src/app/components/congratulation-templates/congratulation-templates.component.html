@@ -17,7 +17,7 @@
       <tr *ngFor="let t of congratulationTemplates">
         <ng-template [ngIf]="congratulationTemplate?.id != t.id" [ngIfElse]="edit">
           <td class="col">
-            <textarea class="form-control" readonly #congratulationTemplateElem>{{t?.text}}</textarea>
+            <textarea class="form-control" autosize readonly #congratulationTemplateElem>{{t?.text}}</textarea>
           </td>
           <td class="col-auto vertical-middle">
             <button id="btn-copy" class="btn btn-sm btn-info icon" [ngxClipboard]="congratulationTemplateElem" title="Копировать">
@@ -38,7 +38,7 @@
 
 <ng-template #edit>
   <td class="col">
-    <textarea #text="ngModel" required [(ngModel)]="congratulationTemplate.text" #congratulationTemplateEditElem
+    <textarea #text="ngModel" autosize required [(ngModel)]="congratulationTemplate.text" #congratulationTemplateEditElem
       appAutofocus class="form-control"></textarea>
   </td>
   <td class="col-auto vertical-middle">
@@ -58,7 +58,7 @@
   <form #f="ngForm" novalidate>
     <div class="form-group">
       <label>Текст</label>
-      <textarea name="Text" #text="ngModel" required [(ngModel)]="congratulationTemplate.text" appAutofocus
+      <textarea name="Text" #text="ngModel" autosize required [(ngModel)]="congratulationTemplate.text" appAutofocus
         class="form-control"></textarea>
 
       <small [hidden]="text.valid || (text.pristine && !submitted)" class="text-danger">

@@ -20,16 +20,16 @@ namespace VkCelebrationApp.BLL.Dtos
         [ExportToExcel(0, "ВК ID")]
         public long VkUserId { get; set; }
 
-        [ExportToExcel(1, "Имя", false, Size = 25)]
+        [ExportToExcel(1, "Имя", Size = 25)]
         public string Name { get; set; }
 
         [ExportToExcel(2, "Фото", Size = 50)]
         public Bitmap Photo { get; set; }
 
-        [ExportToExcel(3, "Текст", false, Size = 100)]
+        [ExportToExcel(3, "Текст", Size = 100)]
         public string Text { get; set; }
 
-        [ExportToExcel(4, "Дата")]
+        [ExportToExcel(4, "Дата", Size = 15)]
         public DateTime CongratulationDate { get; set; }
     }
 }

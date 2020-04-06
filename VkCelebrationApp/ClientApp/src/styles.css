@@ -2,3 +2,10 @@
 .ava {
   width: 100px;
 }
+
+.user-btn {
+  padding: .4rem .8rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}

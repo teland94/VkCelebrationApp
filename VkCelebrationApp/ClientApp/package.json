@@ -31,6 +31,7 @@
     "core-js": "^2.6.5",
     "font-awesome": "^4.7.0",
     "jquery": "^3.4.0",
+    "ngx-autosize": "^1.7.5",
     "ngx-bootstrap": "^5.5.0",
     "ngx-clipboard": "^12.2.0",
     "ngx-progressbar": "^6.0.2",

@@ -32,19 +32,18 @@ namespace VkCelebrationApp.BLL.Services
             Mapper = mapper;
         }
 
-        public async Task<VkUserDto> GetUserInfoAsync(bool? withProfileFields = null)
+        public async Task<VkUserDto> GetUserInfoAsync(bool withProfileFields = false)
         {
             var usersGet = await VkApi.Users.GetAsync(
                 new long[] { },
-                withProfileFields != null ?
-                    (withProfileFields.Value
-                    ? ProfileFields.Photo100 | ProfileFields.Photo50 | ProfileFields.BirthDate | ProfileFields.City
-                    : null) 
-                : null);
+                withProfileFields
+                    ? ProfileFields.Photo100 | ProfileFields.Photo50 | ProfileFields.BirthDate | ProfileFields.City | ProfileFields.Timezone
+                    : ProfileFields.Timezone);
 
             var user = usersGet.FirstOrDefault();
+            var currentDate = DateTime.UtcNow.AddHours(user.Timezone ?? 0);
 
-            return Mapper.Map<VkUser, VkUserDto>(user);
+            return Mapper.Map<VkUser, VkUserDto>(user, opts => opts.Items["CurrentDate"] = currentDate);
         }
 
         public async Task<int> DetectAgeAsync(long userId, string firstName, string lastName)

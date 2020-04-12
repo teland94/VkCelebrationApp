@@ -122,14 +122,14 @@ namespace VkCelebrationApp.BLL.Services
             uint? count = 1000, uint? offset = 0)
         {
             var user = (await VkApi.Users.GetAsync(new long[] { }, ProfileFields.Timezone)).FirstOrDefault();
-            var date = DateTime.UtcNow.AddHours(user.Timezone ?? 0);
+            var currentDate = DateTime.UtcNow.AddHours(user.Timezone ?? 0);
             var users = await VkApi.Users.SearchAsync(new UserSearchParams
             {
                 Sort = UserSort.ByRegDate,
                 AgeFrom = searchParams.AgeFrom,
                 AgeTo = searchParams.AgeTo,
-                BirthMonth = (ushort)date.Month,
-                BirthDay = (ushort)date.Day,
+                BirthMonth = (ushort)currentDate.Month,
+                BirthDay = (ushort)currentDate.Day,
                 City = (int?)searchParams.CityId,
                 University = (int?)searchParams.UniversityId,
                 Sex = (Sex)searchParams.Sex,
@@ -143,10 +143,10 @@ namespace VkCelebrationApp.BLL.Services
 
             var filteredUsers = GetCustomFilteredUsers(users, searchParams);
 
-            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(filteredUsers);
+            var userDtos = Mapper.Map<VkCollection<User>, VkCollectionDto<VkUserDto>>(filteredUsers, opts => opts.Items["CurrentDate"] = currentDate);
 
             userDtos = await UserCongratulationService.GetNoCongratulatedUsersAsync(userDtos, userId);
-            userDtos = await UserService.GetNoBlacklistedUsersAsync(userDtos, userId); 
+            userDtos = await UserService.GetNoBlacklistedUsersAsync(userDtos, userId);
 
             return new Tuple<VkCollectionDto<VkUserDto>, uint>(
                 userDtos.Skip((int)offset).Take((int)count).ToVkCollectionDto(users.TotalCount), 
@@ -240,7 +240,9 @@ namespace VkCelebrationApp.BLL.Services
 
             if (searchParam.LastSeenMode == LastSeenMode.Last24Hours)
             {
-                usersRes = usersRes.Where(u => u.LastSeen.Time > DateTime.Now.AddDays(-1));
+                usersRes = usersRes
+                    .Where(u => u.LastSeen.Time > DateTime.Now.AddDays(-1))
+                    .OrderByDescending(u => u.LastSeen.Time);
             }
 
             if (searchParam.CanWritePrivateMessage)

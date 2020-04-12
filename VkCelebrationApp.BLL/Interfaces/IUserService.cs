@@ -5,7 +5,7 @@ namespace VkCelebrationApp.BLL.Interfaces
 {
     public interface IUserService
     {
-        Task<VkUserDto> GetUserInfoAsync(bool? withProfileFields = null);
+        Task<VkUserDto> GetUserInfoAsync(bool withProfileFields = false);
 
         Task<int> DetectAgeAsync(long userId, string firstName, string lastName);
 

@@ -4,12 +4,12 @@ namespace VkCelebrationApp.BLL.Extensions
 {
     public static class DateTimeExtensions
     {
-        public static int GetAge(this DateTime birthDate)
+        public static int GetAge(this DateTime birthDate, DateTime? currentDate = null)
         {
-            var now = DateTime.Now;
+            var today = currentDate?.Date ?? DateTime.Today;
 
-            var age = now.Year - birthDate.Year;
-            if (now.AddYears(age) < birthDate) 
+            var age = today.Year - birthDate.Year;
+            if (today.AddYears(-age) < birthDate) 
                 age--;
 
             return age;

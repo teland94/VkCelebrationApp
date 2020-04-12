@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Collections.Generic;
 using VkCelebrationApp.BLL.Dtos;
 using VkCelebrationApp.BLL.Extensions;
@@ -15,7 +16,7 @@ namespace VkCelebrationApp.BLL.MappingProfiles
             CreateMap<VkNet.Model.User, VkUserDto>()
                 .ForMember(
                     d => d.Age,
-                    opt => opt.MapFrom(m => ConvertBirthDateToAge(m.BirthDate)))
+                    opt => opt.MapFrom((s, d, destMember, context) => ConvertBirthDateToAge(s.BirthDate, (DateTime?)context.Items["CurrentDate"])))
                 .ForMember(
                     d => d.CityId,
                     opt => opt.MapFrom(m => m.City.Id))
@@ -39,10 +40,10 @@ namespace VkCelebrationApp.BLL.MappingProfiles
             CreateMap<University, VkUniversityDto>();
         }
 
-        private static ushort? ConvertBirthDateToAge(string birthDate)
+        private static ushort? ConvertBirthDateToAge(string birthDate, DateTime? currentDate)
         {
             var date = birthDate.ToFullDateTime();
-            return (ushort?)date?.GetAge();
+            return (ushort?)date?.GetAge(currentDate);
         }
 
         #region Nested Classes
